@@ -109,7 +109,7 @@
 }
 
 .form-group input:invalid:not(:focus):not(:placeholder-shown) {
-    border-color: #e74c3c;
+    border-color: #000000;
 }
 
 .form-checkbox {

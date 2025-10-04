@@ -1,0 +1,141 @@
+/* TermsOfService.css */
+.terms-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem 0;
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+.terms-header {
+    text-align: center;
+    color: white;
+    margin-bottom: 3rem;
+    padding: 0 2rem;
+}
+
+.terms-header .logo {
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+    text-decoration: none;
+    display: block;
+    margin-bottom: 1rem;
+}
+
+.terms-header h1 {
+    font-size: 3rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.last-updated {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.terms-content {
+    max-width: 800px;
+    margin: 0 auto;
+    background: white;
+    border-radius: 20px;
+    padding: 3rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}
+
+.terms-section {
+    margin-bottom: 2.5rem;
+}
+
+.terms-section h2 {
+    color: #2c3e50;
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #667eea;
+    padding-bottom: 0.5rem;
+}
+
+.terms-section p {
+    color: #555;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+}
+
+.terms-section ul {
+    color: #555;
+    line-height: 1.7;
+    margin-left: 1.5rem;
+}
+
+.terms-section li {
+    margin-bottom: 0.5rem;
+}
+
+.terms-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.btn {
+    padding: 12px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    display: inline-block;
+    text-align: center;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: #667eea;
+    border: 2px solid #667eea;
+}
+
+.btn-secondary:hover {
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+    .terms-container {
+        padding: 1rem 0;
+    }
+
+    .terms-header h1 {
+        font-size: 2.2rem;
+    }
+
+    .terms-content {
+        padding: 2rem;
+        margin: 0 1rem;
+    }
+
+    .terms-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .btn {
+        width: 200px;
+    }
+}
