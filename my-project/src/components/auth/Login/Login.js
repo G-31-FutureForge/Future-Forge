@@ -32,8 +32,8 @@ const Login = () => {
       const data = await response.json();
       if (response.ok) {
         localStorage.setItem('token', data.token);
-        // Redirect or update UI as needed
-        window.location.href = '/';
+        localStorage.setItem('user', JSON.stringify(data.user));
+        window.location.href = '/dashboard';
       } else {
         setError(data.message || 'Login failed');
       }

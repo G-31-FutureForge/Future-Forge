@@ -48,6 +48,7 @@ const Register = () => {
         setLoading(true);
         setError('');
         try {
+        try {
             const response = await fetch('http://localhost:5000/api/auth/register', {
                 method: 'POST',
                 headers: {
@@ -63,8 +64,8 @@ const Register = () => {
             const data = await response.json();
             if (response.ok) {
                 localStorage.setItem('token', data.token);
-                // Redirect or update UI as needed
-                window.location.href = '/';
+                localStorage.setItem('user', JSON.stringify(data.user));
+                window.location.href = '/dashboard';
             } else {
                 setError(data.message || 'Registration failed');
             }
@@ -72,32 +73,6 @@ const Register = () => {
             setError('Server error');
         }
         setLoading(false);
-
-        try {
-            const response = await fetch('http://localhost:5000/api/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    firstName: formData.firstName,
-                    lastName: formData.lastName,
-                    email: formData.email,
-                    password: formData.password
-                }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                // Registration successful
-                alert('Registration successful! Please login.');
-                navigate('/login');
-            } else {
-                setError(data.message || 'Registration failed');
-            }
-        } catch (error) {
-            setError('Network error. Please try again.');
             console.error('Registration error:', error);
         } finally {
             setLoading(false);
