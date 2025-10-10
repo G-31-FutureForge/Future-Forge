@@ -41,13 +41,37 @@ const Register = () => {
         return true;
     };
 
+    // ...existing code...
     const handleSubmit = async (e) => {
         e.preventDefault();
-        
         if (!validateForm()) return;
-
         setLoading(true);
         setError('');
+        try {
+            const response = await fetch('http://localhost:5000/api/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    firstName: formData.firstName,
+                    lastName: formData.lastName,
+                    email: formData.email,
+                    password: formData.password
+                }),
+            });
+            const data = await response.json();
+            if (response.ok) {
+                localStorage.setItem('token', data.token);
+                // Redirect or update UI as needed
+                window.location.href = '/';
+            } else {
+                setError(data.message || 'Registration failed');
+            }
+        } catch (err) {
+            setError('Server error');
+        }
+        setLoading(false);
 
         try {
             const response = await fetch('http://localhost:5000/api/auth/register', {
