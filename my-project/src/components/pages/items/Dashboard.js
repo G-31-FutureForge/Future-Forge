@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -8,14 +8,30 @@ const Dashboard = () => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [jobs, setJobs] = useState([]);
     const [courses, setCourses] = useState([]);
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
 
     useEffect(() => {
         const userData = localStorage.getItem('user');
+        console.log('Raw user data from localStorage:', userData); // Debug log
+        
         if (userData) {
-            setUser(JSON.parse(userData));
+            try {
+                const parsedUser = JSON.parse(userData);
+                console.log('Parsed user object:', parsedUser); // Debug log
+                setUser(parsedUser);
+            } catch (error) {
+                console.error('Error parsing user data:', error);
+                navigate('/login');
+            }
         } else {
             navigate('/login');
+        }
+
+        // Check for tab parameter in URL
+        const tabParam = searchParams.get('tab');
+        if (tabParam && ['overview', 'career', 'profile'].includes(tabParam)) {
+            setActiveTab(tabParam);
         }
 
         setTimeout(() => {
@@ -34,47 +50,59 @@ const Dashboard = () => {
             { id: 2, name: 'Machine Learning Basics', platform: 'Udemy' },
             { id: 3, name: 'Data Structures Mastery', platform: 'edX' },
         ]);
-    }, [navigate]);
+    }, [navigate, searchParams]);
 
-    const handleLogout = () => {
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-        navigate('/');
+    // Safe user data access
+    const getUserFirstName = () => {
+        if (!user) return 'User';
+        
+        // Check different possible property names
+        return user.firstName || user.firstname || user.name || user.username || 'User';
+    };
+
+    const getUserLastName = () => {
+        if (!user) return '';
+        
+        return user.lastName || user.lastname || '';
+    };
+
+    const getUserEmail = () => {
+        if (!user) return 'No email provided';
+        
+        return user.email || user.mail || 'No email provided';
+    };
+
+    const getFullName = () => {
+        const firstName = getUserFirstName();
+        const lastName = getUserLastName();
+        
+        if (lastName) {
+            return `${firstName} ${lastName}`;
+        }
+        return firstName;
     };
 
     if (!user) return <div>Loading...</div>;
 
     return (
         <div className="dashboard-container">
-            {/* Header */}
-            <header className="dashboard-header">
-                <div className="header-content">
-                    <div className="header-left">
-                        <Link to="/dashboard" className="logo">Future Forge</Link>
-                        <nav className="dashboard-nav">
-                            <button 
-                                className={`nav-btn ${activeTab === 'overview' ? 'active' : ''}`}
-                                onClick={() => setActiveTab('overview')}
-                            >Overview</button>
-                            <button 
-                                className={`nav-btn ${activeTab === 'career' ? 'active' : ''}`}
-                                onClick={() => setActiveTab('career')}
-                            >Career</button>
-                            <button 
-                                className={`nav-btn ${activeTab === 'profile' ? 'active' : ''}`}
-                                onClick={() => setActiveTab('profile')}
-                            >Profile</button>
-                        </nav>
-                    </div>
-                    <div className="header-right">
-                        <div className="user-info">
-                            <span>Welcome, {user.firstName}!</span>
-                            <button onClick={handleLogout} className="logout-btn">Logout</button>
-                        </div>
-                    </div>
-                </div>
-            </header>
-            
+            {/* Dashboard Navigation */}
+            <div className="dashboard-nav-container">
+                <nav className="dashboard-nav">
+                    <button 
+                        className={`nav-btn ${activeTab === 'overview' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('overview')}
+                    >Overview</button>
+                    <button 
+                        className={`nav-btn ${activeTab === 'career' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('career')}
+                    >Career</button>
+                    <button 
+                        className={`nav-btn ${activeTab === 'profile' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('profile')}
+                    >Profile</button>
+                </nav>
+            </div>
 
             {/* Main Content */}
             <main className="dashboard-main">
@@ -83,7 +111,7 @@ const Dashboard = () => {
                     <>
                         <section className="welcome-section">
                             <div className="welcome-content">
-                                <h1>Welcome to Your Dashboard, {user.firstName}! 🎉</h1>
+                                <h1>Welcome to Your Dashboard, {getUserFirstName()}! 🎉</h1>
                                 <p>You've successfully joined Future Forge. Start exploring your new workspace.</p>
                                 <div className="welcome-stats">
                                     <div className="stat-card">
@@ -122,11 +150,16 @@ const Dashboard = () => {
                                     <button className="action-btn" onClick={() => navigate('/resume-builder')}>Open</button>
                                 </div>
                                 <div className="action-card">
-                                    <div className="action-icon">🔍</div>
-                                    <h3>Find Jobs</h3>
-                                    <p>Explore roles matched to your profile</p>
-                                    <button className="action-btn">Explore</button>
-                                </div>
+    <div className="action-icon">🔍</div>
+    <h3>Find Jobs</h3>
+    <p>Explore roles matched to your profile</p>
+    <button 
+        className="action-btn" 
+        onClick={() => navigate('/jobs-exploration')}
+    >
+        Explore
+    </button>
+</div>
                                 <div className="action-card">
                                     <div className="action-icon">🎓</div>
                                     <h3>Upskill Yourself</h3>
@@ -176,9 +209,20 @@ const Dashboard = () => {
                     <section className="profile-section">
                         <h2>Your Profile</h2>
                         <div className="profile-card">
-                            <p><strong>Name:</strong> {user.firstName} {user.lastName}</p>
-                            <p><strong>Email:</strong> {user.email}</p>
-                            <p><strong>Member Since:</strong> Today</p>
+                            <p>
+                                <strong>Name:</strong> 
+                                <span>{getUserFirstName()}</span>
+                            </p>
+                            <p>
+                                <strong>Email:</strong> 
+                                <span>{getUserEmail()}</span>
+                            </p>
+                            <p>
+                                <strong>Member Since:</strong> 
+                                <span>Today</span>
+                            </p>
+                            {/* Debug information - you can remove this later */}
+                           
                         </div>
                     </section>
                 )}
@@ -187,4 +231,4 @@ const Dashboard = () => {
     );
 };
 
-export default Dashboard;
+export default Dashboard;   
