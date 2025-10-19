@@ -330,11 +330,19 @@ body {
   -webkit-text-fill-color: transparent;
 }
 
-.jobs-section, .courses-section {
+.career-status-section,
+.jobs-exploration-section,
+.courses-section {
   margin-bottom: 50px;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 25px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.jobs-section h3, .courses-section h3 {
+.career-status-section h3,
+.jobs-exploration-section h3,
+.courses-section h3 {
   font-size: 1.8rem;
   margin-bottom: 25px;
   color: #333;
@@ -343,54 +351,68 @@ body {
   border-bottom: 3px solid #f0f0f0;
 }
 
-.job-list, .course-list {
+.job-status-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 25px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
 }
 
-.job-card, .course-card {
+.jobs-exploration-section {
+  margin-top: 40px;
+}
+
+.course-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.job-status-card {
   background: #fff;
-  padding: 25px;
-  border-radius: 16px;
-  box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-  transition: all 0.3s ease;
-  border: 1px solid #f0f0f0;
-  position: relative;
-  overflow: hidden;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid #eee;
+  transition: transform 0.2s ease;
 }
 
-.job-card::before, .course-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 5px;
-  height: 100%;
-  background: #007bff;
-  transition: width 0.3s ease;
-}
-
-.job-card:hover::before, .course-card:hover::before {
-  width: 8px;
-}
-
-.job-card:hover, .course-card:hover {
+.job-status-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
 }
 
-.job-card h4, .course-card h4 {
-  font-size: 1.3rem;
+.job-status-card h4 {
   margin: 0 0 10px 0;
   color: #333;
-  font-weight: 600;
+  font-size: 1.1rem;
 }
 
-.job-card p, .course-card p {
+.job-status-card p {
   color: #666;
   margin: 0 0 15px 0;
-  line-height: 1.5;
+}
+
+.job-status {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.job-status-card.applied .job-status {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+
+.job-status-card.recommended .job-status {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.job-status-card.interview .job-status {
+  background: #fff3e0;
+  color: #f57c00;
 }
 
 .job-status {

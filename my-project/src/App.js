@@ -5,6 +5,7 @@ import Home from './components/pages/Home';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
  import Dashboard from './components/pages/items/Dashboard';
+import JobExploration from './components/pages/items/JobExploration';
 import TermsOfService from './components/pages/items/TermsOfService';
 import './App.css';
 
@@ -17,8 +18,9 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} /> 
-           <Route path="/terms" element={<TermsOfService />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/jobs-exploration" element={<JobExploration />} />
+          <Route path="/terms" element={<TermsOfService />} />
         </Routes>
       </div>
     </Router>

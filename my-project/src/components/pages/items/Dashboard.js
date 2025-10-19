@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import './Dashboard.css';
+import JobExploration from './JobExploration';
 
 const Dashboard = () => {
     const [user, setUser] = useState(null);
@@ -70,16 +71,6 @@ const Dashboard = () => {
         if (!user) return 'No email provided';
         
         return user.email || user.mail || 'No email provided';
-    };
-
-    const getFullName = () => {
-        const firstName = getUserFirstName();
-        const lastName = getUserLastName();
-        
-        if (lastName) {
-            return `${firstName} ${lastName}`;
-        }
-        return firstName;
     };
 
     if (!user) return <div>Loading...</div>;
@@ -157,7 +148,7 @@ const Dashboard = () => {
         className="action-btn" 
         onClick={() => navigate('/jobs-exploration')}
     >
-        Explore
+        Explore Jobs
     </button>
 </div>
                                 <div className="action-card">
@@ -176,11 +167,11 @@ const Dashboard = () => {
                     <section className="career-section">
                         <h2>Career Growth Hub</h2>
 
-                        <div className="jobs-section">
-                            <h3>Recommended Jobs</h3>
-                            <div className="job-list">
+                        <div className="career-status-section">
+                            <h3>Your Job Status</h3>
+                            <div className="job-status-list">
                                 {jobs.map(job => (
-                                    <div key={job.id} className={`job-card ${job.status.toLowerCase()}`}>
+                                    <div key={job.id} className={`job-status-card ${job.status.toLowerCase()}`}>
                                         <h4>{job.title}</h4>
                                         <p>{job.company}</p>
                                         <span className="job-status">{job.status}</span>
@@ -189,8 +180,13 @@ const Dashboard = () => {
                             </div>
                         </div>
 
+                        <div className="jobs-exploration-section">
+                            <h3>Explore New Opportunities</h3>
+                            <JobExploration />
+                        </div>
+
                         <div className="courses-section">
-                            <h3>Suggested Learning Paths</h3>
+                            <h3>Recommended Learning Paths</h3>
                             <div className="course-list">
                                 {courses.map(course => (
                                     <div key={course.id} className="course-card">
