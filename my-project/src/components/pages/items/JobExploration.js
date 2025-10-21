@@ -7,29 +7,69 @@ const JobExploration = () => {
   const navigate = useNavigate();
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [scrapeSource, setScrapeSource] = useState(null); // 'live' or 'fallback'
   const [error] = useState(null);
   const [selectedQualification, setSelectedQualification] = useState('all');
   const [resume, setResume] = useState(null);
   const [resumeError, setResumeError] = useState('');
 
   useEffect(() => {
-    // Simulate API call with dummy data
-    const loadDummyData = () => {
-      try {
-        setTimeout(() => {
-          // Filter jobs based on qualification
-          const filteredJobs = selectedQualification === 'all' 
-            ? jobsData 
-            : jobsData.filter(job => job.requiredQualification === selectedQualification);
-          setJobs(filteredJobs);
+    if (selectedQualification === '10th') {
+      setLoading(true);
+      fetch(`http://localhost:5000/api/scrape/sarkari-result?qualification=${selectedQualification}`)
+        .then(res => {
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+          return res.json();
+        })
+        .then(response => {
+          console.log('Raw server response:', response); // Debug log
+          // Expecting { success, source, count, jobs, error }
+          const jobsArray = Array.isArray(response) ? response : (response.jobs || []);
+          const scrapedJobs = jobsArray.map(job => ({
+            _id: job.link,
+            title: job.title,
+            company: 'Sarkari Result',
+            requiredQualification: job.qualification || '10th',
+            location: 'India',
+            jobType: 'Govt',
+            salary: 'N/A',
+            description: `See details on Sarkari Result.`,
+            skills: [],
+            postedDate: job.postDate || new Date().toISOString(),
+            applicationDeadline: new Date(Date.now() + 15*24*60*60*1000).toISOString(),
+            link: job.link
+          }));
+          setScrapeSource(response.source || null);
+          setJobs(scrapedJobs);
           setLoading(false);
-        }, 1000);
-      } catch (err) {
-        console.error('Error loading jobs:', err);
-      }
-    };
+        })
+        .catch(err => {
+          console.error('Error fetching jobs:', err);
+          setJobs([]);
+          setScrapeSource(null);
+          setLoading(false);
+        });
+    } else {
+      // Simulate API call with dummy data
+      const loadDummyData = () => {
+        try {
+          setTimeout(() => {
+            // Filter jobs based on qualification
+            const filteredJobs = selectedQualification === 'all' 
+              ? jobsData 
+              : jobsData.filter(job => job.requiredQualification === selectedQualification);
+            setJobs(filteredJobs);
+            setLoading(false);
+          }, 1000);
+        } catch (err) {
+          console.error('Error loading jobs:', err);
+        }
+      };
 
-    loadDummyData();
+      loadDummyData();
+    }
   }, [selectedQualification]);
 
   const handleQualificationChange = (qualification) => {
@@ -115,6 +155,11 @@ const JobExploration = () => {
         </div>
         <div className="jobs-section">
           <h2>Available Positions</h2>
+          {scrapeSource === 'fallback' && (
+            <div className="scrape-banner">
+              <strong>Note:</strong> Live scraping is currently unavailable. Showing sample jobs instead.
+            </div>
+          )}
           <div className="jobs-grid">
             {jobs.map((job) => (
               <div key={job._id} className="job-card">
@@ -138,6 +183,7 @@ const JobExploration = () => {
                   className="apply-btn" 
                   disabled={selectedQualification === 'graduate' && !resume}
                   title={selectedQualification === 'graduate' && !resume ? 'Please upload your resume first' : ''}
+                  onClick={() => job.link ? window.open(job.link, '_blank') : null}
                 >
                   Apply Now
                 </button>
