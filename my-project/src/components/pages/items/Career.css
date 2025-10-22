@@ -1,0 +1,145 @@
+.career-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.career-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.career-header h1 {
+    font-size: 2.5rem;
+    color: #1a202c;
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.career-header p {
+    font-size: 1.2rem;
+    color: #718096;
+}
+
+.career-content {
+    display: grid;
+    gap: 2rem;
+}
+
+.career-status-section, .jobs-exploration-section, .courses-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #e2e8f0;
+}
+
+.career-status-section h2, .jobs-exploration-section h2, .courses-section h2 {
+    font-size: 1.8rem;
+    color: #1a202c;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+/* Job Status Cards */
+.job-status-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.job-status-card {
+    padding: 1.5rem;
+    border-radius: 10px;
+    border-left: 4px solid #e2e8f0;
+}
+
+.job-status-card.applied {
+    border-left-color: #4299e1;
+    background: rgba(66, 153, 225, 0.05);
+}
+
+.job-status-card.recommended {
+    border-left-color: #48bb78;
+    background: rgba(72, 187, 120, 0.05);
+}
+
+.job-status-card.interview {
+    border-left-color: #ed8936;
+    background: rgba(237, 137, 54, 0.05);
+}
+
+.job-status {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.job-status-card.applied .job-status {
+    background: #4299e1;
+    color: white;
+}
+
+.job-status-card.recommended .job-status {
+    background: #48bb78;
+    color: white;
+}
+
+.job-status-card.interview .job-status {
+    background: #ed8936;
+    color: white;
+}
+
+/* Course Cards */
+.course-list {
+    display: grid;
+    gap: 1rem;
+}
+
+.course-card {
+    padding: 1.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.course-card h4 {
+    margin: 0;
+    color: #1a202c;
+}
+
+.course-card p {
+    margin: 0.25rem 0 0 0;
+    color: #718096;
+}
+
+.btn-small {
+    padding: 0.5rem 1rem;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .career-container {
+        padding: 1rem;
+    }
+    
+    .career-header h1 {
+        font-size: 2rem;
+    }
+    
+    .course-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+}

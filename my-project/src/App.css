@@ -13,3 +13,37 @@ body {
 .App {
   min-height: 100vh;
 }
+/* App.css */
+.App {
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Main content area */
+.main-content {
+  transition: margin-left 0.3s ease;
+  min-height: calc(100vh - 60px); /* Adjust based on your navbar height */
+}
+
+.main-content.sidebar-open {
+  margin-left: 280px;
+}
+
+/* Sidebar overlay */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  backdrop-filter: blur(3px);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .main-content.sidebar-open {
+    margin-left: 0;
+  }
+}

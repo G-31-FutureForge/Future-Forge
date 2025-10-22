@@ -84,10 +84,12 @@
     padding: 12px 30px;
     border-radius: 50px;
     text-decoration: none;
+    color: white;
     font-weight: 600;
     font-size: 1rem;
     transition: all 0.3s ease;
-    border: 2px solid transparent;
+    /* border: 2px solid transparent; */
+    border: solid white;
     display: inline-block;
     text-align: center;
     cursor: pointer;
