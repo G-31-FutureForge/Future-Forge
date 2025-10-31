@@ -23,8 +23,8 @@ const JobExploration = () => {
       setError(null);
 
       try {
-        if (selectedQualification === '10th') {
-          // Scrape Sarkari Result for 10th pass jobs
+        if (selectedQualification === '10th' || selectedQualification === '12th') {
+          // Scrape Sarkari Result for 10th and 12th pass jobs
           await fetchSarkariResultJobs();
         } else {
           // Use dummy data for other qualifications
@@ -67,12 +67,12 @@ const JobExploration = () => {
         _id: job.link || Math.random().toString(36).substr(2, 9),
         title: job.title || 'Government Job',
         company: 'Sarkari Result',
-        requiredQualification: job.qualification || '10th',
+        requiredQualification: job.qualification || selectedQualification,
         location: 'India',
         jobType: 'Government',
         salary: 'As per government norms',
         description: job.description || `See details on Sarkari Result website.`,
-        skills: ['Government Job', '10th Pass'],
+        skills: ['Government Job', `${selectedQualification} Pass`],
         postedDate: job.postDate || new Date().toISOString(),
         applicationDeadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
         link: job.link || '#'
