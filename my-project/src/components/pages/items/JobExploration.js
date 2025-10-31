@@ -23,13 +23,8 @@ const JobExploration = () => {
       setError(null);
 
       try {
-        if (selectedQualification === '10th' || selectedQualification === '12th') {
-          // Scrape Sarkari Result for 10th and 12th pass jobs
-          await fetchSarkariResultJobs();
-        } else {
-          // Use dummy data for other qualifications
-          await loadDummyData();
-        }
+        // Scrape Sarkari Result for all qualification levels
+        await fetchSarkariResultJobs();
       } catch (err) {
         console.error('Error loading jobs:', err);
         setError('Failed to load jobs. Please try again.');
@@ -53,7 +48,7 @@ const JobExploration = () => {
 
   const fetchSarkariResultJobs = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/scrape/sarkari-result?qualification=${selectedQualification}`);
+      const response = await fetch(`http://localhost:5000/api/scrape/sarkari-result?qualification=${selectedQualification === 'all' ? '' : selectedQualification}`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -63,24 +58,40 @@ const JobExploration = () => {
       console.log('Raw server response:', data);
 
       const jobsArray = Array.isArray(data) ? data : (data.jobs || []);
-      const scrapedJobs = jobsArray.map(job => ({
-        _id: job.link || Math.random().toString(36).substr(2, 9),
-        title: job.title || 'Government Job',
-        company: 'Sarkari Result',
-        requiredQualification: job.qualification || selectedQualification,
-        location: 'India',
-        jobType: 'Government',
-        salary: 'As per government norms',
-        description: job.description || `See details on Sarkari Result website.`,
-        skills: ['Government Job', `${selectedQualification} Pass`],
-        postedDate: job.postDate || new Date().toISOString(),
-        applicationDeadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-        link: job.link || '#'
-      }));
+      const scrapedJobs = jobsArray.map(job => {
+        const qualification = job.qualification || 'all';
+        const skillsSet = ['Government Job'];
+        if (qualification !== 'all') {
+          skillsSet.push(`${qualification} Pass`);
+        }
+
+        return {
+          _id: job.link || Math.random().toString(36).substr(2, 9),
+          title: job.title || 'Government Job',
+          company: 'Sarkari Result',
+          requiredQualification: qualification,
+          location: 'India',
+          jobType: 'Government',
+          salary: 'As per government norms',
+          description: job.description || `See details on Sarkari Result website.`,
+          skills: skillsSet,
+          postedDate: job.postDate || new Date().toISOString(),
+          applicationDeadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          link: job.link || '#'
+        };
+      });
+
+      // Filter jobs based on selectedQualification if not 'all'
+      const filteredScrapedJobs = selectedQualification === 'all' 
+        ? scrapedJobs 
+        : scrapedJobs.filter(job => 
+            job.requiredQualification === selectedQualification || 
+            job.requiredQualification === 'all'
+          );
 
       setScrapeSource(data.source || 'live');
-      setJobs(scrapedJobs);
-      setFilteredJobs(scrapedJobs);
+      setJobs(filteredScrapedJobs);
+      setFilteredJobs(filteredScrapedJobs);
       setLoading(false);
     } catch (err) {
       console.error('Error fetching Sarkari Result jobs:', err);
@@ -134,6 +145,7 @@ const JobExploration = () => {
   const handleQualificationChange = (qualification) => {
     setSelectedQualification(qualification);
     setSearchQuery('');
+    setLoading(true);
     // Clear location state to remove search filter
     navigate('/jobs-exploration', { replace: true });
   };
