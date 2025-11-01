@@ -41,90 +41,49 @@ const SkillGapAnalyzer = () => {
     setAnalysisResult(null);
 
     try {
-      // Simulate API call to analyze skills
-      const result = await simulateSkillAnalysis(resume, jobDescription);
-      setAnalysisResult(result);
+      const formData = new FormData();
+      formData.append('resume', resume);
+      formData.append('jobDescription', jobDescription);
+
+      console.log('Resume File:', resume);
+      console.log('Job Description:', jobDescription);
+      console.log('Sending analysis request...'); // Debug log
       
-      // Store result in localStorage for dashboard
-      localStorage.setItem('skillAnalysis', JSON.stringify(result));
+      const response = await fetch('/api/skill-analysis', {
+        method: 'POST',
+        body: formData,
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
+
+      console.log('Response status:', response.status); // Debug log
+      const responseData = await response.json();
+      console.log('Analysis response:', responseData); // Debug log
+
+      if (!response.ok) {
+        throw new Error(responseData.error || 'Analysis failed');
+      }
+
+      // Verify response data structure
+      const requiredFields = ['jobFitScore', 'matchedSkills', 'missingSkills', 'extraSkills', 'recommendedCourses'];
+      const missingFields = requiredFields.filter(field => !responseData[field]);
       
+      if (missingFields.length > 0) {
+        throw new Error(`Incomplete analysis data. Missing: ${missingFields.join(', ')}`);
+      }
+
+      // Add the job description to the result
+      responseData.jobDescription = jobDescription;
+      
+      setAnalysisResult(responseData);
+      localStorage.setItem('skillAnalysis', JSON.stringify(responseData));
     } catch (err) {
-      setError('Analysis failed. Please try again.');
+      setError(err.message || 'Analysis failed. Please try again.');
     } finally {
       setIsAnalyzing(false);
     }
-  };
-
-  const simulateSkillAnalysis = (resumeFile, jd) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        // Mock analysis result - Replace with actual AI analysis
-        const mockResult = {
-          jobFitScore: Math.floor(Math.random() * 30) + 70, // 70-100%
-          matchedSkills: [
-            'JavaScript', 'React', 'HTML5', 'CSS3', 'Git',
-            'Responsive Design', 'Problem Solving'
-          ],
-          missingSkills: [
-            'Node.js', 'TypeScript', 'AWS', 'MongoDB', 'GraphQL',
-            'Docker', 'CI/CD'
-          ],
-          extraSkills: [
-            'Python', 'Photoshop', 'UI/UX Design', 'Project Management'
-          ],
-          recommendedCourses: [
-            {
-              id: 1,
-              title: 'Node.js - The Complete Guide',
-              platform: 'Udemy',
-              type: 'paid',
-              duration: '25 hours',
-              rating: 4.7,
-              link: 'https://www.udemy.com/course/nodejs-the-complete-guide/'
-            },
-            {
-              id: 2,
-              title: 'TypeScript Fundamentals',
-              platform: 'FreeCodeCamp',
-              type: 'free',
-              duration: '15 hours',
-              rating: 4.8,
-              link: 'https://www.freecodecamp.org/learn/typescript/'
-            },
-            {
-              id: 3,
-              title: 'AWS Certified Cloud Practitioner',
-              platform: 'Coursera',
-              type: 'paid',
-              duration: '30 hours',
-              rating: 4.6,
-              link: 'https://www.coursera.org/learn/aws-cloud-practitioner'
-            },
-            {
-              id: 4,
-              title: 'MongoDB University',
-              platform: 'MongoDB',
-              type: 'free',
-              duration: '20 hours',
-              rating: 4.5,
-              link: 'https://university.mongodb.com/'
-            },
-            {
-              id: 5,
-              title: 'Docker & Kubernetes: The Practical Guide',
-              platform: 'Udemy',
-              type: 'paid',
-              duration: '22 hours',
-              rating: 4.7,
-              link: 'https://www.udemy.com/course/docker-kubernetes-practical-guide/'
-            }
-          ],
-          jobDescription: jd,
-          analysisDate: new Date().toISOString()
-        };
-        resolve(mockResult);
-      }, 5000); // 5 second delay to simulate analysis
-    });
   };
 
   const handleViewDashboard = () => {
