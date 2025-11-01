@@ -108,11 +108,27 @@ const Dashboard = () => {
                             </button>
                         </div>
                         <div className="action-card">
-                            <div className="action-icon">🎓</div>
-                            <h3>Upskill Yourself</h3>
-                            <p>Access recommended learning courses</p>
-                            <button className="action-btn">Start Learning</button>
-                        </div>
+  <div className="action-icon">🎓</div>
+  <h3>Upskill Yourself</h3>
+  <p>Access recommended learning courses</p>
+  <button 
+    className="action-btn" 
+    onClick={() => navigate('/upskill-courses')}
+  >
+    Start Learning
+  </button>
+</div>
+<div className="action-card">
+  <div className="action-icon">🔍</div>
+  <h3>Skill Gap Analyzer</h3>
+  <p>Analyze your skills against job requirements</p>
+  <button 
+    className="action-btn" 
+    onClick={() => navigate('/skill-gap-analyzer')}
+  >
+    Analyze Skills
+  </button>
+</div>
                     </div>
                 </section>
             </main>

@@ -10,6 +10,9 @@ import Career from './components/pages/items/Career';
 import Profile from './components/pages/items/Profile';
 import JobExploration from './components/pages/items/JobExploration';
 import TermsOfService from './components/pages/items/TermsOfService';
+import SkillGapAnalyzer from './components/pages/items/SkillGapAnalyzer';
+import SkillGapDashboard from './components/pages/items/SkillGapDashboard';
+import UpskillCourses from './components/pages/items/UpskillCourses';
 import './App.css';
 
 function App() {
@@ -55,6 +58,9 @@ function App() {
             <Route path="/career" element={<Career />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/jobs-exploration" element={<JobExploration />} />
+            <Route path="/skill-gap-analyzer" element={<SkillGapAnalyzer />} />
+<Route path="/skill-gap-dashboard" element={<SkillGapDashboard />} />
+<Route path="/upskill-courses" element={<UpskillCourses />} />
             <Route path="/terms" element={<TermsOfService />} />
           </Routes>
         </main>
