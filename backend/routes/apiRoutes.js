@@ -4,6 +4,7 @@ import { handleMatch } from '../controllers/matchController.js';
 import { generateReport } from '../controllers/reportController.js';
 import loadingScreen from '../middleware/loadingScreen.js';
 import path from 'path';
+import courseRoutes from './courseRoutes.js';
 
 const router = express.Router();
 
@@ -56,5 +57,8 @@ router.post('/match',
 );
 
 router.post('/report', generateReport);
+
+// Courses endpoint (Coursera + YouTube)
+router.use('/courses', courseRoutes);
 
 export default router;

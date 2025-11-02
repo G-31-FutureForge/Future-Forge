@@ -51,3 +51,26 @@ $env:SCRAPER_API = 'jina'; npm start
 Notes:
 - These free services are convenient for development but can be rate-limited or unreliable in production.
 - If you need robust scraping, consider a paid provider (ScraperAPI, SerpApi) or an official API from the data provider.
+
+Courses endpoint (Coursera + YouTube)
+------------------------------------
+
+The backend includes a simple course lookup endpoint which aggregates course/video results from Coursera and YouTube.
+
+- Endpoint: GET /api/courses
+- Query parameters:
+   - query (required): search term, e.g. `python`, `react`, `machine learning`
+   - provider (optional): `coursera`, `youtube`, or `all` (default: `all`)
+   - limit (optional): max number of results per provider (default: 5)
+
+Example:
+
+```
+GET /api/courses?query=python&provider=all&limit=5
+```
+
+Notes:
+- YouTube results require a Google API key; set `YOUTUBE_API_KEY` in your environment (see `.env.example`).
+- Coursera is called via their public course search endpoint; field availability can vary and results are best-effort mapped into a normalized JSON structure.
+- If an external provider is unavailable the endpoint will return the successful provider results and log the error for the failing provider.
+

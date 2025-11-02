@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UpskillCourses.css';
 
@@ -95,7 +95,57 @@ const UpskillCourses = () => {
     { id: 'ai', name: 'AI & ML', icon: '🧠' }
   ];
 
-  const filteredCourses = coursesData[selectedCategory] || coursesData.all;
+  // UI state for courses fetched from backend (falls back to sample data)
+  const [courses, setCourses] = useState(coursesData.all);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const categoryQueryMap = {
+    all: 'programming',
+    web: 'web development',
+    data: 'data science',
+    cloud: 'cloud computing',
+    mobile: 'mobile development',
+    ai: 'machine learning'
+  };
+
+  const fetchCoursesFromBackend = async (query) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await fetch(`http://localhost:5000/api/courses?query=${encodeURIComponent(query)}&provider=all&limit=6`);
+      if (!res.ok) throw new Error((await res.json()).message || res.statusText);
+      const data = await res.json();
+      // Map backend results to display-friendly objects
+      const mapped = (data.courses || []).map((c, idx) => ({
+        id: `remote-${idx}`,
+        title: c.title || c.name || 'Untitled',
+        platform: c.platform || c.channelTitle || 'Unknown',
+        type: c.type || (c.platform === 'YouTube' ? 'free' : 'paid'),
+        level: c.difficulty || 'Intermediate',
+        duration: c.duration || (c.platform === 'YouTube' ? 'Video' : ''),
+        rating: c.rating || c.avgRating || null,
+        students: c.studentsEnrolled || c.numStudents || null,
+        link: c.link || c.url || c.videoUrl || '#'
+      }));
+
+      if (mapped.length) setCourses(mapped);
+      else setCourses(coursesData[selectedCategory] || coursesData.all);
+    } catch (err) {
+      console.error('fetchCourses error', err.message || err);
+      setError(err.message || 'Failed to fetch courses');
+      setCourses(coursesData[selectedCategory] || coursesData.all);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    // Fetch when selectedCategory changes
+    const q = categoryQueryMap[selectedCategory] || 'programming';
+    fetchCoursesFromBackend(q);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedCategory]);
 
   return (
     <div className="upskill-courses">
@@ -123,7 +173,9 @@ const UpskillCourses = () => {
         </div>
 
         <div className="courses-grid">
-          {filteredCourses.map(course => (
+          {loading && <div className="loading">Loading courses…</div>}
+          {error && <div className="error">{error}</div>}
+          {courses.map(course => (
             <div key={course.id} className="course-card">
               <div className="course-badge">{course.level}</div>
               <div className="course-header">
