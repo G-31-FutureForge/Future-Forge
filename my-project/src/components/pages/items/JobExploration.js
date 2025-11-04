@@ -13,20 +13,26 @@ const JobExploration = () => {
   const [scrapeSource, setScrapeSource] = useState(null);
   const [error, setError] = useState(null);
   const [selectedQualification, setSelectedQualification] = useState('all');
+  const [jobSource, setJobSource] = useState('government'); // 'government' or 'private'
   const [resume, setResume] = useState(null);
   const [resumeError, setResumeError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [videoUrl, setVideoUrl] = useState(null);
 
-  // Load jobs based on qualification and search
+  // Load jobs based on qualification, search, and job source
   useEffect(() => {
     const loadJobs = async () => {
       setLoading(true);
       setError(null);
 
       try {
-        // Scrape Sarkari Result for all qualification levels
-        await fetchSarkariResultJobs();
+        if (jobSource === 'government') {
+          // Scrape Sarkari Result for all qualification levels
+          await fetchSarkariResultJobs();
+        } else {
+          // Fetch from Jooble API for private jobs
+          await fetchJoobleJobs();
+        }
       } catch (err) {
         console.error('Error loading jobs:', err);
         setError('Failed to load jobs. Please try again.');
@@ -35,7 +41,8 @@ const JobExploration = () => {
     };
 
     loadJobs();
-  }, [selectedQualification]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedQualification, jobSource]);
 
   // Filter jobs when search query changes
   useEffect(() => {
@@ -97,6 +104,46 @@ const JobExploration = () => {
       setLoading(false);
     } catch (err) {
       console.error('Error fetching Sarkari Result jobs:', err);
+      // Fallback to dummy data
+      await loadDummyData();
+      setScrapeSource('fallback');
+    }
+  };
+
+  const fetchJoobleJobs = async () => {
+    try {
+      // Build query parameters for Jooble API
+      const params = new URLSearchParams({
+        keywords: searchQuery || '',
+        location: 'India',
+        page: '1',
+        radius: '25',
+      });
+
+      // Add qualification filter if not 'all'
+      if (selectedQualification !== 'all') {
+        params.append('qualification', selectedQualification);
+      }
+
+      const response = await fetch(`http://localhost:5000/api/jobs/explore?${params.toString()}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Jooble API response:', data);
+
+      if (data.success && data.jobs) {
+        setScrapeSource('jooble');
+        setJobs(data.jobs);
+        setFilteredJobs(data.jobs);
+        setLoading(false);
+      } else {
+        throw new Error(data.error || 'Failed to fetch jobs');
+      }
+    } catch (err) {
+      console.error('Error fetching Jooble jobs:', err);
       // Fallback to dummy data
       await loadDummyData();
       setScrapeSource('fallback');
@@ -264,6 +311,28 @@ const JobExploration = () => {
 
       <div className="job-exploration-content">
         <div className="filters-section">
+          {/* Job Source Toggle */}
+          <div className="job-source-filters">
+            <h2>Job Source</h2>
+            <p className="filter-description">
+              Choose between government jobs or private sector opportunities
+            </p>
+            <div className="job-source-buttons">
+              <button 
+                className={`source-btn ${jobSource === 'government' ? 'active' : ''}`}
+                onClick={() => setJobSource('government')}
+              >
+                🏛️ Government Jobs
+              </button>
+              <button 
+                className={`source-btn ${jobSource === 'private' ? 'active' : ''}`}
+                onClick={() => setJobSource('private')}
+              >
+                🏢 Private Jobs
+              </button>
+            </div>
+          </div>
+
           <div className="qualification-filters">
             <h2>Select Your Qualification</h2>
             <p className="filter-description">

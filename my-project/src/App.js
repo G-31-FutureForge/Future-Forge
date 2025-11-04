@@ -13,6 +13,7 @@ import TermsOfService from './components/pages/items/TermsOfService';
 import SkillGapAnalyzer from './components/pages/items/SkillGapAnalyzer';
 import SkillGapDashboard from './components/pages/items/SkillGapDashboard';
 import UpskillCourses from './components/pages/items/UpskillCourses';
+import ResumeBuilder from './components/pages/items/ResumeBuilder';
 import './App.css';
 
 function App() {
@@ -61,6 +62,7 @@ function App() {
             <Route path="/skill-gap-analyzer" element={<SkillGapAnalyzer />} />
 <Route path="/skill-gap-dashboard" element={<SkillGapDashboard />} />
 <Route path="/upskill-courses" element={<UpskillCourses />} />
+            <Route path="/resume-builder" element={<ResumeBuilder />} />
             <Route path="/terms" element={<TermsOfService />} />
           </Routes>
         </main>
