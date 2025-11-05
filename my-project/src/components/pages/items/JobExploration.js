@@ -3,6 +3,77 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import './JobExploration.css';
 import { jobsData } from '../../../data/jobsData';
 
+const JobCard = ({ job, selectedQualification, resume, handleApply }) => {
+  return (
+    <div key={job._id} className="job-card">
+      <div className="job-card-header">
+        <div className="job-title-container">
+          <h3 className="job-title">{job.title}</h3>
+          <div className="job-badges">
+            <span className={`job-badge ${job.jobType.toLowerCase().replace(' ', '-')}`}>{job.jobType}</span>
+            <span className={`source-badge ${job.source.toLowerCase().replace(' ', '-')}`}>{job.source}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div className="job-company">
+        <span className="company-icon">🏢</span>
+        {job.company}
+      </div>
+
+      <div className="job-details">
+        <div className="job-detail">
+          <span className="detail-icon">🎓</span>
+          <span>Required: {job.requiredQualification}</span>
+        </div>
+        <div className="job-detail">
+          <span className="detail-icon">📍</span>
+          <span>{job.location}</span>
+        </div>
+        <div className="job-detail">
+          <span className="detail-icon">💰</span>
+          <span>{job.salary}</span>
+        </div>
+      </div>
+
+      <p className="job-description">{job.description}</p>
+
+      {job.skills && job.skills.length > 0 && (
+        <div className="skills-section">
+          <h4>Skills Required:</h4>
+          <div className="skills">
+            {job.skills.map((skill, index) => (
+              <span key={index} className="skill-tag">{skill}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="job-dates">
+        <div className="date-info">
+          <span className="date-label">Posted:</span>
+          <span>{new Date(job.postedDate).toLocaleDateString()}</span>
+        </div>
+        {job.applicationDeadline && (
+          <div className="date-info">
+            <span className="date-label">Deadline:</span>
+            <span>{new Date(job.applicationDeadline).toLocaleDateString()}</span>
+          </div>
+        )}
+      </div>
+
+      <button 
+        className={`apply-btn ${selectedQualification === 'graduate' && !resume ? 'disabled' : ''}`}
+        disabled={selectedQualification === 'graduate' && !resume}
+        title={selectedQualification === 'graduate' && !resume ? 'Please upload your resume first' : 'Apply for this position'}
+        onClick={() => handleApply(job)}
+      >
+        {selectedQualification === 'graduate' && !resume ? 'Upload Resume to Apply' : 'Apply Now'}
+      </button>
+    </div>
+  );
+};
+
 const JobExploration = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -15,6 +86,7 @@ const JobExploration = () => {
   const [resume, setResume] = useState(null);
   const [resumeError, setResumeError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
+  const [sectorFilter, setSectorFilter] = useState('all'); // all | government | private
 
   // Load jobs based on qualification and search
   useEffect(() => {
@@ -23,8 +95,7 @@ const JobExploration = () => {
       setError(null);
 
       try {
-        // Scrape Sarkari Result for all qualification levels
-        await fetchSarkariResultJobs();
+        await fetchAllJobs();
       } catch (err) {
         console.error('Error loading jobs:', err);
         setError('Failed to load jobs. Please try again.');
@@ -33,7 +104,7 @@ const JobExploration = () => {
     };
 
     loadJobs();
-  }, [selectedQualification]);
+  }, [selectedQualification, searchQuery]);
 
   // Filter jobs when search query changes
   useEffect(() => {
@@ -45,6 +116,45 @@ const JobExploration = () => {
       setFilteredJobs(jobs);
     }
   }, [location.state, jobs]);
+
+  const fetchJoobleJobs = async () => {
+    try {
+      const params = new URLSearchParams({
+        keywords: searchQuery || '',
+        qualification: selectedQualification,
+        location: 'India',
+        page: '1',
+        radius: '25'
+      });
+      const response = await fetch(`http://localhost:5000/api/jobs/explore?${params.toString()}`);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const jobs = Array.isArray(data?.jobs) ? data.jobs : [];
+      return jobs.map(job => ({
+        _id: job._id || job.id || Math.random().toString(36).substr(2, 9),
+        title: job.title,
+        company: job.company || 'Company not specified',
+        requiredQualification: job.requiredQualification || selectedQualification || 'all',
+        location: job.location || 'Location not specified',
+        // Force sector for Jooble jobs so UI sections work
+        jobType: 'Private Sector',
+        salary: job.salary || 'Not specified',
+        description: job.description || 'No description available',
+        skills: Array.isArray(job.skills) ? job.skills : [],
+        postedDate: job.postedDate || job.updated || new Date().toISOString(),
+        applicationDeadline: job.applicationDeadline || null,
+        link: job.link || '#',
+        source: job.source || 'Jooble'
+      }));
+    } catch (err) {
+      console.error('Error fetching Jooble jobs:', err);
+      return [];
+    }
+  };
 
   const fetchSarkariResultJobs = async () => {
     try {
@@ -77,25 +187,41 @@ const JobExploration = () => {
           skills: skillsSet,
           postedDate: job.postDate || new Date().toISOString(),
           applicationDeadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          link: job.link || '#'
+          link: job.link || '#',
+          source: 'Sarkari Result'
         };
       });
 
-      // Filter jobs based on selectedQualification if not 'all'
-      const filteredScrapedJobs = selectedQualification === 'all' 
-        ? scrapedJobs 
-        : scrapedJobs.filter(job => 
-            job.requiredQualification === selectedQualification || 
-            job.requiredQualification === 'all'
-          );
-
-      setScrapeSource(data.source || 'live');
-      setJobs(filteredScrapedJobs);
-      setFilteredJobs(filteredScrapedJobs);
-      setLoading(false);
+      return scrapedJobs;
     } catch (err) {
       console.error('Error fetching Sarkari Result jobs:', err);
-      // Fallback to dummy data
+      return [];
+    }
+  };
+
+  const fetchAllJobs = async () => {
+    try {
+      const [joobleJobs, sarkariJobs] = await Promise.all([
+        fetchJoobleJobs(),
+        fetchSarkariResultJobs()
+      ]);
+
+      let allJobs = [...joobleJobs, ...sarkariJobs];
+
+      // Filter jobs based on selectedQualification if not 'all'
+      if (selectedQualification !== 'all') {
+        allJobs = allJobs.filter(job => 
+          job.requiredQualification === selectedQualification || 
+          job.requiredQualification === 'all'
+        );
+      }
+
+      setScrapeSource('live');
+      setJobs(allJobs);
+      setFilteredJobs(allJobs);
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching jobs:', err);
       await loadDummyData();
       setScrapeSource('fallback');
     }
@@ -148,6 +274,11 @@ const JobExploration = () => {
     setLoading(true);
     // Clear location state to remove search filter
     navigate('/jobs-exploration', { replace: true });
+  };
+
+  const handleSectorChange = (sector) => {
+    // toggle off when clicking the same sector to show all
+    setSectorFilter(prev => (prev === sector ? 'all' : sector));
   };
 
   const handleResumeUpload = (event) => {
@@ -288,6 +419,23 @@ const JobExploration = () => {
                 🌟 All Jobs
               </button>
             </div>
+
+            <h2 style={{ marginTop: '1.5rem' }}>Filter by Sector</h2>
+            <p className="filter-description">Quickly switch between Government and Private jobs</p>
+            <div className="qualification-buttons">
+              <button
+                className={`qual-btn ${sectorFilter === 'government' ? 'active' : ''}`}
+                onClick={() => handleSectorChange('government')}
+              >
+                🏛️ Government
+              </button>
+              <button
+                className={`qual-btn ${sectorFilter === 'private' ? 'active' : ''}`}
+                onClick={() => handleSectorChange('private')}
+              >
+                🏢 Private
+              </button>
+            </div>
           </div>
 
           {/* Resume Upload Section - Only for Graduate */}
@@ -364,68 +512,62 @@ const JobExploration = () => {
               )}
             </div>
           ) : (
-            <div className="jobs-grid">
-              {filteredJobs.map((job) => (
-                <div key={job._id} className="job-card">
-                  <div className="job-card-header">
-                    <h3 className="job-title">{job.title}</h3>
-                    <span className="job-badge">{job.jobType}</span>
-                  </div>
-                  
-                  <div className="job-company">
-                    <span className="company-icon">🏢</span>
-                    {job.company}
-                  </div>
-
-                  <div className="job-details">
-                    <div className="job-detail">
-                      <span className="detail-icon">🎓</span>
-                      <span>Required: {job.requiredQualification}</span>
-                    </div>
-                    <div className="job-detail">
-                      <span className="detail-icon">📍</span>
-                      <span>{job.location}</span>
-                    </div>
-                    <div className="job-detail">
-                      <span className="detail-icon">💰</span>
-                      <span>{job.salary}</span>
-                    </div>
-                  </div>
-
-                  <p className="job-description">{job.description}</p>
-
-                  {job.skills && job.skills.length > 0 && (
-                    <div className="skills-section">
-                      <h4>Skills Required:</h4>
-                      <div className="skills">
-                        {job.skills.map((skill, index) => (
-                          <span key={index} className="skill-tag">{skill}</span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="job-dates">
-                    <div className="date-info">
-                      <span className="date-label">Posted:</span>
-                      <span>{new Date(job.postedDate).toLocaleDateString()}</span>
-                    </div>
-                    <div className="date-info">
-                      <span className="date-label">Deadline:</span>
-                      <span>{new Date(job.applicationDeadline).toLocaleDateString()}</span>
-                    </div>
-                  </div>
-
-                  <button 
-                    className={`apply-btn ${selectedQualification === 'graduate' && !resume ? 'disabled' : ''}`}
-                    disabled={selectedQualification === 'graduate' && !resume}
-                    title={selectedQualification === 'graduate' && !resume ? 'Please upload your resume first' : 'Apply for this position'}
-                    onClick={() => handleApply(job)}
-                  >
-                    {selectedQualification === 'graduate' && !resume ? 'Upload Resume to Apply' : 'Apply Now'}
-                  </button>
+            <div className="jobs-sections">
+              {/* Government Jobs Section */}
+              {(sectorFilter === 'all' || sectorFilter === 'government') && (
+              <div className="jobs-section-category">
+                <div className="section-header">
+                  <h3>
+                    <span className="section-icon">🏛️</span>
+                    Government Jobs
+                  </h3>
+                  <span className="section-count">
+                    {filteredJobs.filter(job => job.jobType === 'Government').length} positions
+                  </span>
                 </div>
-              ))}
+                <div className="jobs-grid">
+                  {filteredJobs
+                    .filter(job => job.jobType === 'Government')
+                    .map((job) => (
+                      <JobCard 
+                        key={job._id}
+                        job={job}
+                        selectedQualification={selectedQualification}
+                        resume={resume}
+                        handleApply={handleApply}
+                      />
+                    ))}
+                </div>
+              </div>
+              )}
+
+              {/* Private Sector Jobs Section */}
+              {(sectorFilter === 'all' || sectorFilter === 'private') && (
+              <div className="jobs-section-category">
+                <div className="section-header">
+                  <h3>
+                    <span className="section-icon">🏢</span>
+                    Private Sector Jobs
+                  </h3>
+                  <span className="section-count">
+                    {filteredJobs.filter(job => job.jobType === 'Private Sector').length} positions
+                  </span>
+                </div>
+                <div className="jobs-grid">
+                  {filteredJobs
+                    .filter(job => job.jobType === 'Private Sector')
+                    .map((job) => (
+                      <JobCard 
+                        key={job._id}
+                        job={job}
+                        selectedQualification={selectedQualification}
+                        resume={resume}
+                        handleApply={handleApply}
+                      />
+                    ))}
+                </div>
+              </div>
+              )}
             </div>
           )}
         </div>
