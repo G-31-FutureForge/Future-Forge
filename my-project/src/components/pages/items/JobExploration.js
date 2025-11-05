@@ -216,9 +216,22 @@ const JobExploration = () => {
         );
       }
 
+      // If there is a search query, only show searched results
+      let nextFiltered = allJobs;
+      if (searchQuery && searchQuery.trim()) {
+        const searchTerm = searchQuery.toLowerCase();
+        nextFiltered = allJobs.filter(job =>
+          job.title?.toLowerCase().includes(searchTerm) ||
+          job.company?.toLowerCase().includes(searchTerm) ||
+          job.description?.toLowerCase().includes(searchTerm) ||
+          job.location?.toLowerCase().includes(searchTerm) ||
+          (Array.isArray(job.skills) && job.skills.some(skill => skill.toLowerCase().includes(searchTerm)))
+        );
+      }
+
       setScrapeSource('live');
       setJobs(allJobs);
-      setFilteredJobs(allJobs);
+      setFilteredJobs(nextFiltered);
       setLoading(false);
     } catch (err) {
       console.error('Error fetching jobs:', err);
