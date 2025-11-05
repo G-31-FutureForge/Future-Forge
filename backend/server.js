@@ -8,6 +8,7 @@ import authRoutes from './routes/authRoutes.js';
 import scrapeRoutes from './routes/scrapeRoutes.js';
 import matchRoutes from './routes/matchRoutes.js';
 import reportRoutes from './routes/reportRoutes.js';
+import jobExplorationRoutes from './routes/jobExplorationRoutes.js';
 
 dotenv.config();
 const app = express();
@@ -34,6 +35,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/scrape', scrapeRoutes);
 app.use('/api/match', matchRoutes);
 app.use('/api/report', reportRoutes);
+app.use('/api/jobs', jobExplorationRoutes);
 app.use('/api', apiRoutes);
 
 // Fallback route for unmatched paths
