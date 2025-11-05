@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './JobExploration.css';
 import { jobsData } from '../../../data/jobsData';
-import VideoModal from '../../common/VideoModal';
 
 const JobExploration = () => {
   const navigate = useNavigate();
@@ -16,7 +15,6 @@ const JobExploration = () => {
   const [resume, setResume] = useState(null);
   const [resumeError, setResumeError] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [videoUrl, setVideoUrl] = useState(null);
 
   // Load jobs based on qualification and search
   useEffect(() => {
@@ -175,12 +173,7 @@ const JobExploration = () => {
     }
 
     if (job.link && job.link !== '#') {
-      const link = job.link || '';
-      if (/youtube\.com|youtu\.be/.test(link)) {
-        setVideoUrl(link);
-      } else {
-        window.open(link, '_blank', 'noopener,noreferrer');
-      }
+      window.open(job.link, '_blank', 'noopener,noreferrer');
     } else {
       alert(`Application process for ${job.title} at ${job.company} would start here.`);
     }
@@ -437,9 +430,6 @@ const JobExploration = () => {
           )}
         </div>
       </div>
-      {videoUrl && (
-        <VideoModal src={videoUrl} onClose={() => setVideoUrl(null)} />
-      )}
     </div>
   );
 };

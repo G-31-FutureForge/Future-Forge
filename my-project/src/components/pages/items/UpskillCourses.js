@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import VideoModal from '../../common/VideoModal';
 import { useNavigate } from 'react-router-dom';
 import './UpskillCourses.css';
 
@@ -100,7 +99,6 @@ const UpskillCourses = () => {
   const [courses, setCourses] = useState(coursesData.all);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [videoUrl, setVideoUrl] = useState(null);
 
   const categoryQueryMap = {
     all: 'programming',
@@ -187,31 +185,14 @@ const UpskillCourses = () => {
                 </span>
               </div>
               <div className="course-info">
-                <span 
-                  className={`platform ${course.platform === 'YouTube' || course.duration === 'Video' ? 'platform-label' : ''}`}
-                  data-platform={course.platform === 'YouTube' ? 'youtube' : course.duration === 'Video' ? 'video' : ''}
-                >
-                  <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style={{marginRight: '2px'}}>
-                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
-                  </svg>
-                  {course.platform === 'YouTube' ? 'YouTube' : course.duration === 'Video' ? 'Video' : course.platform}
-                </span>
-                {course.duration !== 'Video' && (
-                  <span className="duration">⏱️ {course.duration}</span>
-                )}
+                <span className="platform">🏢 {course.platform}</span>
+                <span className="duration">⏱️ {course.duration}</span>
                 <span className="rating">⭐ {course.rating}</span>
                 <span className="students">👥 {course.students}</span>
               </div>
               <button 
                 className="enroll-btn"
-                onClick={() => {
-                  const link = course.link || '';
-                  if (/youtube\.com|youtu\.be/.test(link)) {
-                    setVideoUrl(link);
-                  } else {
-                    window.open(link, '_blank', 'noopener,noreferrer');
-                  }
-                }}
+                onClick={() => window.open(course.link, '_blank')}
               >
                 Enroll Now
               </button>
@@ -219,9 +200,6 @@ const UpskillCourses = () => {
           ))}
         </div>
       </div>
-      {videoUrl && (
-        <VideoModal src={videoUrl} onClose={() => setVideoUrl(null)} />
-      )}
     </div>
   );
 };

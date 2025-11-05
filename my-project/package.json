@@ -41,6 +41,5 @@
   "description": "adding readme according to the project",
   "main": "index.js",
   "author": "",
-  "license": "ISC",
-  "devDependencies": {}
+  "license": "ISC"
 }
