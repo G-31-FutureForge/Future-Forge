@@ -63,11 +63,11 @@ const Sidebar = ({ isOpen, toggleSidebar, closeSidebar }) => {
                   My Profile
                 </Link>
               </li>
-              <li className={location.pathname === '/resume-builder' ? 'active' : ''}>
-                <Link to="/resume-builder" onClick={handleLinkClick}>
+              <li>
+                <a href="#resume" onClick={handleLinkClick}>
                   <span className="sidebar-icon">📝</span>
                   Resume Builder
-                </Link>
+                </a>
               </li>
               <li>
                 <a href="#courses" onClick={handleLinkClick}>
