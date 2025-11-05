@@ -69,25 +69,60 @@ const ResumeBuilder = () => {
 
         {step === 'choose' && (
           <div className="rb-templates">
-            <div className="template-card" onClick={() => { setTemplate('classic'); setStep('edit'); }}>
-              <div className="template-preview tp-classic" style={{ backgroundImage: "url(/images/backg.jpg)", backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: '#fff' }} />
+            <div className="template-card" onClick={() => { setTemplate('t1'); setStep('edit'); }}>
+              <div className="template-preview tp-classic" style={{ backgroundImage: "url(/images/1.jpg)", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: '#fff' }} />
               <div className="template-meta">
-                <h3>Classic</h3>
+                <h3>Template 1</h3>
                 <p>Traditional layout with clear sections and subtle accents.</p>
               </div>
             </div>
-            <div className="template-card" onClick={() => { setTemplate('modern'); setStep('edit'); }}>
-              <div className="template-preview tp-modern" style={{ backgroundImage: "url(/images/backg.jpg)", backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: '#fff' }} />
+            <div className="template-card" onClick={() => { setTemplate('t2'); setStep('edit'); }}>
+              <div className="template-preview tp-modern" style={{ backgroundImage: "url(/images/2.jpg)", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: '#fff' }} />
               <div className="template-meta">
-                <h3>Modern</h3>
+                <h3>Template 2</h3>
                 <p>Bold header, accent color, contemporary typography.</p>
               </div>
             </div>
-            <div className="template-card" onClick={() => { setTemplate('minimal'); setStep('edit'); }}>
-              <div className="template-preview tp-minimal" style={{ backgroundImage: "url(/images/backg.jpg)", backgroundSize: 'cover', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: '#fff' }} />
+            <div className="template-card" onClick={() => { setTemplate('t3'); setStep('edit'); }}>
+              <div className="template-preview tp-minimal" style={{ backgroundImage: "url(/images/3.jpg)", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: '#fff' }} />
               <div className="template-meta">
-                <h3>Minimal</h3>
+                <h3>Template 3</h3>
                 <p>Clean, spacious layout focusing on readability.</p>
+              </div>
+            </div>
+            <div className="template-card" onClick={() => { setTemplate('t4'); setStep('edit'); }}>
+              <div className="template-preview" style={{ backgroundImage: "url(/images/4.jpg)", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: '#fff' }} />
+              <div className="template-meta">
+                <h3>Template 4</h3>
+                <p>Alternate visual style with distinct layout.</p>
+              </div>
+            </div>
+            <div className="template-card" onClick={() => { setTemplate('t5'); setStep('edit'); }}>
+              <div className="template-preview" style={{ backgroundImage: "url(/images/5.jpg)", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: '#fff' }} />
+              <div className="template-meta">
+                <h3>Template 5</h3>
+                <p>Clean professional layout with accents.</p>
+              </div>
+            </div>
+            <div className="template-card" onClick={() => { setTemplate('t6'); setStep('edit'); }}>
+              <div className="template-preview" style={{ backgroundImage: "url(/images/6.jpg)", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: '#fff' }} />
+              <div className="template-meta">
+                <h3>Template 6</h3>
+                <p>Emphasis on experience and skills.</p>
+              </div>
+            </div>
+            <div className="template-card" onClick={() => { setTemplate('t7'); setStep('edit'); }}>
+              <div className="template-preview" style={{ backgroundImage: "url(/images/7.jpg)", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: '#fff' }} />
+              <div className="template-meta">
+                <h3>Template 7</h3>
+                <p>Modern header with balanced spacing.</p>
+              </div>
+            </div>
+            <div className="template-card" onClick={() => { setTemplate('t8'); setStep('edit'); }}>
+              <div className="template-preview" style={{ backgroundImage: "url(/images/8.jpg)", backgroundSize: 'contain', backgroundRepeat: 'no-repeat', backgroundPosition: 'center', backgroundColor: '#fff' }} />
+              <div className="template-meta">
+                <h3>Template 8</h3>
+                <p>Minimalist layout focusing on content.</p>
               </div>
             </div>
           </div>
