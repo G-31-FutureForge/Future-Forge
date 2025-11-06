@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './JobExploration.css';
 import { jobsData } from '../../../data/jobsData';
+import YouTubeModal from '../../common/YouTubeModal';
 
 const JobCard = ({ job, selectedQualification, resume, handleApply }) => {
   return (
@@ -85,6 +86,7 @@ const JobExploration = () => {
   const [selectedQualification, setSelectedQualification] = useState('all');
   const [resume, setResume] = useState(null);
   const [resumeError, setResumeError] = useState('');
+  const [videoUrl, setVideoUrl] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [sectorFilter, setSectorFilter] = useState('all'); // all | government | private
 
@@ -317,7 +319,13 @@ const JobExploration = () => {
     }
 
     if (job.link && job.link !== '#') {
-      window.open(job.link, '_blank', 'noopener,noreferrer');
+      const link = (job.link || '').toString();
+      const isYouTube = link.includes('youtube.com') || link.includes('youtu.be');
+      if (isYouTube) {
+        setVideoUrl(link);
+      } else {
+        window.open(link, '_blank', 'noopener,noreferrer');
+      }
     } else {
       alert(`Application process for ${job.title} at ${job.company} would start here.`);
     }
@@ -585,6 +593,9 @@ const JobExploration = () => {
           )}
         </div>
       </div>
+      {videoUrl && (
+        <YouTubeModal url={videoUrl} onClose={() => setVideoUrl(null)} />
+      )}
     </div>
   );
 };

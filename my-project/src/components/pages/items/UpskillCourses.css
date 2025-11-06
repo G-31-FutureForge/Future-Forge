@@ -159,7 +159,7 @@
 
 .category-btn:hover {
   background: white;
-  color: #2d3436;
+  color: #fff59d !important; /* light yellow on hover (force to override other rules) */
   transform: translateX(8px) scale(1.02);
   border-color: #74b9ff;
   box-shadow: 0 8px 25px rgba(116, 185, 255, 0.2);
@@ -231,6 +231,21 @@
   box-shadow: 0 25px 50px rgba(116, 185, 255, 0.3);
   border-color: rgba(116, 185, 255, 0.6);
   background: linear-gradient(135deg, rgba(116, 185, 255, 0.2) 0%, rgba(9, 132, 227, 0.2) 100%);
+}
+
+/* Make course text clearly yellow on card hover */
+.course-card:hover .course-header h4,
+.course-card:hover .course-info span,
+.course-card:hover .course-badge,
+.course-card:hover .course-type {
+  color: #fff59d !important; /* requested light yellow */
+}
+
+/* Ensure the course-type badge keeps readable background while making text yellow */
+.course-card:hover .course-type.free,
+.course-card:hover .course-type.paid {
+  color: #fff59d !important;
+  border-color: rgba(255, 245, 157, 0.15) !important;
 }
 
 .course-badge {
@@ -321,7 +336,7 @@
 }
 
 .course-info span:hover {
-  color: #2d3436;
+  color: #fff59d !important; /* light yellow on hover (force to override other rules) */
   border-bottom-color: #74b9ff;
 }
 
@@ -551,7 +566,7 @@
   }
   
   .course-info span:hover {
-    color: #ffffff;
+    color: #fff59d !important; /* keep light yellow in dark mode too */
   }
   
   .enroll-btn {

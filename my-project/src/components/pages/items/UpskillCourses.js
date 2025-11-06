@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UpskillCourses.css';
+import YouTubeModal from '../../common/YouTubeModal';
 
 const UpskillCourses = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -1024,6 +1025,7 @@ const UpskillCourses = () => {
   const [courses, setCourses] = useState(coursesData.all);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [videoUrl, setVideoUrl] = useState(null);
 
   const categoryQueryMap = {
     all: 'programming',
@@ -1117,7 +1119,17 @@ const UpskillCourses = () => {
               </div>
               <button 
                 className="enroll-btn"
-                onClick={() => window.open(course.link, '_blank')}
+                onClick={() => {
+                  const link = (course.link || '').toString();
+                  const isYouTube = (course.platform && course.platform.toString().toLowerCase().includes('youtube'))
+                    || link.includes('youtube.com')
+                    || link.includes('youtu.be');
+                  if (isYouTube) {
+                    setVideoUrl(link);
+                  } else {
+                    window.open(link, '_blank');
+                  }
+                }}
               >
                 Enroll Now
               </button>
@@ -1125,6 +1137,9 @@ const UpskillCourses = () => {
           ))}
         </div>
       </div>
+      {videoUrl && (
+        <YouTubeModal url={videoUrl} onClose={() => setVideoUrl(null)} />
+      )}
     </div>
   );
 };

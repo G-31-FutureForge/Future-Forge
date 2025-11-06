@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './SkillGapDashboard.css';
+import YouTubeModal from '../../common/YouTubeModal';
 
 const SkillGapDashboard = () => {
   const [analysisData, setAnalysisData] = useState(null);
   const navigate = useNavigate();
+  const [videoUrl, setVideoUrl] = useState(null);
 
   useEffect(() => {
     const storedAnalysis = localStorage.getItem('skillAnalysis');
@@ -101,7 +103,14 @@ const SkillGapDashboard = () => {
                 </div>
                 <button 
                   className="course-btn"
-                  onClick={() => window.open(course.link, '_blank')}
+                  onClick={() => {
+                    const link = (course.link || '').toString();
+                    const isYouTube = (course.platform && course.platform.toString().toLowerCase().includes('youtube'))
+                      || link.includes('youtube.com')
+                      || link.includes('youtu.be');
+                    if (isYouTube) setVideoUrl(link);
+                    else window.open(link, '_blank');
+                  }}
                 >
                   View Course
                 </button>
@@ -119,6 +128,9 @@ const SkillGapDashboard = () => {
           </div>
         </div>
       </div>
+      {videoUrl && (
+        <YouTubeModal url={videoUrl} onClose={() => setVideoUrl(null)} />
+      )}
     </div>
   );
 };
