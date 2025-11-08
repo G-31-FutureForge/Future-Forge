@@ -1,101 +1,81 @@
+import fetchCourses from './courseFetcher.js';
+
+/**
+ * Fetch course recommendations from YouTube API based on missing skills
+ * @param {string[]} skills - Array of skills to search courses for
+ * @returns {Promise<Array>} Array of course recommendations
+ */
 const fetchResources = async (skills) => {
-  // Mock course data with realistic information
-  const courseProviders = {
-    'Udemy': { 
-      type: 'paid', 
-      baseRating: 4.5,
-      priceRange: '$10-20',
-      features: ['Lifetime access', 'Certificate', 'Downloadable resources']
-    },
-    'Coursera': { 
-      type: 'paid', 
-      baseRating: 4.6,
-      priceRange: '$40-80/month',
-      features: ['University certificates', 'Guided projects', 'Graded assignments']
-    },
-    'freeCodeCamp': { 
-      type: 'free', 
-      baseRating: 4.7,
-      priceRange: 'Free',
-      features: ['Interactive tutorials', 'Project-based learning', 'Certification']
-    },
-    'edX': { 
-      type: 'paid', 
-      baseRating: 4.5,
-      priceRange: '$50-300',
-      features: ['University credit', 'Verified certificates', 'Self-paced']
-    },
-    'YouTube': { 
-      type: 'free', 
-      baseRating: 4.4,
-      priceRange: 'Free',
-      features: ['Video tutorials', 'Community support', 'Real-time updates']
-    },
-    'Pluralsight': {
-      type: 'paid',
-      baseRating: 4.6,
-      priceRange: '$30/month',
-      features: ['Skill assessments', 'Learning paths', 'Exercise files']
-    },
-    'LinkedIn Learning': {
-      type: 'paid',
-      baseRating: 4.5,
-      priceRange: '$40/month',
-      features: ['Professional certificates', 'Industry experts', 'Mobile learning']
+  if (!skills || skills.length === 0) {
+    return [];
+  }
+
+  try {
+    // Fetch YouTube courses for each skill
+    // Limit to 3 courses per skill to avoid too many results
+    const coursesPerSkill = 3;
+    const allCourses = [];
+
+    // Process skills in parallel but limit concurrent requests
+    for (const skill of skills.slice(0, 10)) { // Limit to first 10 skills to avoid too many API calls
+      try {
+        // Fetch courses from YouTube API for this skill
+        const skillCourses = await fetchCourses(skill, 'youtube', coursesPerSkill);
+        
+        // Map YouTube courses to match expected format
+        const mappedCourses = skillCourses.map((course) => {
+          // Calculate a rating based on view count and likes (if available)
+          let rating = 4.5; // Default rating
+          if (course.viewCount && course.likeCount) {
+            // Simple heuristic: higher like-to-view ratio = better rating
+            const likeRatio = course.likeCount / course.viewCount;
+            rating = Math.min(5, Math.max(4, 4 + (likeRatio * 10))).toFixed(1);
+            rating = parseFloat(rating);
+          }
+
+          return {
+            title: course.title || 'Untitled Course',
+            platform: course.platform || 'YouTube',
+            type: 'free', // YouTube courses are always free
+            duration: course.duration || 'Video Course',
+            rating: rating,
+            studentsEnrolled: course.viewCount ? `${(course.viewCount / 1000).toFixed(1)}K views` : null,
+            priceRange: 'Free',
+            features: ['Video tutorials', 'Community support', 'Real-time updates'],
+            updatedDate: course.publishedAt ? new Date(course.publishedAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+            difficulty: 'Intermediate', // Default difficulty
+            link: course.link || course.videoUrl || '#',
+            description: course.description || '',
+            channelTitle: course.channelTitle || 'Unknown Channel',
+            thumbnail: course.thumbnail || null
+          };
+        });
+
+        allCourses.push(...mappedCourses);
+      } catch (error) {
+        console.error(`Error fetching courses for skill "${skill}":`, error.message);
+        // Continue with next skill even if one fails
+      }
     }
-  };
 
-  const generateCourse = (skill, provider, providerData) => {
-    const duration = Math.floor(Math.random() * 20 + 10); // 10-30 hours
-    const rating = (providerData.baseRating + Math.random() * 0.4).toFixed(1);
-    const students = Math.floor(Math.random() * 90000 + 10000); // 10k-100k students
-    
-    // Generate a more specific title based on skill type
-    const titles = {
-      default: `Complete ${skill} Developer Course`,
-      framework: `${skill} Framework Masterclass`,
-      language: `${skill} Programming from Zero to Hero`,
-      tool: `${skill} Professional Certification Course`,
-      cloud: `${skill} Cloud Solutions Architect Course`,
-      ai: `${skill} for Artificial Intelligence and Machine Learning`
-    };
+    // Deduplicate courses by link
+    const seen = new Set();
+    const uniqueCourses = allCourses.filter((course) => {
+      const key = (course.link || course.title || '').toLowerCase();
+      if (seen.has(key)) {
+        return false;
+      }
+      seen.add(key);
+      return true;
+    });
 
-    // Map skills to categories
-    const category = 
-      ['react', 'angular', 'vue'].includes(skill.toLowerCase()) ? 'framework' :
-      ['javascript', 'python', 'java'].includes(skill.toLowerCase()) ? 'language' :
-      ['aws', 'azure', 'gcp'].includes(skill.toLowerCase()) ? 'cloud' :
-      ['machine learning', 'deep learning', 'ai'].includes(skill.toLowerCase()) ? 'ai' :
-      ['docker', 'kubernetes', 'jenkins'].includes(skill.toLowerCase()) ? 'tool' :
-      'default';
-    
-    return {
-      title: titles[category],
-      platform: provider,
-      type: providerData.type,
-      duration: `${duration} hours`,
-      rating: parseFloat(rating),
-      studentsEnrolled: students,
-      priceRange: providerData.priceRange,
-      features: providerData.features,
-      updatedDate: new Date().toISOString().split('T')[0], // Current date
-      difficulty: ['Beginner', 'Intermediate', 'Advanced'][Math.floor(Math.random() * 3)],
-      link: `https://www.${provider.toLowerCase()}.com/learn/${skill.toLowerCase()}`
-    };
-  };
-
-  // Generate 2-3 courses per skill
-  const courses = skills.flatMap(skill => {
-    const providers = Object.entries(courseProviders)
-      .sort(() => Math.random() - 0.5)
-      .slice(0, Math.floor(Math.random() * 2) + 2);
-    
-    return providers.map(([provider, data]) => 
-      generateCourse(skill, provider, data)
-    );
-  });
-
-  return courses;
+    // Limit total results to reasonable number (e.g., 15 courses max)
+    return uniqueCourses.slice(0, 15);
+  } catch (error) {
+    console.error('Error in fetchResources:', error.message);
+    // Return empty array on error instead of throwing
+    return [];
+  }
 };
 
 export default fetchResources;
