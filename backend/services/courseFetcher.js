@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { scrapeElearningPlatforms } from '../scrapers/elearningScraper.js';
 
 const COURSERA_BASE = process.env.COURSERA_API_BASE || 'https://api.coursera.org/api/courses.v1';
 const YOUTUBE_KEY = process.env.YOUTUBE_API_KEY;
@@ -37,10 +38,11 @@ export async function fetchCoursera(query, limit = 5) {
  */
 export async function fetchYouTube(query, limit = 5) {
   if (!YOUTUBE_KEY) {
-    console.warn('YOUTUBE_API_KEY not set; YouTube fetch will return empty results.');
+    console.warn('[fetchYouTube] YOUTUBE_API_KEY not set; YouTube fetch will return empty results.');
     return [];
   }
 
+  console.log(`[fetchYouTube] Fetching YouTube courses for query: "${query}", limit: ${limit}`);
   try {
     // Enhanced search query to prioritize educational/tutorial content
     const searchQueries = [
@@ -83,7 +85,8 @@ export async function fetchYouTube(query, limit = 5) {
           }
         }
       } catch (searchErr) {
-        console.error(`YouTube search error for query "${q}":`, searchErr.message);
+        console.error(`[fetchYouTube] YouTube search error for query "${q}":`, searchErr.message);
+        console.error(`[fetchYouTube] Error details:`, searchErr.response?.data || searchErr.response?.status || 'No response data');
         // Continue with next query if one fails
       }
     }
@@ -149,10 +152,13 @@ export async function fetchYouTube(query, limit = 5) {
         };
       });
 
+      console.log(`[fetchYouTube] Successfully fetched ${videos.length} YouTube videos`);
       return videos;
     } catch (detailsErr) {
-      console.error('YouTube video details error:', detailsErr.message);
+      console.error('[fetchYouTube] YouTube video details error:', detailsErr.message);
+      console.error('[fetchYouTube] Details error:', detailsErr.response?.data || detailsErr.response?.status || 'No response data');
       // Return videos without detailed stats if details fetch fails
+      console.log(`[fetchYouTube] Returning ${allVideos.length} videos without detailed stats`);
       return allVideos.slice(0, limit).map((video) => ({
         title: video.title,
         platform: 'YouTube',
@@ -165,28 +171,89 @@ export async function fetchYouTube(query, limit = 5) {
       }));
     }
   } catch (err) {
-    console.error('fetchYouTube error:', err.message);
+    console.error('[fetchYouTube] Fatal error:', err.message);
+    console.error('[fetchYouTube] Error stack:', err.stack);
+    console.error('[fetchYouTube] Error response:', err.response?.data || err.response?.status || 'No response');
+    return [];
+  }
+}
+
+/**
+ * Fetch courses by scraping e-learning platforms
+ */
+export async function fetchScrapedCourses(query, platform = 'all', limit = 5) {
+  try {
+    const platforms = platform === 'all' 
+      ? ['khanacademy', 'freecodecamp', 'codecademy']
+      : [platform.toLowerCase()];
+    
+    console.log(`[fetchScrapedCourses] Scraping platforms: ${platforms.join(', ')} for query: "${query}"`);
+    const courses = await scrapeElearningPlatforms(query, platforms, limit);
+    console.log(`[fetchScrapedCourses] Retrieved ${courses.length} courses from scraped platforms`);
+    return courses;
+  } catch (error) {
+    console.error('[fetchScrapedCourses] Error:', error.message);
+    console.error('[fetchScrapedCourses] Stack:', error.stack);
     return [];
   }
 }
 
 /**
  * Main helper: fetch courses from providers.
- * provider can be 'coursera', 'youtube' or 'all'.
+ * provider can be 'coursera', 'youtube', 'khanacademy', 'freecodecamp', 'codecademy', 'pluralsight', 'skillshare', 'scraped' (all scraped), or 'all'. (udemy & edx removed)
  */
 export default async function fetchCourses(query, provider = 'all', limit = 5) {
   const results = [];
   const lim = Number(limit) || 5;
 
+  console.log(`[CourseFetcher] Starting fetch - query: "${query}", provider: "${provider}", limit: ${lim}`);
+
+  // API-based providers
   if (provider === 'coursera' || provider === 'all') {
-    const c = await fetchCoursera(query, lim);
-    results.push(...c);
+    try {
+      console.log(`[CourseFetcher] Fetching from Coursera...`);
+      const c = await fetchCoursera(query, lim);
+      console.log(`[CourseFetcher] Coursera returned ${c.length} courses`);
+      results.push(...c);
+    } catch (error) {
+      console.error('[CourseFetcher] Coursera error:', error.message);
+    }
   }
 
   if (provider === 'youtube' || provider === 'all') {
-    const y = await fetchYouTube(query, lim);
-    results.push(...y);
+    try {
+      console.log(`[CourseFetcher] Fetching from YouTube...`);
+      const y = await fetchYouTube(query, lim);
+      console.log(`[CourseFetcher] YouTube returned ${y.length} courses`);
+      results.push(...y);
+    } catch (error) {
+      console.error('[CourseFetcher] YouTube error:', error.message);
+    }
   }
+
+  // Scraped providers
+  const scrapedProviders = [
+    'khanacademy', 'khan', 
+    'freecodecamp', 'codecademy', 'pluralsight', 
+    'skillshare', 'linkedin', 'linkedinlearning', 
+    'futurelearn', 'scraped'
+  ];
+  const isScrapedProvider = scrapedProviders.includes(provider.toLowerCase());
+  
+  if (isScrapedProvider || provider === 'all') {
+    try {
+      const scrapedPlatform = provider === 'all' ? 'all' : provider.toLowerCase();
+      console.log(`[CourseFetcher] Fetching scraped courses from: ${scrapedPlatform}...`);
+      const scraped = await fetchScrapedCourses(query, scrapedPlatform, lim);
+      console.log(`[CourseFetcher] Scraped platforms returned ${scraped.length} courses`);
+      results.push(...scraped);
+    } catch (error) {
+      console.error('[CourseFetcher] Scraped courses error:', error.message);
+      console.error('[CourseFetcher] Scraped courses stack:', error.stack);
+    }
+  }
+
+  console.log(`[CourseFetcher] Total results before deduplication: ${results.length}`);
 
   // Deduplicate by link/title
   const seen = new Set();
@@ -199,5 +266,6 @@ export default async function fetchCourses(query, provider = 'all', limit = 5) {
     }
   }
 
-  return dedup.slice(0, lim * 2); // return up to a reasonable number
+  console.log(`[CourseFetcher] Total results after deduplication: ${dedup.length}`);
+  return dedup.slice(0, lim * 3); // return up to a reasonable number (more since we have more sources)
 }

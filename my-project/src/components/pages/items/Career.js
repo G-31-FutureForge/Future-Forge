@@ -25,25 +25,19 @@ const Career = () => {
             { id: 3, title: 'UI/UX Designer', company: 'Designify', status: 'Interview' },
         ]);
 
-        // Fetch recommended courses from YouTube API
+        // Fetch recommended courses from all platforms
         const fetchRecommendedCourses = async () => {
             try {
-                // Fetch career development and skill-building courses
-                const response = await fetch('http://localhost:5000/api/courses?query=career development skills&provider=youtube&limit=3');
-                if (response.ok) {
-                    const data = await response.json();
-                    const mappedCourses = (data.courses || []).map((course, index) => ({
-                        id: index + 1,
-                        name: course.title || 'Untitled Course',
-                        platform: course.platform || course.channelTitle || 'YouTube',
-                        link: course.link || '#'
-                    }));
-                    setCourses(mappedCourses);
-                } else {
-                    console.error('Failed to fetch courses:', response.statusText);
-                    // Fallback to empty array if API fails
-                    setCourses([]);
-                }
+                const { fetchAndNormalizeCourses, COURSE_PROVIDERS } = await import('../../../utils/courseApi');
+                // Fetch career development and skill-building courses from all platforms
+                const courses = await fetchAndNormalizeCourses('career development skills', COURSE_PROVIDERS.ALL, 3);
+                const mappedCourses = courses.map((course, index) => ({
+                    id: index + 1,
+                    name: course.title || 'Untitled Course',
+                    platform: course.platform || 'Unknown',
+                    link: course.link || '#'
+                }));
+                setCourses(mappedCourses);
             } catch (error) {
                 console.error('Error fetching courses:', error);
                 // Fallback to empty array on error

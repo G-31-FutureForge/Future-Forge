@@ -2,9 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UpskillCourses.css';
 import YouTubeModal from '../../common/YouTubeModal';
+import { 
+  fetchAndNormalizeCourses, 
+  COURSE_PROVIDERS, 
+  PROVIDER_INFO,
+  getProviderIcon,
+  getProviderName 
+} from '../../../utils/courseApi';
 
 const UpskillCourses = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedProvider, setSelectedProvider] = useState(COURSE_PROVIDERS.ALL);
   const navigate = useNavigate();
 
   // Categories for course filtering
@@ -15,6 +23,17 @@ const UpskillCourses = () => {
     { id: 'cloud', name: 'Cloud Computing', icon: '☁️' },
     { id: 'mobile', name: 'Mobile Development', icon: '📱' },
     { id: 'ai', name: 'AI & ML', icon: '🧠' }
+  ];
+
+  // Popular providers to show in selector
+  const popularProviders = [
+    COURSE_PROVIDERS.ALL,
+    COURSE_PROVIDERS.YOUTUBE,
+    // Udemy and edX removed
+    COURSE_PROVIDERS.KHAN_ACADEMY,
+    COURSE_PROVIDERS.FREECODECAMP,
+    COURSE_PROVIDERS.CODECADEMY,
+    COURSE_PROVIDERS.SCRAPED
   ];
 
   // UI state for courses fetched from backend
@@ -32,48 +51,59 @@ const UpskillCourses = () => {
     ai: 'machine learning'
   };
 
-  const fetchCoursesFromBackend = async (query) => {
+  const fetchCoursesFromBackend = async (query, provider) => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`http://localhost:5000/api/courses?query=${encodeURIComponent(query)}&provider=youtube&limit=15`);
-      if (!res.ok) throw new Error((await res.json()).message || res.statusText);
-      const data = await res.json();
-      // Map backend results to display-friendly objects
-      const mapped = (data.courses || []).map((c, idx) => ({
-        id: `remote-${idx}`,
-        title: c.title || c.name || 'Untitled',
-        platform: c.platform || c.channelTitle || 'YouTube',
-        type: c.type || 'free', // YouTube courses are free
-        level: c.difficulty || 'Intermediate',
-        duration: c.duration || 'Video Course',
-        rating: c.rating || c.avgRating || null,
-        students: c.studentsEnrolled || (c.viewCount ? `${(c.viewCount / 1000).toFixed(1)}K views` : null),
-        link: c.link || c.url || c.videoUrl || '#'
-      }));
-
-      setCourses(mapped);
+      console.log(`[UpskillCourses] Fetching courses - query: "${query}", provider: "${provider}"`);
+      const normalizedCourses = await fetchAndNormalizeCourses(query, provider, 15);
+      console.log(`[UpskillCourses] Received ${normalizedCourses.length} courses`);
+      
+      if (normalizedCourses.length === 0) {
+        console.warn(`[UpskillCourses] No courses received. Check backend logs for details.`);
+        setError(`No courses found for "${query}" on ${provider}. The backend might be having issues fetching from providers. Check browser console and backend logs for details.`);
+      }
+      
+      setCourses(normalizedCourses);
     } catch (err) {
-      console.error('fetchCourses error', err.message || err);
-      setError(err.message || 'Failed to fetch courses. Please make sure the YouTube API key is configured.');
-      setCourses([]); // Set empty array instead of fallback to dummy data
+      console.error('[UpskillCourses] fetchCourses error', err);
+      setError(err.message || 'Failed to fetch courses. Please check if the backend server is running and check the browser console for details.');
+      setCourses([]);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    // Fetch when selectedCategory changes
+    // Fetch when selectedCategory or selectedProvider changes
     const q = categoryQueryMap[selectedCategory] || 'programming';
-    fetchCoursesFromBackend(q);
+    fetchCoursesFromBackend(q, selectedProvider);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedCategory]);
+  }, [selectedCategory, selectedProvider]);
 
   return (
     <div className="upskill-courses">
       <div className="courses-header">
         <h1>🎓 Upskill Yourself</h1>
-        <p>Discover courses to enhance your skills and career prospects</p>
+        <p>Discover courses from multiple platforms to enhance your skills and career prospects</p>
+      </div>
+
+      {/* Platform Selector */}
+      <div className="platform-selector">
+        <h3>Select Platform:</h3>
+        <div className="platform-buttons">
+          {popularProviders.map(provider => (
+            <button
+              key={provider}
+              className={`platform-btn ${selectedProvider === provider ? 'active' : ''}`}
+              onClick={() => setSelectedProvider(provider)}
+              title={getProviderName(provider)}
+            >
+              <span className="platform-icon">{getProviderIcon(provider)}</span>
+              <span className="platform-name">{getProviderName(provider)}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="courses-container">
@@ -96,13 +126,13 @@ const UpskillCourses = () => {
           {error && (
             <div className="error">
               {error}
-              <p className="error-hint">Make sure the YouTube API key is configured in the backend.</p>
+              <p className="error-hint">Try selecting a different platform or category.</p>
             </div>
           )}
           {!loading && !error && courses.length === 0 && (
             <div className="no-courses">
               <p>No courses available at the moment.</p>
-              <p className="hint">Please configure the YouTube API key to see course recommendations.</p>
+              <p className="hint">Try selecting a different platform or search query.</p>
             </div>
           )}
           {courses.map(course => (
@@ -119,22 +149,25 @@ const UpskillCourses = () => {
                 <span className="duration">⏱️ {course.duration}</span>
                 {course.rating && <span className="rating">⭐ {typeof course.rating === 'number' ? course.rating.toFixed(1) : course.rating}/5</span>}
                 {course.students && <span className="students">👥 {course.students}</span>}
+                {course.instructor && <span className="instructor">👤 {course.instructor}</span>}
               </div>
+              {course.description && (
+                <div className="course-description">
+                  <p>{course.description.substring(0, 100)}...</p>
+                </div>
+              )}
               <button 
                 className="enroll-btn"
                 onClick={() => {
                   const link = (course.link || '').toString();
-                  const isYouTube = (course.platform && course.platform.toString().toLowerCase().includes('youtube'))
-                    || link.includes('youtube.com')
-                    || link.includes('youtu.be');
-                  if (isYouTube) {
+                  if (course.isYouTube) {
                     setVideoUrl(link);
                   } else {
                     window.open(link, '_blank');
                   }
                 }}
               >
-                Enroll Now
+                {course.isYouTube ? 'Watch Now' : 'Enroll Now'}
               </button>
             </div>
           ))}

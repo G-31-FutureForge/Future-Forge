@@ -61,6 +61,100 @@
   line-height: 1.6;
 }
 
+/* Platform Selector */
+.platform-selector {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 20px;
+  padding: 1.5rem 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.platform-selector h3 {
+  margin-bottom: 1rem;
+  color: #2d3436;
+  font-size: 1.2rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.platform-selector h3::before {
+  content: '🔌';
+  font-size: 1.5rem;
+}
+
+.platform-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.platform-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border: 2px solid #dfe6e9;
+  background: rgba(248, 249, 250, 0.8);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 600;
+  color: #636e72;
+  font-size: 0.9rem;
+}
+
+.platform-btn:hover {
+  background: white;
+  border-color: #74b9ff;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 6px 20px rgba(116, 185, 255, 0.3);
+  color: #2d3436;
+}
+
+.platform-btn.active {
+  background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+  color: white;
+  border-color: #74b9ff;
+  box-shadow: 0 8px 25px rgba(116, 185, 255, 0.4);
+  transform: translateY(-2px) scale(1.05);
+}
+
+.platform-icon {
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.platform-btn:hover .platform-icon,
+.platform-btn.active .platform-icon {
+  transform: scale(1.2) rotate(5deg);
+}
+
+.platform-name {
+  white-space: nowrap;
+}
+
+/* Course Description */
+.course-description {
+  margin: 1rem 0;
+  padding: 1rem;
+  background: rgba(248, 249, 250, 0.8);
+  border-radius: 10px;
+  font-size: 0.9rem;
+  color: #636e72;
+  line-height: 1.5;
+  position: relative;
+  z-index: 2;
+}
+
+.course-description p {
+  margin: 0;
+}
+
 .back-btn {
   position: absolute;
   left: 0;
@@ -503,6 +597,23 @@
     position: relative;
     top: 0;
     margin-bottom: 1rem;
+  }
+  
+  .platform-selector {
+    padding: 1rem;
+  }
+  
+  .platform-buttons {
+    gap: 0.5rem;
+  }
+  
+  .platform-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .platform-name {
+    display: none;
   }
   
   .courses-grid {

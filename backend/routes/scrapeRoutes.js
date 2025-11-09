@@ -1,5 +1,6 @@
 import express from 'express';
 import { scrapeSarkariResultJobs } from '../scrapers/sarkariResultScraperV2.js';
+import { scrapeElearningPlatforms } from '../scrapers/elearningScraper.js';
 const router = express.Router();
 
 // Optional: simple in-memory cache
@@ -64,6 +65,44 @@ router.get('/sarkari-result', async (req, res) => {
     res.status(500).json({
       success: false,
       error: 'Failed to fetch jobs',
+      message: error.message
+    });
+  }
+});
+
+// GET /api/scrape/courses?query=python&platforms=khanacademy,freecodecamp&limit=10
+router.get('/courses', async (req, res) => {
+  try {
+    const { query, platforms = 'all', limit = 10 } = req.query;
+
+    if (!query || query.trim() === '') {
+      return res.status(400).json({
+        success: false,
+        error: 'Missing required query parameter'
+      });
+    }
+
+    const platformList = platforms === 'all' 
+      ? ['all']
+      : platforms.split(',').map(p => p.trim().toLowerCase());
+
+    console.log(`Scraping courses for query: "${query}", platforms: ${platformList.join(', ')}`);
+
+    const courses = await scrapeElearningPlatforms(query, platformList, Number(limit || 10));
+
+    res.json({
+      success: true,
+      query,
+      platforms: platformList,
+      count: courses.length,
+      courses,
+      source: 'scraped'
+    });
+  } catch (error) {
+    console.error('Error in /courses scrape route:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to scrape courses',
       message: error.message
     });
   }

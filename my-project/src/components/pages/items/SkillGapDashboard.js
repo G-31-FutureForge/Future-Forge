@@ -19,7 +19,7 @@ const SkillGapDashboard = () => {
     }
   }, [navigate]);
 
-  // Fetch fresh YouTube courses for missing skills
+  // Fetch fresh courses for missing skills from all platforms
   const handleRefreshCourses = async () => {
     if (!analysisData || !analysisData.missingSkills || analysisData.missingSkills.length === 0) {
       setCoursesError('No missing skills to fetch courses for');
@@ -30,50 +30,35 @@ const SkillGapDashboard = () => {
     setCoursesError(null);
 
     try {
-      // Fetch YouTube courses for each missing skill
+      // Fetch courses from all providers for each missing skill
       const allCourses = [];
       const skills = analysisData.missingSkills.slice(0, 10); // Limit to first 10 skills
 
+      // Import the course API utility
+      const { fetchAndNormalizeCourses, COURSE_PROVIDERS } = await import('../../../utils/courseApi');
+
       for (const skill of skills) {
         try {
-          const response = await fetch(
-            `http://localhost:5000/api/courses?query=${encodeURIComponent(skill)}&provider=youtube&limit=3`
-          );
+          // Fetch from all scraped platforms for better diversity
+          const courses = await fetchAndNormalizeCourses(skill, COURSE_PROVIDERS.SCRAPED, 3);
           
-          if (response.ok) {
-            const data = await response.json();
-            if (data.courses && data.courses.length > 0) {
-              // Map courses to match the expected format
-              const mappedCourses = data.courses.map((course, idx) => {
-                // Handle viewCount - format if it's a number, otherwise use existing formatted value
-                let studentsEnrolled = course.studentsEnrolled || null;
-                if (!studentsEnrolled && course.viewCount) {
-                  const viewCount = typeof course.viewCount === 'number' 
-                    ? course.viewCount 
-                    : parseInt(course.viewCount);
-                  if (viewCount) {
-                    studentsEnrolled = viewCount >= 1000 
-                      ? `${(viewCount / 1000).toFixed(1)}K views`
-                      : `${viewCount} views`;
-                  }
-                }
-
-                return {
-                  id: `refresh-${skill}-${idx}`,
-                  title: course.title || 'Untitled Course',
-                  platform: course.platform || 'YouTube',
-                  type: 'free', // YouTube courses are always free
-                  duration: course.duration || 'Video Course',
-                  rating: course.rating || 4.5,
-                  studentsEnrolled: studentsEnrolled,
-                  link: course.link || course.videoUrl || '#',
-                  description: course.description || '',
-                  channelTitle: course.channelTitle || 'Unknown Channel',
-                  thumbnail: course.thumbnail || null
-                };
-              });
-              allCourses.push(...mappedCourses);
-            }
+          if (courses && courses.length > 0) {
+            // Map courses to match the expected format
+            const mappedCourses = courses.map((course, idx) => ({
+              id: `refresh-${skill}-${idx}`,
+              title: course.title || 'Untitled Course',
+              platform: course.platform || 'Unknown',
+              type: course.type || 'free',
+              duration: course.duration || 'N/A',
+              rating: course.rating || 4.5,
+              studentsEnrolled: course.students || null,
+              link: course.link || '#',
+              description: course.description || '',
+              channelTitle: course.instructor || course.platform || 'Unknown',
+              thumbnail: course.thumbnail || null,
+              isYouTube: course.isYouTube || false
+            }));
+            allCourses.push(...mappedCourses);
           }
         } catch (error) {
           console.error(`Error fetching courses for skill "${skill}":`, error);
@@ -104,7 +89,7 @@ const SkillGapDashboard = () => {
       localStorage.setItem('skillAnalysis', JSON.stringify(updatedAnalysis));
     } catch (error) {
       console.error('Error refreshing courses:', error);
-      setCoursesError('Failed to refresh courses. Please make sure the YouTube API key is configured.');
+      setCoursesError('Failed to refresh courses. Please try again or check your connection.');
     } finally {
       setRefreshingCourses(false);
     }
@@ -202,7 +187,7 @@ const SkillGapDashboard = () => {
 
           {refreshingCourses && (
             <div className="loading-message" style={{ marginBottom: '20px', padding: '10px', textAlign: 'center' }}>
-              🔄 Fetching fresh YouTube courses...
+              🔄 Fetching fresh courses from multiple platforms...
             </div>
           )}
 
@@ -218,7 +203,7 @@ const SkillGapDashboard = () => {
                   </div>
                   <div className="course-info">
                     <span className="platform">
-                      🎥 {course.channelTitle || course.platform || 'YouTube'}
+                      🎥 {course.channelTitle || course.platform || 'Unknown Platform'}
                     </span>
                     <span className="duration">⏱️ {course.duration || 'Video Course'}</span>
                     {course.rating && (
@@ -244,10 +229,7 @@ const SkillGapDashboard = () => {
                     className="course-btn"
                     onClick={() => {
                       const link = (course.link || '').toString();
-                      const isYouTube = (course.platform && course.platform.toString().toLowerCase().includes('youtube'))
-                        || link.includes('youtube.com')
-                        || link.includes('youtu.be');
-                      if (isYouTube) setVideoUrl(link);
+                      if (course.isYouTube) setVideoUrl(link);
                       else window.open(link, '_blank');
                     }}
                   >
@@ -258,15 +240,15 @@ const SkillGapDashboard = () => {
             </div>
           ) : (
             <div className="no-courses-message">
-              <p>No YouTube course recommendations available at the moment.</p>
+              <p>No course recommendations available at the moment.</p>
               <p className="hint">
                 {analysisData.missingSkills && analysisData.missingSkills.length > 0 
-                  ? 'Click "Refresh Courses" to fetch YouTube courses for your missing skills, or make sure the YouTube API key is configured in the backend.'
-                  : 'Make sure the YouTube API key is configured in the backend, then re-run the skill analysis.'}
+                  ? 'Click "Refresh Courses" to fetch courses from multiple e-learning platforms for your missing skills.'
+                  : 'Re-run the skill analysis to get course recommendations.'}
               </p>
               {analysisData.missingSkills && analysisData.missingSkills.length > 0 ? (
                 <button className="btn-secondary" onClick={handleRefreshCourses} disabled={refreshingCourses}>
-                  {refreshingCourses ? '🔄 Refreshing...' : '🔄 Refresh Courses from YouTube'}
+                  {refreshingCourses ? '🔄 Refreshing...' : '🔄 Refresh Courses from All Platforms'}
                 </button>
               ) : (
                 <button className="btn-secondary" onClick={handleNewAnalysis}>
