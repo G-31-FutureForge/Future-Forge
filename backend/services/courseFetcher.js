@@ -33,6 +33,7 @@ export async function fetchCoursera(query, limit = 5) {
 
 /**
  * Fetch videos from YouTube and map them as course-like resources.
+ * Enhanced to fetch video details including duration and prioritize educational content.
  */
 export async function fetchYouTube(query, limit = 5) {
   if (!YOUTUBE_KEY) {
@@ -41,30 +42,128 @@ export async function fetchYouTube(query, limit = 5) {
   }
 
   try {
-    const q = `${query} course tutorial`;
-    const searchRes = await axios.get('https://www.googleapis.com/youtube/v3/search', {
-      params: {
-        key: YOUTUBE_KEY,
-        part: 'snippet',
-        q,
-        maxResults: limit,
-        type: 'video'
-      },
-      timeout: 8000
-    });
+    // Enhanced search query to prioritize educational/tutorial content
+    const searchQueries = [
+      `${query} full course`,
+      `${query} tutorial course`,
+      `${query} complete tutorial`
+    ];
+    
+    const allVideos = [];
+    const videoIds = new Set();
+    
+    // Search with different query variations to get better results
+    for (const q of searchQueries.slice(0, 2)) { // Use first 2 query variations
+      try {
+        const searchRes = await axios.get('https://www.googleapis.com/youtube/v3/search', {
+          params: {
+            key: YOUTUBE_KEY,
+            part: 'snippet',
+            q,
+            maxResults: Math.ceil(limit / 2), // Split limit across queries
+            type: 'video',
+            videoDuration: 'long', // Prioritize longer videos (more likely to be courses)
+            order: 'relevance' // Order by relevance for educational content
+          },
+          timeout: 10000
+        });
 
-    const items = searchRes.data.items || [];
-    const videos = items.map((it) => ({
-      title: it.snippet.title,
-      platform: 'YouTube',
-      description: it.snippet.description,
-      link: `https://www.youtube.com/watch?v=${it.id.videoId}`,
-      channelTitle: it.snippet.channelTitle,
-      publishedAt: it.snippet.publishedAt,
-      thumbnail: it.snippet.thumbnails && it.snippet.thumbnails.default && it.snippet.thumbnails.default.url
-    }));
+        const items = searchRes.data.items || [];
+        for (const item of items) {
+          if (!videoIds.has(item.id.videoId)) {
+            videoIds.add(item.id.videoId);
+            allVideos.push({
+              videoId: item.id.videoId,
+              title: item.snippet.title,
+              description: item.snippet.description,
+              channelTitle: item.snippet.channelTitle,
+              publishedAt: item.snippet.publishedAt,
+              thumbnail: item.snippet.thumbnails?.high?.url || item.snippet.thumbnails?.default?.url
+            });
+          }
+        }
+      } catch (searchErr) {
+        console.error(`YouTube search error for query "${q}":`, searchErr.message);
+        // Continue with next query if one fails
+      }
+    }
 
-    return videos;
+    if (allVideos.length === 0) {
+      return [];
+    }
+
+    // Fetch video details including duration, view count, etc.
+    const videoIdList = allVideos.map(v => v.videoId).slice(0, limit);
+    try {
+      const detailsRes = await axios.get('https://www.googleapis.com/youtube/v3/videos', {
+        params: {
+          key: YOUTUBE_KEY,
+          part: 'contentDetails,statistics',
+          id: videoIdList.join(',')
+        },
+        timeout: 10000
+      });
+
+      const videoDetails = {};
+      (detailsRes.data.items || []).forEach(video => {
+        videoDetails[video.id] = {
+          duration: video.contentDetails?.duration,
+          viewCount: video.statistics?.viewCount,
+          likeCount: video.statistics?.likeCount
+        };
+      });
+
+      // Map videos with their details
+      const videos = allVideos.slice(0, limit).map((video) => {
+        const details = videoDetails[video.videoId] || {};
+        
+        // Parse duration (ISO 8601 format: PT1H2M10S)
+        let durationText = 'Video Course';
+        if (details.duration) {
+          const match = details.duration.match(/PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/);
+          if (match) {
+            const hours = parseInt(match[1] || 0);
+            const minutes = parseInt(match[2] || 0);
+            const seconds = parseInt(match[3] || 0);
+            if (hours > 0) {
+              durationText = `${hours}h ${minutes}m`;
+            } else if (minutes > 0) {
+              durationText = `${minutes}m`;
+            } else {
+              durationText = `${seconds}s`;
+            }
+          }
+        }
+
+        return {
+          title: video.title,
+          platform: 'YouTube',
+          description: video.description || '',
+          link: `https://www.youtube.com/watch?v=${video.videoId}`,
+          channelTitle: video.channelTitle,
+          publishedAt: video.publishedAt,
+          thumbnail: video.thumbnail,
+          duration: durationText,
+          viewCount: details.viewCount ? parseInt(details.viewCount) : null,
+          likeCount: details.likeCount ? parseInt(details.likeCount) : null
+        };
+      });
+
+      return videos;
+    } catch (detailsErr) {
+      console.error('YouTube video details error:', detailsErr.message);
+      // Return videos without detailed stats if details fetch fails
+      return allVideos.slice(0, limit).map((video) => ({
+        title: video.title,
+        platform: 'YouTube',
+        description: video.description || '',
+        link: `https://www.youtube.com/watch?v=${video.videoId}`,
+        channelTitle: video.channelTitle,
+        publishedAt: video.publishedAt,
+        thumbnail: video.thumbnail,
+        duration: 'Video Course'
+      }));
+    }
   } catch (err) {
     console.error('fetchYouTube error:', err.message);
     return [];

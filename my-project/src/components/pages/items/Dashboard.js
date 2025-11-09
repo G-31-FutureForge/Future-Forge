@@ -27,18 +27,40 @@ const Dashboard = () => {
             setIsLoaded(true);
         }, 400);
 
-        // Mock Data
+        // Mock Data for jobs
         setJobs([
             { id: 1, title: 'Frontend Developer', company: 'TechNova', status: 'Applied' },
             { id: 2, title: 'AI Engineer', company: 'FutureLabs', status: 'Recommended' },
             { id: 3, title: 'UI/UX Designer', company: 'Designify', status: 'Interview' },
         ]);
 
-        setCourses([
-            { id: 1, name: 'React for Beginners', platform: 'Coursera' },
-            { id: 2, name: 'Machine Learning Basics', platform: 'Udemy' },
-            { id: 3, name: 'Data Structures Mastery', platform: 'edX' },
-        ]);
+        // Fetch recommended courses from YouTube API
+        const fetchRecommendedCourses = async () => {
+            try {
+                // Fetch popular programming/development courses
+                const response = await fetch('http://localhost:5000/api/courses?query=programming tutorial&provider=youtube&limit=3');
+                if (response.ok) {
+                    const data = await response.json();
+                    const mappedCourses = (data.courses || []).map((course, index) => ({
+                        id: index + 1,
+                        name: course.title || 'Untitled Course',
+                        platform: course.platform || course.channelTitle || 'YouTube',
+                        link: course.link || '#'
+                    }));
+                    setCourses(mappedCourses);
+                } else {
+                    console.error('Failed to fetch courses:', response.statusText);
+                    // Fallback to empty array if API fails
+                    setCourses([]);
+                }
+            } catch (error) {
+                console.error('Error fetching courses:', error);
+                // Fallback to empty array on error
+                setCourses([]);
+            }
+        };
+
+        fetchRecommendedCourses();
     }, [navigate]);
 
     const getUserFirstName = () => {
