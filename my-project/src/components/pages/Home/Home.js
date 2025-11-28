@@ -23,49 +23,49 @@ const Home = () => {
     return (
         <div className="home-container">
             {/* Sidebar */}
-            <div className={`sidebar ${sidebarOpen ? 'sidebar-open' : ''}`}>
-                <div className="sidebar-header">
+            <div className={`home-drawer ${sidebarOpen ? 'open' : ''}`}>
+                <div className="home-drawer-header">
                     <h3>Future Forge</h3>
-                    <button onClick={toggleSidebar} className="sidebar-close-btn">
+                    <button onClick={toggleSidebar} className="home-drawer-close-btn">
                         ×
                     </button>
                 </div>
                 
-                <div className="sidebar-content">
-                    <ul className="sidebar-menu">
+                <div className="home-drawer-content">
+                    <ul className="home-drawer-menu">
                         <li>
                             <Link to="/" onClick={closeSidebar}>
-                                <span className="sidebar-icon">🏠</span>
+                                <span className="home-drawer-icon">🏠</span>
                                 Home
                             </Link>
                         </li>
                         <li>
                             <Link to="/login" onClick={closeSidebar}>
-                                <span className="sidebar-icon">🔐</span>
+                                <span className="home-drawer-icon">🔐</span>
                                 Login
                             </Link>
                         </li>
                         <li>
                             <Link to="/register" onClick={closeSidebar}>
-                                <span className="sidebar-icon">📝</span>
+                                <span className="home-drawer-icon">📝</span>
                                 Register
                             </Link>
                         </li>
                         <li>
                             <Link to="/terms" onClick={closeSidebar}>
-                                <span className="sidebar-icon">📄</span>
+                                <span className="home-drawer-icon">📄</span>
                                 Terms and Services
                             </Link>
                         </li>
                         <li>
                             <a href="#features" onClick={closeSidebar}>
-                                <span className="sidebar-icon">⭐</span>
+                                <span className="home-drawer-icon">⭐</span>
                                 Features
                             </a>
                         </li>
                         <li>
                             <a href="#cta" onClick={closeSidebar}>
-                                <span className="sidebar-icon">🎯</span>
+                                <span className="home-drawer-icon">🎯</span>
                                 Get Started
                             </a>
                         </li>
@@ -76,7 +76,7 @@ const Home = () => {
             {/* Overlay when sidebar is open */}
             {sidebarOpen && (
                 <div 
-                    className="sidebar-overlay" 
+                    className="home-drawer-overlay" 
                     onClick={closeSidebar}
                 ></div>
             )}
@@ -85,7 +85,7 @@ const Home = () => {
             <header className="home-header">
                 <div className="nav-brand">
                     <button 
-                        className="sidebar-toggle-btn"
+                        className="home-drawer-toggle-btn"
                         onClick={toggleSidebar}
                     >
                         ☰
@@ -151,7 +151,7 @@ const Home = () => {
                     <div className="cta-content">
                         <h2>Ready to Craft Your Future?</h2>
                         <p>Thousands have chosen their path and become successful</p>
-                        <a href="/register" className="btn btn-large">Start Your Journey</a>
+                        <a href="/register" className="btn btn-primary btn-large">Start Your Journey</a>
                     </div>
                 </div>
             </section>

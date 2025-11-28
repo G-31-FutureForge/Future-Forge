@@ -1,6 +1,6 @@
 .job-exploration-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+  background: var(--bg);
   padding: 2rem;
 }
 
@@ -26,8 +26,8 @@
 }
 
 .back-btn {
-  background: #fff;
-  color: #007bff;
+  background: var(--surface);
+  color: var(--accent);
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 8px;
@@ -41,7 +41,7 @@
 }
 
 .back-btn:hover {
-  background: #007bff;
+  background: var(--accent);
   color: #fff;
   transform: translateX(-5px);
 }
@@ -49,14 +49,14 @@
 .job-exploration {
   max-width: 1200px;
   margin: 0 auto;
-  background: white;
+  background: var(--surface);
   padding: 2rem;
   border-radius: 16px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px var(--shadow);
 }
 
 .filters-section {
-  background: #fff;
+  background: var(--surface);
   border-radius: 16px;
   padding: 2rem;
   margin-bottom: 2rem;
@@ -74,7 +74,7 @@
 
 .qualification-filters h2 {
   font-size: 1.5rem;
-  color: #007bff;
+  color: var(--accent);
   margin-bottom: 1rem;
   font-weight: 600;
 }
@@ -87,10 +87,10 @@
 
 .qual-btn {
   padding: 1rem 2rem;
-  border: 2px solid #007bff;
+  border: 2px solid var(--accent);
   border-radius: 8px;
-  background: #f4f6fc;
-  color: #007bff;
+  background: rgba(0,0,0,0.03);
+  color: var(--accent);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -98,12 +98,12 @@
 }
 
 .qual-btn:hover {
-  background: #e0eafc;
-  color: #0056b3;
+  background: rgba(0,123,255,0.06);
+  color: #055aa8;
 }
 
 .qual-btn.active {
-  background: linear-gradient(90deg, #007bff 0%, #00c6ff 100%);
+  background: linear-gradient(90deg, var(--accent) 0%, #00c6ff 100%);
   color: #fff;
   box-shadow: 0 4px 12px rgba(0,123,255,0.12);
 }
@@ -133,8 +133,8 @@
 .resume-label {
   display: inline-block;
   padding: 1rem 2rem;
-  background: #f8f9fa;
-  border: 2px dashed #007bff;
+  background: rgba(0,0,0,0.03);
+  border: 2px dashed var(--accent);
   border-radius: 8px;
   cursor: pointer;
   color: #666;
@@ -143,8 +143,8 @@
 }
 
 .resume-label:hover {
-  background: #e0eafc;
-  color: #007bff;
+  background: rgba(0,123,255,0.04);
+  color: var(--accent);
 }
 
 .resume-error {
@@ -166,7 +166,7 @@
 }
 
 .jobs-section {
-  background: #fff;
+  background: var(--surface);
   border-radius: 16px;
   box-shadow: 0 4px 16px rgba(0,123,255,0.08);
   padding: 2rem;
@@ -175,7 +175,7 @@
 
 .jobs-section h2 {
   font-size: 2rem;
-  color: #007bff;
+  color: var(--accent);
   font-weight: 700;
   margin-bottom: 2rem;
   letter-spacing: 1px;
@@ -188,7 +188,7 @@
 }
 
 .jobs-section-category {
-  background: #fff;
+  background: var(--surface);
   border-radius: 16px;
   padding: 2rem;
   box-shadow: 0 4px 16px rgba(0,123,255,0.08);
@@ -205,7 +205,7 @@
 
 .section-header h3 {
   font-size: 1.5rem;
-  color: #2c3e50;
+  color: var(--text);
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -217,10 +217,10 @@
 }
 
 .section-count {
-  background: #f8f9fa;
+  background: rgba(0,0,0,0.03);
   padding: 0.5rem 1rem;
   border-radius: 20px;
-  color: #007bff;
+  color: var(--accent);
   font-weight: 600;
   font-size: 0.9rem;
 }
@@ -233,7 +233,7 @@
 }
 
 .job-card {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e0eafc 100%);
+  background: var(--surface);
   border-radius: 16px;
   padding: 2rem 1.5rem;
   box-shadow: 0 2px 8px rgba(0, 123, 255, 0.08);
@@ -243,7 +243,7 @@
   gap: 0.75rem;
   position: relative;
   overflow: hidden;
-  border: 1px solid #e0eafc;
+  border: 1px solid rgba(0,0,0,0.04);
   animation: fadeInUp 0.5s;
 }
 
@@ -255,7 +255,7 @@
 .job-card:hover {
   transform: translateY(-8px) scale(1.02);
   box-shadow: 0 8px 24px rgba(0,123,255,0.18);
-  border-color: #007bff;
+  border-color: var(--accent);
 }
 
 .job-title-container {
@@ -266,7 +266,7 @@
 
 .job-card h3 {
   margin: 0;
-  color: #007bff;
+  color: var(--accent);
   font-size: 1.35rem;
   font-weight: 700;
 }
@@ -314,19 +314,19 @@
 }
 
 .company {
-  color: #333;
+  color: var(--text);
   font-weight: 600;
   font-size: 1.1rem;
 }
 
 .qualification {
-  color: #0056b3;
+  color: #055aa8;
   font-size: 0.95rem;
   font-weight: 500;
 }
 
 .location, .job-type, .salary {
-  color: #555;
+  color: var(--muted);
   font-size: 0.95rem;
   display: flex;
   align-items: center;
@@ -334,7 +334,7 @@
 }
 
 .description {
-  color: #555;
+  color: var(--muted);
   margin-bottom: 1rem;
   line-height: 1.5;
 }
@@ -347,7 +347,7 @@
 }
 
 .skill-tag {
-  background: linear-gradient(90deg, #007bff 0%, #00c6ff 100%);
+  background: linear-gradient(90deg, var(--accent) 0%, #00c6ff 100%);
   color: #fff;
   padding: 0.25rem 0.75rem;
   border-radius: 15px;
@@ -359,7 +359,7 @@
 .apply-btn {
   width: 100%;
   padding: 0.85rem;
-  background: linear-gradient(90deg, #007bff 0%, #00c6ff 100%);
+  background: linear-gradient(90deg, var(--accent) 0%, #00c6ff 100%);
   color: white;
   border: none;
   border-radius: 8px;
@@ -377,8 +377,8 @@
 }
 
 .apply-btn:disabled {
-  background: #e0eafc;
-  color: #aaa;
+  background: rgba(0,0,0,0.03);
+  color: rgba(0,0,0,0.4);
   cursor: not-allowed;
 }
 
@@ -386,9 +386,9 @@
   display: flex;
   justify-content: space-between;
   font-size: 0.85rem;
-  color: #666;
+  color: var(--muted);
   margin-top: 1rem;
-  border-top: 1px solid #eee;
+  border-top: 1px solid rgba(0,0,0,0.06);
   padding-top: 1rem;
 }
 
@@ -399,13 +399,6 @@
 .deadline {
   color: #dc3545;
   font-weight: 600;
-}
-
-/* Featured job card style for first job */
-.job-card:first-child {
-  border: 2px solid #00c6ff;
-  box-shadow: 0 8px 32px rgba(0,198,255,0.12);
-  background: linear-gradient(135deg, #e0eafc 0%, #fff 100%);
 }
 
 /* Responsive adjustments */

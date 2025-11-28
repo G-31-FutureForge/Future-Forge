@@ -7,10 +7,10 @@
 }
 
 .resume-builder {
-	background: #ffffff;
+	background: var(--surface);
 	border-radius: 16px;
-	box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-	border: 1px solid #f0f0f0;
+	box-shadow: 0 10px 30px var(--shadow);
+	border: 1px solid rgba(0,0,0,0.06);
 	position: relative;
 }
 
@@ -57,8 +57,8 @@
 }
 
 .template-card {
-	background: #fff;
-	border: 1px solid #eceff3;
+	background: var(--surface);
+	border: 1px solid rgba(0,0,0,0.06);
 	border-radius: 12px;
 	box-shadow: 0 6px 20px rgba(17, 24, 39, 0.06);
 	cursor: pointer;
@@ -74,7 +74,7 @@
 .template-preview {
 	height: 320px;
 	border-radius: 12px 12px 0 0;
-	background: linear-gradient(180deg, #f6f8ff 0%, #ffffff 100%);
+	background: linear-gradient(180deg, rgba(246,248,255,0.6) 0%, var(--surface) 100%);
 	position: relative;
 	overflow: hidden;
 }
@@ -88,11 +88,11 @@
 
 .template-meta { padding: 14px 16px 16px 16px; }
 .template-meta h3 { margin: 0 0 6px 0; font-size: 1.05rem; }
-.template-meta p { margin: 0; color: #6b7280; font-size: 0.92rem; }
+.template-meta p { margin: 0; color: var(--muted); font-size: 0.92rem; }
 
 .rb-form {
 	padding: 28px;
-	border-right: 1px solid #f5f5f5;
+	border-right: 1px solid rgba(0,0,0,0.04);
 }
 
 .rb-topbar {
@@ -103,12 +103,12 @@
 }
 
 .rb-chip {
-	background: #f3f4f6;
-	border: 1px solid #e5e7eb;
+	background: rgba(0,0,0,0.04);
+	border: 1px solid rgba(0,0,0,0.06);
 	border-radius: 999px;
 	padding: 6px 10px;
 	font-size: 0.85rem;
-	color: #374151;
+	color: var(--text);
 }
 
 .rb-form h2 {
@@ -116,7 +116,7 @@
 	font-size: 1.1rem;
 	text-transform: uppercase;
 	letter-spacing: 0.6px;
-	color: #374151;
+	color: var(--text);
 }
 
 .rb-row {
@@ -127,30 +127,30 @@
 
 .rb-row label {
 	font-size: 0.9rem;
-	color: #444;
+	color: var(--text);
 	margin-bottom: 6px;
 }
 
 .rb-row input,
 .rb-row textarea {
-	border: 1px solid #e5e7eb;
+	border: 1px solid rgba(0,0,0,0.06);
 	border-radius: 8px;
 	padding: 10px 12px;
 	font-family: inherit;
 	font-size: 0.95rem;
-	background: #ffffff;
+	background: var(--surface);
 	transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
 .rb-row input::placeholder,
 .rb-row textarea::placeholder {
-	color: #9aa3af;
+	color: rgba(0,0,0,0.38);
 }
 
 .rb-row input:focus,
 .rb-row textarea:focus {
 	outline: none;
-	border-color: #7c89ff;
+	border-color: var(--accent);
 	box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.12);
 }
 
@@ -162,11 +162,11 @@
 }
 
 .rb-card {
-	border: 1px solid #eceff3;
+	border: 1px solid rgba(0,0,0,0.06);
 	border-radius: 12px;
 	padding: 18px;
 	margin-bottom: 14px;
-	background: #fbfbfd;
+	background: var(--surface);
 	box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
 }
 
@@ -184,13 +184,13 @@
 }
 
 .rb-btn {
-	background: #f3f4f6;
+	background: rgba(0,0,0,0.04);
 	border: none;
 	border-radius: 8px;
 	padding: 10px 14px;
 	cursor: pointer;
 	font-weight: 600;
-	color: #111827;
+	color: var(--text);
 	transition: transform 0.15s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
@@ -210,11 +210,11 @@
 .resume {
 	max-width: 790px;
 	margin: 0 auto;
-	border: 1px solid #e5e7eb;
+	border: 1px solid rgba(0,0,0,0.06);
 	padding: 28px;
 	border-radius: 12px;
-	background: #fff;
-	box-shadow: 0 8px 24px rgba(17, 24, 39, 0.08);
+	background: var(--surface);
+	box-shadow: 0 8px 24px var(--shadow);
 }
 
 .resume header h1 { margin: 0; font-size: 2rem; font-weight: 700; letter-spacing: 0.2px; }

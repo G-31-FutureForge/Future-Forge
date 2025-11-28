@@ -11,14 +11,14 @@
 
 .career-header h1 {
     font-size: 2.5rem;
-    color: #1a202c;
+    color: var(--text);
     margin-bottom: 1rem;
     font-weight: 700;
 }
 
 .career-header p {
     font-size: 1.2rem;
-    color: #718096;
+    color: var(--muted);
 }
 
 .career-content {
@@ -27,16 +27,16 @@
 }
 
 .career-status-section, .jobs-exploration-section, .courses-section {
-    background: white;
+    background: var(--surface);
     padding: 2rem;
     border-radius: 15px;
-    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
-    border: 1px solid #e2e8f0;
+    box-shadow: 0 5px 20px var(--shadow);
+    border: 1px solid rgba(0,0,0,0.06);
 }
 
 .career-status-section h2, .jobs-exploration-section h2, .courses-section h2 {
     font-size: 1.8rem;
-    color: #1a202c;
+    color: var(--text);
     margin-bottom: 1.5rem;
     font-weight: 600;
 }
@@ -50,7 +50,7 @@
 .job-status-card {
     padding: 1.5rem;
     border-radius: 10px;
-    border-left: 4px solid #e2e8f0;
+    border-left: 4px solid rgba(0,0,0,0.06);
 }
 
 .job-status-card.applied {
@@ -100,7 +100,7 @@
 
 .course-card {
     padding: 1.5rem;
-    border: 1px solid #e2e8f0;
+    border: 1px solid rgba(0,0,0,0.06);
     border-radius: 10px;
     display: flex;
     justify-content: space-between;
@@ -109,17 +109,17 @@
 
 .course-card h4 {
     margin: 0;
-    color: #1a202c;
+    color: var(--text);
 }
 
 .course-card p {
     margin: 0.25rem 0 0 0;
-    color: #718096;
+    color: var(--muted);
 }
 
 .btn-small {
     padding: 0.5rem 1rem;
-    background: #667eea;
+    background: var(--accent);
     color: white;
     border: none;
     border-radius: 6px;

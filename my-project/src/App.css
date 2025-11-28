@@ -6,8 +6,55 @@
 
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #ecf0f1;
-  color: #50372c;
+  background-color: var(--bg);
+  color: var(--text);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme variables */
+:root {
+  --bg: #ecf0f1;
+  --bg-rgb: 236,240,241;
+  --surface: #ffffff;
+  --surface-rgb: 255,255,255;
+  --surface-alt: #f7f9fc;
+  --muted: #6c757d;
+  --accent: #6366f1;
+  --accent-rgb: 99,102,241;
+  --accent-strong: #7c3aed;
+  --accent-contrast: #f8fafc;
+  --text: #1e293b;
+  --text-rgb: 30,41,59;
+  --shadow: 0 10px 30px rgba(15,23,42,0.12);
+  --border: rgba(15,23,42,0.08);
+  --overlay: rgba(15,23,42,0.55);
+  --hero-gradient-start: #f8fafc;
+  --hero-gradient-end: #edf2f7;
+  --cta-gradient-start: #1a202c;
+  --cta-gradient-end: #2d3748;
+}
+
+/* Dark theme overrides */
+[data-theme="dark"] {
+  --bg: #030712;
+  --bg-rgb: 3,7,18;
+  --surface: #0f1720;
+  --surface-rgb: 15,23,32;
+  --surface-alt: #131c2a;
+  --muted: #a0aec0;
+  --accent: #7dd3fc;
+  --accent-rgb: 125,211,252;
+  --accent-strong: #38bdf8;
+  --accent-contrast: #f8fafc;
+  --text: #e2e8f0;
+  --text-rgb: 226,232,240;
+  --shadow: 0 25px 45px rgba(0,0,0,0.55);
+  --border: rgba(148,163,184,0.35);
+  --overlay: rgba(3,7,18,0.75);
+  --hero-gradient-start: #0b1220;
+  --hero-gradient-end: #111b2a;
+  --cta-gradient-start: #0f172a;
+  --cta-gradient-end: #0b1120;
 }
 
 .App {
@@ -36,7 +83,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--overlay);
   z-index: 999;
   backdrop-filter: blur(3px);
 }
@@ -46,4 +93,55 @@ body {
   .main-content.sidebar-open {
     margin-left: 0;
   }
+}
+
+/* Generic component mappings to theme variables so existing CSS mostly adapts */
+a { color: var(--accent); }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-strong), var(--accent));
+  color: var(--accent-contrast);
+  border: none;
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.btn-primary:hover {
+  filter: brightness(0.95);
+  transform: translateY(-1px);
+}
+
+.bg-white, .card, .panel, .nav-profile-dropdown, .dropdown-item.user-info {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+}
+
+.muted, .text-muted {
+  color: var(--muted) !important;
+}
+
+input, textarea, select {
+  background: transparent;
+  color: var(--text);
+  border-color: var(--border);
+}
+
+/* Make some common light backgrounds adapt */
+.light-bg {
+  background: var(--bg) !important;
+}
+
+/* Accent borders */
+.accent-border {
+  border-color: var(--accent) !important;
+}
+
+.surface-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  color: var(--text);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }

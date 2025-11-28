@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 
-const Navbar = ({ toggleSidebar }) => {
+const Navbar = ({ toggleSidebar, theme, toggleTheme }) => {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -133,6 +133,14 @@ const Navbar = ({ toggleSidebar }) => {
 
         {/* Right Section - Navigation Links */}
         <div className="navbar-right">
+          <button
+            className="theme-toggle-btn"
+            onClick={toggleTheme}
+            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            aria-label="Toggle theme"
+          >
+            {theme === 'dark' ? '🌞' : '🌙'}
+          </button>
           {user ? (
             // Show when user is logged in
             <>
