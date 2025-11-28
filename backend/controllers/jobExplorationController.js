@@ -43,17 +43,22 @@ export const exploreJobs = async (req, res) => {
     const result = await fetchJoobleJobs(searchParams);
 
     if (!result.success) {
-      console.error('Jooble API error:', result.error);
-      return res.status(500).json({
-        success: false,
-        error: result.error || 'Failed to fetch jobs from Jooble',
+      // If Jooble is down or times out, degrade gracefully instead of 500
+      console.error('Jooble API error, falling back to empty job list:', result.error);
+
+      return res.status(200).json({
+        success: true,
         jobs: [],
-        message: 'Unable to fetch jobs. Please try again later.',
+        totalCount: 0,
+        totalPages: 1,
+        currentPage: parseInt(page),
+        source: 'jooble-fallback',
+        message: 'Jooble API is currently unavailable. Showing no live private jobs.',
       });
     }
 
     // Transform Jooble jobs to our format
-    const transformedJobs = transformJoobleJobs(result.jobs);
+    const transformedJobs = transformJoobleJobs(result.jobs || []);
 
     // Filter jobs by qualification if needed
     let filteredJobs = transformedJobs;

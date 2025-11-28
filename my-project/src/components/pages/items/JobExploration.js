@@ -75,6 +75,112 @@ const JobCard = ({ job, selectedQualification, resume, handleApply }) => {
   );
 };
 
+const MatchedJobCard = ({ job, handleApply }) => {
+  const matchData = job.matchData || {};
+  const matchPercentage = matchData.matchPercentage || 0;
+  const getMatchColor = (percentage) => {
+    if (percentage >= 80) return '#2ecc71'; // Green
+    if (percentage >= 60) return '#f39c12'; // Orange
+    if (percentage >= 40) return '#e74c3c'; // Red
+    return '#95a5a6'; // Gray
+  };
+
+  return (
+    <div key={job._id} className="matched-job-card">
+      <div className="match-score-badge" style={{ borderColor: getMatchColor(matchPercentage) }}>
+        <div className="match-percentage" style={{ color: getMatchColor(matchPercentage) }}>
+          {matchPercentage}%
+        </div>
+        <div className="match-label">Match</div>
+      </div>
+
+      <div className="job-card-header">
+        <div className="job-title-container">
+          <h3 className="job-title">{job.title}</h3>
+          <div className="job-badges">
+            <span className={`job-badge ${job.jobType.toLowerCase().replace(' ', '-')}`}>{job.jobType}</span>
+            <span className={`source-badge ${job.source.toLowerCase().replace(' ', '-')}`}>{job.source}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div className="job-company">
+        <span className="company-icon">🏢</span>
+        {job.company}
+      </div>
+
+      <div className="job-details">
+        <div className="job-detail">
+          <span className="detail-icon">🎓</span>
+          <span>Required: {job.requiredQualification}</span>
+        </div>
+        <div className="job-detail">
+          <span className="detail-icon">📍</span>
+          <span>{job.location}</span>
+        </div>
+        <div className="job-detail">
+          <span className="detail-icon">💰</span>
+          <span>{job.salary}</span>
+        </div>
+      </div>
+
+      <p className="job-description">{job.description}</p>
+
+      {/* Show matched skills */}
+      {matchData.matchedSkills && matchData.matchedSkills.length > 0 && (
+        <div className="skills-section">
+          <h4>Your Skills Match:</h4>
+          <div className="skills">
+            {matchData.matchedSkills.map((skill, index) => (
+              <span key={index} className="skill-tag matched-skill">✓ {skill}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Show missing skills */}
+      {matchData.missingSkills && matchData.missingSkills.length > 0 && (
+        <div className="skills-section">
+          <h4>Skills to Develop ({matchData.missingSkills.length}):</h4>
+          <div className="skills">
+            {matchData.missingSkills.map((skill, index) => (
+              <span key={index} className="skill-tag missing-skill">○ {skill}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="match-stats">
+        <div className="stat">
+          <span className="stat-label">Matched Skills:</span>
+          <span className="stat-value">{matchData.totalMatchedSkills}/{matchData.totalRequiredSkills}</span>
+        </div>
+      </div>
+
+      <div className="job-dates">
+        <div className="date-info">
+          <span className="date-label">Posted:</span>
+          <span>{new Date(job.postedDate).toLocaleDateString()}</span>
+        </div>
+        {job.applicationDeadline && (
+          <div className="date-info">
+            <span className="date-label">Deadline:</span>
+            <span>{new Date(job.applicationDeadline).toLocaleDateString()}</span>
+          </div>
+        )}
+      </div>
+
+      <button 
+        className="apply-btn matched-apply"
+        onClick={() => handleApply(job)}
+        title="Apply for this position"
+      >
+        Apply Now
+      </button>
+    </div>
+  );
+};
+
 const JobExploration = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -89,6 +195,9 @@ const JobExploration = () => {
   const [videoUrl, setVideoUrl] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [sectorFilter, setSectorFilter] = useState('all'); // all | government | private
+  const [matchedJobs, setMatchedJobs] = useState([]);
+  const [isMatchingResume, setIsMatchingResume] = useState(false);
+  const [matchStats, setMatchStats] = useState(null);
 
   // Load jobs based on qualification and search
   useEffect(() => {
@@ -296,19 +405,97 @@ const JobExploration = () => {
     setSectorFilter(prev => (prev === sector ? 'all' : sector));
   };
 
-  const handleResumeUpload = (event) => {
+  const handleResumeUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
       if (file.type === 'application/pdf') {
         if (file.size <= 5 * 1024 * 1024) { // 5MB limit
           setResume(file);
           setResumeError('');
+          
+          // Match resume with private sector jobs
+          await matchResumeWithPrivateJobs(file);
         } else {
           setResumeError('Resume file size should be less than 5MB');
         }
       } else {
         setResumeError('Please upload a PDF file');
       }
+    }
+  };
+
+  const matchResumeWithPrivateJobs = async (resumeFile) => {
+    try {
+      setIsMatchingResume(true);
+      setResumeError('');
+      
+      // Get only private sector jobs with skills
+      const privateJobs = filteredJobs.filter(
+        job => job.jobType === 'Private Sector' && job.skills && job.skills.length > 0
+      );
+
+      if (privateJobs.length === 0) {
+        console.log('No private sector jobs with skills found');
+        setMatchedJobs([]);
+        setMatchStats({ totalJobs: 0, matchedJobs: 0 });
+        setIsMatchingResume(false);
+        return;
+      }
+
+      console.log(`Matching resume with ${privateJobs.length} private sector jobs`);
+
+      // Create FormData for file upload
+      const formData = new FormData();
+      formData.append('resume', resumeFile);
+      formData.append('jobs', JSON.stringify(privateJobs));
+
+      console.log('FormData prepared:', {
+        resume: resumeFile.name,
+        jobsCount: privateJobs.length
+      });
+
+      const response = await fetch('http://localhost:5000/api/match/resume-jobs', {
+        method: 'POST',
+        body: formData
+      });
+
+      console.log('Response status:', response.status);
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        console.error('Server error:', errorData);
+        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      }
+
+      const matchResult = await response.json();
+      
+      if (!matchResult.success) {
+        console.error('Match result indicates failure:', matchResult);
+        throw new Error(matchResult.error || 'Matching failed');
+      }
+
+      console.log('Match result:', matchResult);
+      
+      // Filter to only show jobs with at least one skill match
+      const jobsWithMatches = matchResult.matchedJobs.filter(
+        job => job.matchData?.matchedSkills?.length > 0
+      );
+
+      setMatchedJobs(jobsWithMatches);
+      setMatchStats({
+        totalJobs: matchResult.totalJobsProcessed,
+        matchedJobs: jobsWithMatches.length,
+        resumeSkills: matchResult.resumeSkills
+      });
+
+      console.log(`✅ Found ${jobsWithMatches.length} jobs matching your resume skills`);
+    } catch (err) {
+      console.error('Error matching resume:', err);
+      setResumeError(err.message || 'Error processing resume. Please ensure your PDF contains readable text and try again.');
+      setMatchedJobs([]);
+      setMatchStats(null);
+    } finally {
+      setIsMatchingResume(false);
     }
   };
 
@@ -494,6 +681,53 @@ const JobExploration = () => {
               <p className="resume-hint">Max file size: 5MB, PDF format only</p>
             </div>
           )}
+
+          {/* Matched Jobs Section - Shows when resume is uploaded */}
+          {selectedQualification === 'graduate' && matchedJobs.length > 0 && (
+            <div className="matched-jobs-section">
+              <h2>
+                <span className="match-icon">⭐</span>
+                Jobs Matching Your Skills
+              </h2>
+              <p className="match-section-description">
+                Based on your resume, we found {matchStats?.matchedJobs} jobs that match your skills
+              </p>
+              <div className="matched-jobs-preview">
+                {matchedJobs.slice(0, 3).map((job) => (
+                  <div key={job._id} className="matched-job-preview">
+                    <div className="preview-match-score">
+                      <div className="score-circle" style={{ 
+                        background: `conic-gradient(#2ecc71 0% ${job.matchData?.matchPercentage || 0}%, #ecf0f1 ${job.matchData?.matchPercentage || 0}% 100%)`
+                      }}>
+                        <span>{job.matchData?.matchPercentage || 0}%</span>
+                      </div>
+                    </div>
+                    <div className="preview-job-info">
+                      <h4>{job.title}</h4>
+                      <p className="preview-company">{job.company}</p>
+                      <p className="preview-location">📍 {job.location}</p>
+                      {job.matchData?.matchedSkills?.length > 0 && (
+                        <div className="preview-skills">
+                          <small>Matched: {job.matchData.matchedSkills.slice(0, 2).join(', ')}{job.matchData.matchedSkills.length > 2 ? '...' : ''}</small>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button className="view-all-matches-btn" onClick={() => setSectorFilter('private')}>
+                View All Matches ({matchStats?.matchedJobs})
+              </button>
+            </div>
+          )}
+
+          {/* Loading indicator while matching */}
+          {isMatchingResume && (
+            <div className="matching-loader">
+              <div className="loader-spinner"></div>
+              <p>Analyzing your resume and matching with jobs...</p>
+            </div>
+          )}
         </div>
 
         <div className="jobs-section">
@@ -569,23 +803,41 @@ const JobExploration = () => {
                   <h3>
                     <span className="section-icon">🏢</span>
                     Private Sector Jobs
+                    {resume && matchedJobs.length > 0 && (
+                      <span className="badge-matched">Based on Your Resume</span>
+                    )}
                   </h3>
                   <span className="section-count">
-                    {filteredJobs.filter(job => job.jobType === 'Private Sector').length} positions
+                    {resume && matchedJobs.length > 0 
+                      ? `${matchedJobs.length} matches`
+                      : `${filteredJobs.filter(job => job.jobType === 'Private Sector').length} positions`
+                    }
                   </span>
                 </div>
                 <div className="jobs-grid">
-                  {filteredJobs
-                    .filter(job => job.jobType === 'Private Sector')
-                    .map((job) => (
-                      <JobCard 
+                  {resume && matchedJobs.length > 0 ? (
+                    // Show matched jobs first
+                    matchedJobs.map((job) => (
+                      <MatchedJobCard 
                         key={job._id}
                         job={job}
-                        selectedQualification={selectedQualification}
-                        resume={resume}
                         handleApply={handleApply}
                       />
-                    ))}
+                    ))
+                  ) : (
+                    // Show all private sector jobs
+                    filteredJobs
+                      .filter(job => job.jobType === 'Private Sector')
+                      .map((job) => (
+                        <JobCard 
+                          key={job._id}
+                          job={job}
+                          selectedQualification={selectedQualification}
+                          resume={resume}
+                          handleApply={handleApply}
+                        />
+                      ))
+                  )}
                 </div>
               </div>
               )}
