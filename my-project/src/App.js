@@ -1,11 +1,13 @@
+// src/App.js
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/common/Navbar';
 import Sidebar from './components/common/Sidebar';
 import Home from './components/pages/Home';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
-import Dashboard from './components/pages/items/Dashboard';
+import Dashboard from './components/pages/items/Dashboard'; // Existing dashboard
+import RecruiterDashboard from './components/pages/items/RecruiterDashboard'; // New recruiter dashboard
 import Career from './components/pages/items/Career';
 import Profile from './components/pages/items/Profile';
 import JobExploration from './components/pages/items/JobExploration';
@@ -15,6 +17,24 @@ import SkillGapDashboard from './components/pages/items/SkillGapDashboard';
 import ResumeBuilder from './components/pages/items/ResumeBuilder';
 import UpskillCourses from './components/pages/items/UpskillCourses';
 import './App.css';
+
+// Protected Route Component with User Type Check
+const ProtectedRoute = ({ children, allowedUserTypes }) => {
+  const token = localStorage.getItem('token');
+  const userType = localStorage.getItem('userType');
+  
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
+  
+  // Check if route is restricted to specific user types
+  if (allowedUserTypes && !allowedUserTypes.includes(userType)) {
+    // Redirect to appropriate dashboard
+    return <Navigate to={userType === 'recruiter' ? '/recruiter-dashboard' : '/dashboard'} />;
+  }
+  
+  return children;
+};
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -66,24 +86,98 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            
+            {/* Student Dashboard - Existing Dashboard.js */}
             <Route 
               path="/dashboard" 
               element={
-                <Dashboard 
-                  sidebarOpen={sidebarOpen}
-                  toggleSidebar={toggleSidebar}
-                  closeSidebar={closeSidebar}
-                />
+                <ProtectedRoute allowedUserTypes={['student']}>
+                  <Dashboard />
+                </ProtectedRoute>
               } 
             />
-            <Route path="/career" element={<Career />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/jobs-exploration" element={<JobExploration />} />
-            <Route path="/skill-gap-analyzer" element={<SkillGapAnalyzer />} />
-            <Route path="/skill-gap-dashboard" element={<SkillGapDashboard />} />
-            <Route path="/upskill-courses" element={<UpskillCourses />} />
-            <Route path="/resume-builder" element={<ResumeBuilder />} />
-            <Route path="/terms" element={<TermsOfService />} />
+            
+            {/* Recruiter Dashboard - New Component */}
+            <Route 
+              path="/recruiter-dashboard" 
+              element={
+                <ProtectedRoute allowedUserTypes={['recruiter']}>
+                  <RecruiterDashboard 
+                    sidebarOpen={sidebarOpen}
+                    toggleSidebar={toggleSidebar}
+                    closeSidebar={closeSidebar}
+                  />
+                </ProtectedRoute>
+              } 
+            />
+            
+            {/* Common Routes (accessible by both) */}
+            <Route 
+              path="/profile" 
+              element={
+                <ProtectedRoute>
+                  <Profile />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/terms" 
+              element={
+                <ProtectedRoute>
+                  <TermsOfService />
+                </ProtectedRoute>
+              } 
+            />
+            
+            {/* Student-specific routes */}
+            <Route 
+              path="/career" 
+              element={
+                <ProtectedRoute allowedUserTypes={['student']}>
+                  <Career />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/jobs-exploration" 
+              element={
+                <ProtectedRoute allowedUserTypes={['student']}>
+                  <JobExploration />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/skill-gap-analyzer" 
+              element={
+                <ProtectedRoute allowedUserTypes={['student']}>
+                  <SkillGapAnalyzer />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/skill-gap-dashboard" 
+              element={
+                <ProtectedRoute allowedUserTypes={['student']}>
+                  <SkillGapDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/resume-builder" 
+              element={
+                <ProtectedRoute allowedUserTypes={['student']}>
+                  <ResumeBuilder />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/upskill-courses" 
+              element={
+                <ProtectedRoute allowedUserTypes={['student']}>
+                  <UpskillCourses />
+                </ProtectedRoute>
+              } 
+            />
           </Routes>
         </main>
       </div>
