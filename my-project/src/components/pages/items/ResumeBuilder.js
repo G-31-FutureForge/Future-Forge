@@ -56,7 +56,15 @@ const ResumeBuilder = () => {
   };
 
   const handlePrint = () => {
-    window.print();
+    // Ensure template is set before printing
+    if (!template) {
+      alert('Please select a template first');
+      return;
+    }
+    // Small delay to ensure DOM is ready
+    setTimeout(() => {
+      window.print();
+    }, 100);
   };
 
   return (
@@ -208,7 +216,189 @@ const ResumeBuilder = () => {
 
           <div className="rb-preview print-area">
             <div className={`resume ${template ? `tmpl-${template}` : ''}`}>
-              {template === 'sidebar' ? (
+              {template === 't1' ? (
+                <>
+                  <div className="tmpl-t1-grid">
+                    <aside className="tmpl-t1-left">
+                      <div className="tmpl-t1-photo"></div>
+                      <header>
+                        <h1>{personal.fullName || 'Your Name'}</h1>
+                        <p className="muted">{personal.title || 'Professional Title'}</p>
+                      </header>
+                      <div className="tmpl-t1-contact">
+                        <p>{personal.email}</p>
+                        <p>{personal.phone}</p>
+                        {personal.location && <p>{personal.location}</p>}
+                      </div>
+                      {skills && (
+                        <section>
+                          <h3>Skills</h3>
+                          <ul className="skills-list">
+                            {skills.split(',').map((s, i) => (
+                              <li key={`skill-t1-${i}`}>{s.trim()}</li>
+                            ))}
+                          </ul>
+                        </section>
+                      )}
+                    </aside>
+                    <main className="tmpl-t1-right">
+                      {summary && (
+                        <section>
+                          <h3>About Me</h3>
+                          <p>{summary}</p>
+                        </section>
+                      )}
+                      {experiences.filter((e) => e.company || e.title || e.description).length > 0 && (
+                        <section>
+                          <h3>Experience</h3>
+                          {experiences.map((exp, i) => (
+                            <div className="exp-item" key={`exp-t1-${i}`}>
+                              <h4>{exp.title || 'Job Title'}</h4>
+                              <p className="muted">{exp.company || 'Company'}</p>
+                              <p className="muted">{[exp.start, exp.end].filter(Boolean).join(' - ')}</p>
+                              {exp.description && <p>{exp.description}</p>}
+                            </div>
+                          ))}
+                        </section>
+                      )}
+                      {educations.filter((e) => e.school || e.degree || e.description).length > 0 && (
+                        <section>
+                          <h3>Education</h3>
+                          {educations.map((ed, i) => (
+                            <div className="ed-item" key={`ed-t1-${i}`}>
+                              <h4>{ed.degree || 'Degree'}</h4>
+                              <p className="muted">{ed.school || 'School'}</p>
+                              <p className="muted">{[ed.start, ed.end].filter(Boolean).join(' - ')}</p>
+                              {ed.description && <p>{ed.description}</p>}
+                            </div>
+                          ))}
+                        </section>
+                      )}
+                    </main>
+                  </div>
+                </>
+              ) : template === 't2' ? (
+                <>
+                  <div className="tmpl-t2-grid">
+                    <aside className="tmpl-t2-left">
+                      <div className="tmpl-t2-photo"></div>
+                      <header>
+                        <h1>{personal.fullName || 'Your Name'}</h1>
+                        <p className="muted">{personal.title || 'Professional Title'}</p>
+                      </header>
+                      <div className="tmpl-t2-contact">
+                        <h3>CONTACT</h3>
+                        <p>{personal.email}</p>
+                        <p>{personal.phone}</p>
+                        {personal.location && <p>{personal.location}</p>}
+                      </div>
+                      {skills && (
+                        <section>
+                          <h3>SKILLS</h3>
+                          <ul className="skills-list tmpl-t2-skills">
+                            {skills.split(',').map((s, i) => (
+                              <li key={`skill-t2-${i}`}>{s.trim()}</li>
+                            ))}
+                          </ul>
+                        </section>
+                      )}
+                    </aside>
+                    <main className="tmpl-t2-right">
+                      {summary && (
+                        <section>
+                          <h3>SUMMARY</h3>
+                          <p>{summary}</p>
+                        </section>
+                      )}
+                      {experiences.filter((e) => e.company || e.title || e.description).length > 0 && (
+                        <section>
+                          <h3>EXPERIENCE</h3>
+                          {experiences.map((exp, i) => (
+                            <div className="exp-item" key={`exp-t2-${i}`}>
+                              <h4>{exp.title || 'Job Title'}{exp.company ? ` - ${exp.company}` : ''}</h4>
+                              <p className="muted">{[exp.start, exp.end].filter(Boolean).join(' - ')}</p>
+                              {exp.description && <p>{exp.description}</p>}
+                            </div>
+                          ))}
+                        </section>
+                      )}
+                      {educations.filter((e) => e.school || e.degree || e.description).length > 0 && (
+                        <section>
+                          <h3>EDUCATION</h3>
+                          {educations.map((ed, i) => (
+                            <div className="ed-item" key={`ed-t2-${i}`}>
+                              <h4>{ed.degree || 'Degree'}{ed.school ? ` - ${ed.school}` : ''}</h4>
+                              <p className="muted">{[ed.start, ed.end].filter(Boolean).join(' - ')}</p>
+                              {ed.description && <p>{ed.description}</p>}
+                            </div>
+                          ))}
+                        </section>
+                      )}
+                    </main>
+                  </div>
+                </>
+              ) : template === 't3' ? (
+                <>
+                  <header className="tmpl-t3-header">
+                    <div className="tmpl-t3-header-content">
+                      <div className="tmpl-t3-header-left">
+                        <div className="tmpl-t3-photo"></div>
+                        <div className="tmpl-t3-header-text">
+                          <h1>{personal.fullName || 'Your Name'}</h1>
+                          <p className="muted">{personal.title || 'Professional Title'}</p>
+                          <p className="contact">{[personal.phone, personal.email].filter(Boolean).join(' \u2022 ')}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </header>
+                  <div className="tmpl-t3-content">
+                    <div className="tmpl-t3-left">
+                      {experiences.filter((e) => e.company || e.title || e.description).length > 0 && (
+                        <section>
+                          <h3>Work Experience</h3>
+                          {experiences.map((exp, i) => (
+                            <div className="exp-item" key={`exp-t3-${i}`}>
+                              <h4>{exp.title || 'Job Title'}{exp.company ? `, ${exp.company}` : ''}</h4>
+                              <p className="muted">{[exp.start, exp.end].filter(Boolean).join(' - ')}</p>
+                              {exp.description && <p>{exp.description}</p>}
+                            </div>
+                          ))}
+                        </section>
+                      )}
+                      {educations.filter((e) => e.school || e.degree || e.description).length > 0 && (
+                        <section>
+                          <h3>Education History</h3>
+                          {educations.map((ed, i) => (
+                            <div className="ed-item" key={`ed-t3-${i}`}>
+                              <h4>{ed.degree || 'Degree'}{ed.school ? ` | ${ed.school}` : ''}</h4>
+                              <p className="muted">{[ed.start, ed.end].filter(Boolean).join(' - ')}</p>
+                              {ed.description && <p>{ed.description}</p>}
+                            </div>
+                          ))}
+                        </section>
+                      )}
+                    </div>
+                    <div className="tmpl-t3-right">
+                      {skills && (
+                        <section>
+                          <h3>Relevant Skills</h3>
+                          <ul className="skills-list">
+                            {skills.split(',').map((s, i) => (
+                              <li key={`skill-t3-${i}`}>{s.trim()}</li>
+                            ))}
+                          </ul>
+                        </section>
+                      )}
+                      {summary && (
+                        <section>
+                          <h3>Summary</h3>
+                          <p>{summary}</p>
+                        </section>
+                      )}
+                    </div>
+                  </div>
+                </>
+              ) : template === 'sidebar' ? (
                 <>
                   <div className="rs-grid">
                     <aside className="rs-left">

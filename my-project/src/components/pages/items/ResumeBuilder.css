@@ -232,6 +232,390 @@
 }
 
 /* ===== Template style variants for preview ===== */
+/* Template 1 - Two-column with beige left sidebar */
+.resume.tmpl-t1 {
+	padding: 0;
+	border: none;
+}
+
+.resume.tmpl-t1 .tmpl-t1-grid {
+	display: grid;
+	grid-template-columns: 280px 1fr;
+	min-height: 100%;
+}
+
+.resume.tmpl-t1 .tmpl-t1-left {
+	background: #f5f1e8;
+	padding: 24px 20px;
+	border-radius: 12px 0 0 12px;
+}
+
+.resume.tmpl-t1 .tmpl-t1-photo {
+	width: 80px;
+	height: 80px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #d4c5b9 0%, #a08f7f 100%);
+	margin: 0 auto 20px auto;
+}
+
+.resume.tmpl-t1 .tmpl-t1-left header {
+	border: none;
+	padding: 0;
+	margin: 0 0 20px 0;
+	text-align: center;
+}
+
+.resume.tmpl-t1 .tmpl-t1-left header h1 {
+	font-size: 1.4rem;
+	font-weight: 700;
+	color: #2d3748;
+	margin: 0 0 6px 0;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+}
+
+.resume.tmpl-t1 .tmpl-t1-left header .muted {
+	color: #4a5568;
+	font-size: 0.9rem;
+	margin: 0;
+}
+
+.resume.tmpl-t1 .tmpl-t1-contact {
+	margin: 20px 0;
+}
+
+.resume.tmpl-t1 .tmpl-t1-contact p {
+	color: #2d3748;
+	font-size: 0.85rem;
+	margin: 6px 0;
+}
+
+.resume.tmpl-t1 .tmpl-t1-left section {
+	margin-top: 24px;
+}
+
+.resume.tmpl-t1 .tmpl-t1-left h3 {
+	color: #2d3748;
+	font-size: 0.95rem;
+	text-transform: uppercase;
+	letter-spacing: 0.8px;
+	margin: 0 0 12px 0;
+	font-weight: 600;
+}
+
+.resume.tmpl-t1 .tmpl-t1-right {
+	padding: 24px 28px;
+	background: #fff;
+}
+
+.resume.tmpl-t1 .tmpl-t1-right section {
+	margin-top: 24px;
+}
+
+.resume.tmpl-t1 .tmpl-t1-right section:first-child {
+	margin-top: 0;
+}
+
+.resume.tmpl-t1 .tmpl-t1-right h3 {
+	color: #2d3748;
+	font-size: 1rem;
+	text-transform: uppercase;
+	letter-spacing: 0.6px;
+	margin: 0 0 12px 0;
+	font-weight: 600;
+}
+
+.resume.tmpl-t1 .tmpl-t1-right .exp-item,
+.resume.tmpl-t1 .tmpl-t1-right .ed-item {
+	padding: 12px 0;
+	border-bottom: 1px solid #e5e7eb;
+}
+
+.resume.tmpl-t1 .tmpl-t1-right .exp-item:last-child,
+.resume.tmpl-t1 .tmpl-t1-right .ed-item:last-child {
+	border-bottom: none;
+}
+
+.resume.tmpl-t1 .tmpl-t1-right .exp-item h4,
+.resume.tmpl-t1 .tmpl-t1-right .ed-item h4 {
+	margin: 0 0 4px 0;
+	font-size: 1rem;
+	font-weight: 600;
+	color: #1f2937;
+}
+
+.resume.tmpl-t1 .tmpl-t1-right .exp-item .muted,
+.resume.tmpl-t1 .tmpl-t1-right .ed-item .muted {
+	color: #6b7280;
+	font-size: 0.9rem;
+	margin: 0 0 6px 0;
+}
+
+/* Template 2 - Two-column with dark teal left sidebar */
+.resume.tmpl-t2 {
+	padding: 0;
+	border: none;
+}
+
+.resume.tmpl-t2 .tmpl-t2-grid {
+	display: grid;
+	grid-template-columns: 280px 1fr;
+	min-height: 100%;
+}
+
+.resume.tmpl-t2 .tmpl-t2-left {
+	background: linear-gradient(135deg, #0f4c75 0%, #3282b8 100%);
+	color: #fff;
+	padding: 24px 20px;
+	border-radius: 12px 0 0 12px;
+}
+
+.resume.tmpl-t2 .tmpl-t2-photo {
+	width: 100px;
+	height: 100px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #bbe1fa 0%, #3282b8 100%);
+	border: 3px solid rgba(255, 255, 255, 0.3);
+	margin: 0 auto 20px auto;
+}
+
+.resume.tmpl-t2 .tmpl-t2-left header {
+	border: none;
+	padding: 0;
+	margin: 0 0 24px 0;
+	text-align: center;
+}
+
+.resume.tmpl-t2 .tmpl-t2-left header h1 {
+	font-size: 1.5rem;
+	font-weight: 700;
+	color: #fff;
+	margin: 0 0 6px 0;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+}
+
+.resume.tmpl-t2 .tmpl-t2-left header .muted {
+	color: rgba(255, 255, 255, 0.9);
+	font-size: 0.95rem;
+	margin: 0;
+	text-transform: uppercase;
+}
+
+.resume.tmpl-t2 .tmpl-t2-contact {
+	margin: 24px 0;
+}
+
+.resume.tmpl-t2 .tmpl-t2-contact h3 {
+	color: #fff;
+	font-size: 0.9rem;
+	text-transform: uppercase;
+	letter-spacing: 0.8px;
+	margin: 0 0 12px 0;
+	font-weight: 600;
+}
+
+.resume.tmpl-t2 .tmpl-t2-contact p {
+	color: rgba(255, 255, 255, 0.9);
+	font-size: 0.85rem;
+	margin: 6px 0;
+}
+
+.resume.tmpl-t2 .tmpl-t2-left section {
+	margin-top: 24px;
+}
+
+.resume.tmpl-t2 .tmpl-t2-left h3 {
+	color: #fff;
+	font-size: 0.9rem;
+	text-transform: uppercase;
+	letter-spacing: 0.8px;
+	margin: 0 0 12px 0;
+	font-weight: 600;
+}
+
+.resume.tmpl-t2 .tmpl-t2-skills li {
+	background: rgba(255, 255, 255, 0.15);
+	border-color: rgba(255, 255, 255, 0.3);
+	color: #fff;
+}
+
+.resume.tmpl-t2 .tmpl-t2-right {
+	padding: 24px 28px;
+	background: #fff;
+}
+
+.resume.tmpl-t2 .tmpl-t2-right section {
+	margin-top: 24px;
+}
+
+.resume.tmpl-t2 .tmpl-t2-right section:first-child {
+	margin-top: 0;
+}
+
+.resume.tmpl-t2 .tmpl-t2-right h3 {
+	color: #2d3748;
+	font-size: 1rem;
+	text-transform: uppercase;
+	letter-spacing: 0.6px;
+	margin: 0 0 12px 0;
+	font-weight: 600;
+}
+
+.resume.tmpl-t2 .tmpl-t2-right .exp-item,
+.resume.tmpl-t2 .tmpl-t2-right .ed-item {
+	padding: 12px 0;
+	border-bottom: 1px solid #e5e7eb;
+}
+
+.resume.tmpl-t2 .tmpl-t2-right .exp-item:last-child,
+.resume.tmpl-t2 .tmpl-t2-right .ed-item:last-child {
+	border-bottom: none;
+}
+
+.resume.tmpl-t2 .tmpl-t2-right .exp-item h4,
+.resume.tmpl-t2 .tmpl-t2-right .ed-item h4 {
+	margin: 0 0 4px 0;
+	font-size: 1rem;
+	font-weight: 600;
+	color: #1f2937;
+}
+
+.resume.tmpl-t2 .tmpl-t2-right .exp-item .muted,
+.resume.tmpl-t2 .tmpl-t2-right .ed-item .muted {
+	color: #6b7280;
+	font-size: 0.9rem;
+	margin: 0 0 6px 0;
+}
+
+/* Template 3 - Full-width header with two columns */
+.resume.tmpl-t3 {
+	border: none;
+	box-shadow: none;
+	padding: 0;
+}
+
+.resume.tmpl-t3 .tmpl-t3-header {
+	background: linear-gradient(135deg, #0f4c75 0%, #3282b8 100%);
+	color: #fff;
+	padding: 32px 28px;
+	margin: -28px -28px 24px -28px;
+	border-radius: 12px 12px 0 0;
+	width: calc(100% + 56px);
+}
+
+.resume.tmpl-t3 .tmpl-t3-header-content {
+	display: flex;
+	align-items: center;
+	gap: 24px;
+}
+
+.resume.tmpl-t3 .tmpl-t3-header-left {
+	display: flex;
+	align-items: center;
+	gap: 20px;
+	width: 100%;
+}
+
+.resume.tmpl-t3 .tmpl-t3-photo {
+	width: 100px;
+	height: 100px;
+	border-radius: 50%;
+	background: linear-gradient(135deg, #bbe1fa 0%, #3282b8 100%);
+	border: 3px solid rgba(255, 255, 255, 0.3);
+	flex-shrink: 0;
+}
+
+.resume.tmpl-t3 .tmpl-t3-header-text h1 {
+	color: #fff;
+	font-size: 2rem;
+	font-weight: 700;
+	margin: 0 0 6px 0;
+	letter-spacing: 0.5px;
+}
+
+.resume.tmpl-t3 .tmpl-t3-header-text .muted {
+	color: rgba(255, 255, 255, 0.9);
+	font-size: 1.1rem;
+	margin: 0 0 8px 0;
+}
+
+.resume.tmpl-t3 .tmpl-t3-header-text .contact {
+	color: rgba(255, 255, 255, 0.85);
+	font-size: 0.95rem;
+	margin: 0;
+}
+
+.resume.tmpl-t3 .tmpl-t3-content {
+	display: grid;
+	grid-template-columns: 2fr 1fr;
+	gap: 32px;
+	padding: 0;
+}
+
+.resume.tmpl-t3 .tmpl-t3-left {
+	padding-right: 24px;
+}
+
+.resume.tmpl-t3 .tmpl-t3-right {
+	padding-left: 24px;
+	border-left: 1px solid #e5e7eb;
+}
+
+.resume.tmpl-t3 .tmpl-t3-left section,
+.resume.tmpl-t3 .tmpl-t3-right section {
+	margin-top: 24px;
+}
+
+.resume.tmpl-t3 .tmpl-t3-left section:first-child,
+.resume.tmpl-t3 .tmpl-t3-right section:first-child {
+	margin-top: 0;
+}
+
+.resume.tmpl-t3 h3 {
+	margin: 0 0 12px 0;
+	font-size: 1.05rem;
+	text-transform: uppercase;
+	letter-spacing: 0.6px;
+	color: #374151;
+	font-weight: 600;
+}
+
+.resume.tmpl-t3 .exp-item,
+.resume.tmpl-t3 .ed-item {
+	padding: 12px 0;
+	border-bottom: 1px solid #f1f5f9;
+}
+
+.resume.tmpl-t3 .exp-item:last-child,
+.resume.tmpl-t3 .ed-item:last-child {
+	border-bottom: none;
+}
+
+.resume.tmpl-t3 .exp-item h4,
+.resume.tmpl-t3 .ed-item h4 {
+	margin: 0 0 4px 0;
+	font-size: 1rem;
+	font-weight: 600;
+	color: #1f2937;
+}
+
+.resume.tmpl-t3 .exp-item .muted,
+.resume.tmpl-t3 .ed-item .muted {
+	color: #6b7280;
+	font-size: 0.9rem;
+	margin: 0 0 6px 0;
+}
+
+.resume.tmpl-t3 .exp-item p,
+.resume.tmpl-t3 .ed-item p {
+	color: #374151;
+	font-size: 0.95rem;
+	line-height: 1.6;
+	margin: 0;
+}
+
+/* Legacy class names for backward compatibility */
 .resume.tmpl-classic header {
 	border-bottom: 3px solid #e5e7eb;
 	padding-bottom: 10px;
@@ -358,10 +742,308 @@
 
 /* Print styles to make only the resume preview print */
 @media print {
-	body * { visibility: hidden; }
-	.print-area, .print-area * { visibility: visible; }
-	.print-area { position: absolute; left: 0; top: 0; width: 100%; }
-	.resume { box-shadow: none; border: none; }
+	@page {
+		margin: 0;
+		size: A4;
+	}
+	
+	* {
+		-webkit-print-color-adjust: exact !important;
+		print-color-adjust: exact !important;
+		color-adjust: exact !important;
+	}
+	
+	/* Hide everything by default */
+	body > * {
+		visibility: hidden !important;
+	}
+	
+	/* Show only the resume builder container and its print area */
+	.resume-builder-container {
+		visibility: visible !important;
+		display: block !important;
+		position: absolute !important;
+		left: 0 !important;
+		top: 0 !important;
+		width: 100% !important;
+		padding: 0 !important;
+		margin: 0 !important;
+		background: white !important;
+	}
+	
+	.resume-builder {
+		visibility: visible !important;
+		display: block !important;
+		background: white !important;
+		box-shadow: none !important;
+		border: none !important;
+		padding: 0 !important;
+		margin: 0 !important;
+	}
+	
+	/* Hide form but show preview */
+	.rb-form,
+	.rb-section,
+	.rb-topbar,
+	.rb-actions-end,
+	.rb-templates {
+		visibility: hidden !important;
+		display: none !important;
+	}
+	
+	.rb-grid {
+		display: block !important;
+		visibility: visible !important;
+	}
+	
+	.rb-preview,
+	.print-area { 
+		visibility: visible !important;
+		display: block !important;
+		position: relative !important;
+		left: 0 !important; 
+		top: 0 !important; 
+		width: 100% !important; 
+		height: auto !important;
+		background: white !important;
+		padding: 20px !important;
+		margin: 0 !important;
+		opacity: 1 !important;
+	}
+	
+	/* Ensure resume content is visible */
+	.rb-preview *,
+	.print-area *,
+	.resume,
+	.resume * {
+		visibility: visible !important;
+		display: revert !important;
+		opacity: 1 !important;
+	}
+	
+	.resume {
+		display: block !important;
+		visibility: visible !important;
+	}
+	
+	/* Ensure all content inside resume is visible */
+	.resume {
+		visibility: visible !important;
+		display: block !important;
+		opacity: 1 !important;
+	}
+	
+	.resume * {
+		visibility: visible !important;
+		color: #000 !important;
+		background: transparent !important;
+	}
+	
+	.resume h1,
+	.resume h3,
+	.resume h4 {
+		color: #000 !important;
+	}
+	
+	.resume p {
+		color: #333 !important;
+	}
+	
+	.resume header,
+	.resume section,
+	.resume .tmpl-t1-grid,
+	.resume .tmpl-t2-grid,
+	.resume .tmpl-t3-header,
+	.resume .tmpl-t3-content {
+		display: block !important;
+		visibility: visible !important;
+	}
+	
+	.resume .tmpl-t1-grid,
+	.resume .tmpl-t2-grid {
+		display: grid !important;
+	}
+	
+	.resume .tmpl-t3-content {
+		display: grid !important;
+	}
+	
+	.resume .tmpl-t3-header-content,
+	.resume .tmpl-t3-header-left {
+		display: flex !important;
+	}
+	
+	.resume h1,
+	.resume h3,
+	.resume h4,
+	.resume p,
+	.resume span,
+	.resume div {
+		display: block !important;
+		visibility: visible !important;
+	}
+	
+	.resume ul {
+		display: block !important;
+		visibility: visible !important;
+	}
+	
+	.resume li {
+		display: list-item !important;
+		visibility: visible !important;
+	}
+	
+	.resume { 
+		display: block !important;
+		box-shadow: none !important; 
+		border: none !important; 
+		margin: 0 !important;
+		padding: 20px !important;
+		max-width: 100% !important;
+		background: white !important;
+		page-break-inside: avoid;
+	}
+	
+	/* Template 1 print styles */
+	.resume.tmpl-t1 {
+		padding: 0 !important;
+	}
+	.resume.tmpl-t1 .tmpl-t1-grid {
+		display: grid !important;
+		grid-template-columns: 280px 1fr !important;
+		visibility: visible !important;
+	}
+	.resume.tmpl-t1 .tmpl-t1-left,
+	.resume.tmpl-t1 .tmpl-t1-right {
+		display: block !important;
+		visibility: visible !important;
+	}
+	.resume.tmpl-t1 .tmpl-t1-left {
+		background: #f5f1e8 !important;
+		-webkit-print-color-adjust: exact !important;
+		print-color-adjust: exact !important;
+	}
+	
+	/* Template 2 print styles */
+	.resume.tmpl-t2 {
+		padding: 0 !important;
+	}
+	.resume.tmpl-t2 .tmpl-t2-grid {
+		display: grid !important;
+		grid-template-columns: 280px 1fr !important;
+		visibility: visible !important;
+	}
+	.resume.tmpl-t2 .tmpl-t2-left,
+	.resume.tmpl-t2 .tmpl-t2-right {
+		display: block !important;
+		visibility: visible !important;
+	}
+	.resume.tmpl-t2 .tmpl-t2-left {
+		background: linear-gradient(135deg, #0f4c75 0%, #3282b8 100%) !important;
+		-webkit-print-color-adjust: exact !important;
+		print-color-adjust: exact !important;
+		color: #fff !important;
+	}
+	.resume.tmpl-t2 .tmpl-t2-left * {
+		color: #fff !important;
+		visibility: visible !important;
+	}
+	
+	/* Template 3 print styles */
+	.resume.tmpl-t3 {
+		padding: 0 !important;
+	}
+	.resume.tmpl-t3 .tmpl-t3-header {
+		margin: 0 0 24px 0 !important;
+		border-radius: 0 !important;
+		width: 100% !important;
+		background: linear-gradient(135deg, #0f4c75 0%, #3282b8 100%) !important;
+		-webkit-print-color-adjust: exact !important;
+		print-color-adjust: exact !important;
+		color: #fff !important;
+		padding: 32px 28px !important;
+		display: block !important;
+		visibility: visible !important;
+	}
+	.resume.tmpl-t3 .tmpl-t3-header * {
+		color: #fff !important;
+		visibility: visible !important;
+	}
+	.resume.tmpl-t3 .tmpl-t3-header-content,
+	.resume.tmpl-t3 .tmpl-t3-header-left,
+	.resume.tmpl-t3 .tmpl-t3-header-text,
+	.resume.tmpl-t3 .tmpl-t3-photo {
+		display: block !important;
+		visibility: visible !important;
+	}
+	.resume.tmpl-t3 .tmpl-t3-header-content {
+		display: flex !important;
+	}
+	.resume.tmpl-t3 .tmpl-t3-header-left {
+		display: flex !important;
+	}
+	.resume.tmpl-t3 .tmpl-t3-content {
+		display: grid !important;
+		grid-template-columns: 2fr 1fr !important;
+		gap: 32px !important;
+		visibility: visible !important;
+	}
+	.resume.tmpl-t3 .tmpl-t3-left,
+	.resume.tmpl-t3 .tmpl-t3-right {
+		display: block !important;
+		visibility: visible !important;
+	}
+	
+	.resume.tmpl-t5 header {
+		margin: 0 0 16px 0;
+		border-radius: 0;
+	}
+	.resume.tmpl-t8 header {
+		margin: 0 0 20px 0;
+		border-radius: 0;
+	}
+	
+	/* Ensure all template elements are visible */
+	.resume header,
+	.resume section,
+	.resume h1,
+	.resume h3,
+	.resume h4,
+	.resume p,
+	.resume ul,
+	.resume li,
+	.resume .exp-item,
+	.resume .ed-item,
+	.tmpl-t1-grid,
+	.tmpl-t2-grid,
+	.tmpl-t3-header,
+	.tmpl-t3-content,
+	.tmpl-t1-left,
+	.tmpl-t1-right,
+	.tmpl-t2-left,
+	.tmpl-t2-right,
+	.tmpl-t3-left,
+	.tmpl-t3-right {
+		display: block !important;
+		visibility: visible !important;
+	}
+	
+	.tmpl-t1-grid,
+	.tmpl-t2-grid {
+		display: grid !important;
+	}
+	
+	.tmpl-t3-content {
+		display: grid !important;
+	}
+	
+	.resume ul {
+		display: block !important;
+	}
+	
+	.resume li {
+		display: list-item !important;
+	}
 }
 
 @media (max-width: 900px) {
