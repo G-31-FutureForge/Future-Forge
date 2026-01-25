@@ -1,6 +1,6 @@
 // src/App.js
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Navbar from './components/common/Navbar';
 import Sidebar from './components/common/Sidebar';
 import Home from './components/pages/Home';
@@ -67,21 +67,28 @@ function App() {
     setSidebarOpen(false);
   };
 
-  return (
-    <Router>
+  // Inner component to access useLocation hook
+  const AppContent = () => {
+    const location = useLocation();
+    const isRecruiterDashboard = location.pathname === '/recruiter-dashboard';
+
+    return (
       <div className="App">
         <Navbar toggleSidebar={toggleSidebar} theme={theme} toggleTheme={toggleTheme} />
-        <Sidebar 
-          isOpen={sidebarOpen} 
-          toggleSidebar={toggleSidebar}
-          closeSidebar={closeSidebar}
-        />
-        
-        {sidebarOpen && (
-          <div className="sidebar-overlay" onClick={closeSidebar}></div>
+        {!isRecruiterDashboard && (
+          <>
+            <Sidebar 
+              isOpen={sidebarOpen} 
+              toggleSidebar={toggleSidebar}
+              closeSidebar={closeSidebar}
+            />
+            {sidebarOpen && (
+              <div className="sidebar-overlay" onClick={closeSidebar}></div>
+            )}
+          </>
         )}
         
-        <main className={`main-content ${sidebarOpen ? 'sidebar-open' : ''}`}>
+        <main className={`main-content ${sidebarOpen && !isRecruiterDashboard ? 'sidebar-open' : ''}`}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
@@ -102,11 +109,7 @@ function App() {
               path="/recruiter-dashboard" 
               element={
                 <ProtectedRoute allowedUserTypes={['recruiter']}>
-                  <RecruiterDashboard 
-                    sidebarOpen={sidebarOpen}
-                    toggleSidebar={toggleSidebar}
-                    closeSidebar={closeSidebar}
-                  />
+                  <RecruiterDashboard />
                 </ProtectedRoute>
               } 
             />
@@ -181,6 +184,12 @@ function App() {
           </Routes>
         </main>
       </div>
+    );
+  };
+
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }

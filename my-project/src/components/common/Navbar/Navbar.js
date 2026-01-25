@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './Navbar.css';
 
 const Navbar = ({ toggleSidebar, theme, toggleTheme }) => {
@@ -8,6 +8,8 @@ const Navbar = ({ toggleSidebar, theme, toggleTheme }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
+  const isRecruiterDashboard = location.pathname === '/recruiter-dashboard';
 
   useEffect(() => {
     const userData = localStorage.getItem('user');
@@ -89,7 +91,7 @@ const Navbar = ({ toggleSidebar, theme, toggleTheme }) => {
       <div className="navbar-container">
         {/* Left Section - Menu Button and Brand */}
         <div className="navbar-left">
-          {user && (
+          {user && !isRecruiterDashboard && (
             <button 
               className="navbar-menu-btn"
               onClick={toggleSidebar}

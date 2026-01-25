@@ -3,378 +3,141 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 const educationSchema = new mongoose.Schema({
-    institution: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    degree: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    fieldOfStudy: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    startDate: {
-        type: Date,
-        required: true
-    },
-    endDate: {
-        type: Date
-    },
-    currentlyEnrolled: {
-        type: Boolean,
-        default: false
-    },
-    grade: {
-        type: String,
-        trim: true
-    },
-    description: {
-        type: String,
-        trim: true,
-        maxlength: 500
-    }
+    institution: { type: String, required: true, trim: true },
+    degree: { type: String, required: true, trim: true },
+    fieldOfStudy: { type: String, required: true, trim: true },
+    startDate: { type: Date, required: true },
+    endDate: Date,
+    currentlyEnrolled: { type: Boolean, default: false },
+    grade: { type: String, trim: true },
+    description: { type: String, trim: true, maxlength: 500 }
 }, { _id: false });
 
 const skillSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    level: {
-        type: String,
-        enum: ['Beginner', 'Intermediate', 'Advanced', 'Expert'],
-        default: 'Beginner'
-    },
-    category: {
-        type: String,
-        enum: ['Technical', 'Soft', 'Language', 'Professional', 'Other'],
-        default: 'Technical'
-    },
-    yearsOfExperience: {
-        type: Number,
-        min: 0,
-        max: 50
-    },
-    verified: {
-        type: Boolean,
-        default: false
-    },
-    verifiedBy: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    },
+    name: { type: String, required: true, trim: true },
+    level: { type: String, enum: ['Beginner', 'Intermediate', 'Advanced', 'Expert'], default: 'Beginner' },
+    category: { type: String, enum: ['Technical', 'Soft', 'Language', 'Professional', 'Other'], default: 'Technical' },
+    yearsOfExperience: { type: Number, min: 0, max: 50 },
+    verified: { type: Boolean, default: false },
+    verifiedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     verifiedAt: Date
 }, { _id: false });
 
 const experienceSchema = new mongoose.Schema({
-    title: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    company: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    location: {
-        type: String,
-        trim: true
-    },
-    startDate: {
-        type: Date,
-        required: true
-    },
-    endDate: {
-        type: Date
-    },
-    currentlyWorking: {
-        type: Boolean,
-        default: false
-    },
-    employmentType: {
-        type: String,
-        enum: ['Full-time', 'Part-time', 'Contract', 'Internship', 'Freelance', 'Self-employed'],
-        default: 'Full-time'
-    },
-    description: {
-        type: String,
-        trim: true,
-        maxlength: 1000
-    },
-    skillsUsed: [{
-        type: String,
-        trim: true
-    }]
+    title: { type: String, required: true, trim: true },
+    company: { type: String, required: true, trim: true },
+    location: { type: String, trim: true },
+    startDate: { type: Date, required: true },
+    endDate: Date,
+    currentlyWorking: { type: Boolean, default: false },
+    employmentType: { type: String, enum: ['Full-time', 'Part-time', 'Contract', 'Internship', 'Freelance', 'Self-employed'], default: 'Full-time' },
+    description: { type: String, trim: true, maxlength: 1000 },
+    skillsUsed: [{ type: String, trim: true }]
 }, { _id: false });
 
 const projectSchema = new mongoose.Schema({
-    title: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    description: {
-        type: String,
-        trim: true,
-        maxlength: 500
-    },
-    technologies: [{
-        type: String,
-        trim: true
-    }],
-    projectUrl: {
-        type: String,
-        trim: true
-    },
-    githubUrl: {
-        type: String,
-        trim: true
-    },
+    title: { type: String, required: true, trim: true },
+    description: { type: String, trim: true, maxlength: 500 },
+    technologies: [{ type: String, trim: true }],
+    projectUrl: { type: String, trim: true },
+    githubUrl: { type: String, trim: true },
     startDate: Date,
     endDate: Date,
-    currentlyWorking: {
-        type: Boolean,
-        default: false
-    }
+    currentlyWorking: { type: Boolean, default: false }
 }, { _id: false });
 
 const certificationSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    issuingOrganization: {
-        type: String,
-        required: true,
-        trim: true
-    },
-    issueDate: {
-        type: Date,
-        required: true
-    },
+    name: { type: String, required: true, trim: true },
+    issuingOrganization: { type: String, required: true, trim: true },
+    issueDate: { type: Date, required: true },
     expirationDate: Date,
-    credentialId: {
-        type: String,
-        trim: true
-    },
-    credentialUrl: {
-        type: String,
-        trim: true
-    },
-    skills: [{
-        type: String,
-        trim: true
-    }]
+    credentialId: { type: String, trim: true },
+    credentialUrl: { type: String, trim: true },
+    skills: [{ type: String, trim: true }]
 }, { _id: false });
 
 const resumeSchema = new mongoose.Schema({
-    fileUrl: {
-        type: String,
-        trim: true
-    },
-    fileName: {
-        type: String,
-        trim: true
-    },
+    fileUrl: { type: String, trim: true },
+    fileName: { type: String, trim: true },
     fileSize: Number,
     fileType: String,
-    uploadedAt: {
-        type: Date,
-        default: Date.now
-    },
+    uploadedAt: { type: Date, default: Date.now },
     lastUpdated: Date,
-    isPublic: {
-        type: Boolean,
-        default: true
-    },
-    downloadCount: {
-        type: Number,
-        default: 0
-    }
+    isPublic: { type: Boolean, default: true },
+    downloadCount: { type: Number, default: 0 }
 }, { _id: false });
 
 const companyInfoSchema = new mongoose.Schema({
-    companyId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Company'
-    },
-    role: {
-        type: String,
-        enum: ['owner', 'admin', 'recruiter', 'hiring_manager', 'viewer', 'hr_manager', 'talent_acquisition'],
-        default: 'recruiter'
-    },
-    joiningDate: {
-        type: Date,
-        default: Date.now
-    },
-    department: {
-        type: String,
-        trim: true
-    },
-    employeeId: {
-        type: String,
-        trim: true
-    },
+    companyId: { type: mongoose.Schema.Types.ObjectId, ref: 'Company' },
+    role: { type: String, enum: ['owner', 'admin', 'recruiter', 'hiring_manager', 'viewer', 'hr_manager', 'talent_acquisition'], default: 'recruiter' },
+    joiningDate: { type: Date, default: Date.now },
+    department: { type: String, trim: true },
+    employeeId: { type: String, trim: true },
     permissions: {
-        canPostJobs: {
-            type: Boolean,
-            default: true
-        },
-        canViewApplications: {
-            type: Boolean,
-            default: true
-        },
-        canInterviewCandidates: {
-            type: Boolean,
-            default: true
-        },
-        canManageTeam: {
-            type: Boolean,
-            default: false
-        },
-        canViewAnalytics: {
-            type: Boolean,
-            default: true
-        },
-        canManageCompanyProfile: {
-            type: Boolean,
-            default: false
-        }
+        canPostJobs: { type: Boolean, default: true },
+        canViewApplications: { type: Boolean, default: true },
+        canInterviewCandidates: { type: Boolean, default: true },
+        canManageTeam: { type: Boolean, default: false },
+        canViewAnalytics: { type: Boolean, default: true },
+        canManageCompanyProfile: { type: Boolean, default: false }
     }
 }, { _id: false });
 
 const recruiterProfileSchema = new mongoose.Schema({
-    specialization: [{
-        type: String,
-        trim: true
-    }],
-    yearsOfExperience: {
-        type: Number,
-        min: 0,
-        max: 50
-    },
-    hiringExpertise: [{
-        type: String,
-        trim: true
-    }],
-    about: {
-        type: String,
-        trim: true,
-        maxlength: 1000
-    },
-    awards: [{
-        title: String,
-        organization: String,
-        year: Number,
-        description: String
-    }],
-    totalHires: {
-        type: Number,
-        default: 0
-    },
-    successRate: {
-        type: Number,
-        min: 0,
-        max: 100,
-        default: 0
-    },
-    averageTimeToHire: Number, // in days
-    isVerifiedRecruiter: {
-        type: Boolean,
-        default: false
-    }
+    specialization: [{ type: String, trim: true }],
+    yearsOfExperience: { type: Number, min: 0, max: 50 },
+    hiringExpertise: [{ type: String, trim: true }],
+    about: { type: String, trim: true, maxlength: 1000 },
+    awards: [{ title: String, organization: String, year: Number, description: String }],
+    totalHires: { type: Number, default: 0 },
+    successRate: { type: Number, min: 0, max: 100, default: 0 },
+    averageTimeToHire: Number,
+    isVerifiedRecruiter: { type: Boolean, default: false }
 }, { _id: false });
 
 const studentProfileSchema = new mongoose.Schema({
-    headline: {
-        type: String,
-        trim: true,
-        maxlength: 200
-    },
-    summary: {
-        type: String,
-        trim: true,
-        maxlength: 1000
-    },
-    careerObjective: {
-        type: String,
-        trim: true,
-        maxlength: 500
-    },
-    desiredJobTitles: [{
-        type: String,
-        trim: true
-    }],
-    preferredLocations: [{
-        type: String,
-        trim: true
-    }],
-    preferredJobTypes: [{
-        type: String,
-        enum: ['Full-time', 'Part-time', 'Contract', 'Internship', 'Remote', 'Hybrid', 'On-site']
-    }],
-    salaryExpectation: {
-        min: Number,
-        max: Number,
-        currency: {
-            type: String,
-            default: 'USD'
-        }
-    },
-    availability: {
-        type: String,
-        enum: ['Immediately', '1 week', '2 weeks', '1 month', '2 months', '3 months+', 'Not available'],
-        default: 'Immediately'
-    },
-    totalExperience: Number, // in years
-    profileCompletion: {
-        type: Number,
-        min: 0,
-        max: 100,
-        default: 0
-    }
+    headline: { type: String, trim: true, maxlength: 200 },
+    summary: { type: String, trim: true, maxlength: 1000 },
+    careerObjective: { type: String, trim: true, maxlength: 500 },
+    desiredJobTitles: [{ type: String, trim: true }],
+    preferredLocations: [{ type: String, trim: true }],
+    preferredJobTypes: [{ type: String, enum: ['Full-time', 'Part-time', 'Contract', 'Internship', 'Remote', 'Hybrid', 'On-site'] }],
+    salaryExpectation: { min: Number, max: Number, currency: { type: String, default: 'USD' } },
+    availability: { type: String, enum: ['Immediately', '1 week', '2 weeks', '1 month', '2 months', '3 months+', 'Not available'], default: 'Immediately' },
+    totalExperience: Number,
+    profileCompletion: { type: Number, min: 0, max: 100, default: 0 }
 }, { _id: false });
 
 const userSchema = new mongoose.Schema({
     // Basic Information
     firstName: { 
         type: String, 
-        required: [true, 'First name is required'],
+        required: true,
         trim: true,
-        minlength: [2, 'First name must be at least 2 characters'],
-        maxlength: [50, 'First name cannot exceed 50 characters']
+        minlength: 2,
+        maxlength: 50
     },
-    lastName:  { 
+    lastName: { 
         type: String, 
-        required: [true, 'Last name is required'],
+        required: true,
         trim: true,
-        minlength: [2, 'Last name must be at least 2 characters'],
-        maxlength: [50, 'Last name cannot exceed 50 characters']
+        minlength: 2,
+        maxlength: 50
     },
     email: { 
         type: String, 
-        required: [true, 'Email is required'], 
+        required: true, 
         unique: true,
         lowercase: true,
         trim: true,
-        match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Please enter a valid email']
+        match: [/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/, 'Invalid email']
     },
-    password:  { 
+    password: { 
         type: String, 
-        required: [true, 'Password is required'],
-        minlength: [6, 'Password must be at least 6 characters'],
-        select: false // Don't return password by default
+        required: true,
+        minlength: 6,
+        select: false
     },
-    
-    // User Type & Portal
     userType: {
         type: String,
         enum: ['student', 'recruiter', 'admin'],
@@ -383,42 +146,16 @@ const userSchema = new mongoose.Schema({
     },
     
     // Contact Information
-    phone: {
-        type: String,
-        trim: true
-    },
-    address: {
-        street: String,
-        city: String,
-        state: String,
-        country: String,
-        zipCode: String
-    },
+    phone: { type: String, trim: true },
+    address: { street: String, city: String, state: String, country: String, zipCode: String },
     dateOfBirth: Date,
-    gender: {
-        type: String,
-        enum: ['Male', 'Female', 'Other', 'Prefer not to say']
-    },
+    gender: { type: String, enum: ['Male', 'Female', 'Other', 'Prefer not to say'] },
     
     // Profile Information
-    profileImage: {
-        url: String,
-        publicId: String
-    },
-    coverImage: {
-        url: String,
-        publicId: String
-    },
-    headline: {
-        type: String,
-        trim: true,
-        maxlength: 200
-    },
-    bio: {
-        type: String,
-        trim: true,
-        maxlength: 500
-    },
+    profileImage: { url: String, publicId: String },
+    coverImage: { url: String, publicId: String },
+    headline: { type: String, trim: true, maxlength: 200 },
+    bio: { type: String, trim: true, maxlength: 500 },
     
     // Student-Specific Fields
     studentProfile: studentProfileSchema,
@@ -428,18 +165,9 @@ const userSchema = new mongoose.Schema({
     projects: [projectSchema],
     certifications: [certificationSchema],
     resume: resumeSchema,
-    portfolioUrl: {
-        type: String,
-        trim: true
-    },
-    githubUrl: {
-        type: String,
-        trim: true
-    },
-    linkedinUrl: {
-        type: String,
-        trim: true
-    },
+    portfolioUrl: { type: String, trim: true },
+    githubUrl: { type: String, trim: true },
+    linkedinUrl: { type: String, trim: true },
     
     // Recruiter-Specific Fields
     recruiterProfile: recruiterProfileSchema,
@@ -504,120 +232,48 @@ const userSchema = new mongoose.Schema({
     }],
     
     // Verification & Security
-    emailVerified: {
-        type: Boolean,
-        default: false
-    },
+    emailVerified: { type: Boolean, default: false },
     verificationToken: String,
     verificationTokenExpires: Date,
     resetPasswordToken: String,
     resetPasswordExpires: Date,
-    isActive: {
-        type: Boolean,
-        default: true
-    },
+    isActive: { type: Boolean, default: true },
     lastLogin: Date,
-    loginHistory: [{
-        timestamp: Date,
-        ipAddress: String,
-        userAgent: String
-    }],
+    loginHistory: [{ timestamp: Date, ipAddress: String, userAgent: String }],
     
     // Preferences & Settings
     preferences: {
         emailNotifications: {
-            jobAlerts: {
-                type: Boolean,
-                default: true
-            },
-            applicationUpdates: {
-                type: Boolean,
-                default: true
-            },
-            newsletter: {
-                type: Boolean,
-                default: true
-            }
+            jobAlerts: { type: Boolean, default: true },
+            applicationUpdates: { type: Boolean, default: true },
+            newsletter: { type: Boolean, default: true }
         },
-        pushNotifications: {
-            type: Boolean,
-            default: true
-        },
+        pushNotifications: { type: Boolean, default: true },
         privacy: {
-            profileVisibility: {
-                type: String,
-                enum: ['Public', 'Connections', 'Private'],
-                default: 'Public'
-            },
-            resumeVisibility: {
-                type: Boolean,
-                default: true
-            },
-            showEmail: {
-                type: Boolean,
-                default: false
-            },
-            showPhone: {
-                type: Boolean,
-                default: false
-            }
+            profileVisibility: { type: String, enum: ['Public', 'Connections', 'Private'], default: 'Public' },
+            resumeVisibility: { type: Boolean, default: true },
+            showEmail: { type: Boolean, default: false },
+            showPhone: { type: Boolean, default: false }
         }
     },
     
     // Analytics & Statistics
     stats: {
-        profileViews: {
-            type: Number,
-            default: 0
-        },
-        resumeViews: {
-            type: Number,
-            default: 0
-        },
-        totalApplications: {
-            type: Number,
-            default: 0
-        },
-        interviewRate: {
-            type: Number,
-            default: 0
-        },
-        jobMatchScore: {
-            type: Number,
-            min: 0,
-            max: 100,
-            default: 0
-        }
+        profileViews: { type: Number, default: 0 },
+        resumeViews: { type: Number, default: 0 },
+        totalApplications: { type: Number, default: 0 },
+        interviewRate: { type: Number, default: 0 },
+        jobMatchScore: { type: Number, min: 0, max: 100, default: 0 }
     },
     
     // For Recruiters
     recruiterStats: {
-        totalJobsPosted: {
-            type: Number,
-            default: 0
-        },
-        activeJobs: {
-            type: Number,
-            default: 0
-        },
-        totalApplicationsReceived: {
-            type: Number,
-            default: 0
-        },
-        candidatesHired: {
-            type: Number,
-            default: 0
-        },
-        averageTimeToHire: {
-            type: Number,
-            default: 0
-        },
-        candidateSatisfaction: {
-            type: Number,
-            min: 0,
-            max: 5,
-            default: 0
-        }
+        totalJobsPosted: { type: Number, default: 0 },
+        activeJobs: { type: Number, default: 0 },
+        totalApplicationsReceived: { type: Number, default: 0 },
+        candidatesHired: { type: Number, default: 0 },
+        averageTimeToHire: { type: Number, default: 0 },
+        candidateSatisfaction: { type: Number, min: 0, max: 5, default: 0 }
     }
     
 }, { 
