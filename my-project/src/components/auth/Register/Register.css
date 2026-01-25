@@ -1,11 +1,10 @@
-/* Register.css */
+/* src/components/auth/Register/Register.css */
 .register-container {
-    min-height: 100vh;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     position: relative;
-    font-family: 'Inter', 'Segoe UI', sans-serif;
+    overflow: hidden;
 }
 
 .register-background {
@@ -14,225 +13,352 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    z-index: -1;
-}
-
-.register-background::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.3);
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><circle cx="150" cy="150" r="100" fill="rgba(255,255,255,0.1)"/><circle cx="850" cy="250" r="150" fill="rgba(255,255,255,0.08)"/><circle cx="400" cy="800" r="200" fill="rgba(255,255,255,0.05)"/></svg>');
+    opacity: 0.3;
 }
 
 .register-content {
-    width: 100%;
-    max-width: 480px;
-    padding: 2rem;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    z-index: 1;
 }
 
 .register-card {
-    background: var(--surface);
-    backdrop-filter: blur(6px);
-    border-radius: 24px;
-    padding: 3rem;
-    box-shadow: 0 20px 60px var(--shadow);
-    border: 1px solid rgba(0,0,0,0.06);
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 500px;
+    padding: 40px;
 }
 
 .register-header {
     text-align: center;
-    margin-bottom: 2.5rem;
+    margin-bottom: 30px;
 }
 
 .logo {
-    font-size: 1.8rem;
+    display: inline-block;
+    font-size: 24px;
     font-weight: 700;
-    color: var(--text);
+    color: #667eea;
     text-decoration: none;
-    display: block;
-    margin-bottom: 1rem;
+    margin-bottom: 10px;
 }
 
 .register-header h1 {
-    font-size: 2.2rem;
+    font-size: 28px;
     font-weight: 700;
-    color: var(--text);
-    margin-bottom: 0.5rem;
+    color: #333;
+    margin-bottom: 8px;
 }
 
 .register-header p {
-    color: var(--muted);
-    font-size: 1.1rem;
+    color: #666;
+    font-size: 16px;
+    margin: 0;
 }
 
+/* User Type Selection */
+.user-type-selection {
+    margin-bottom: 25px;
+}
+
+.user-type-selection label {
+    display: block;
+    margin-bottom: 12px;
+    font-weight: 600;
+    color: #333;
+}
+
+.user-type-options {
+    display: flex;
+    gap: 15px;
+}
+
+.user-type-option {
+    flex: 1;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+.user-type-option:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+}
+
+.user-type-option.active {
+    border-color: #667eea;
+    background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+}
+
+.user-type-option input {
+    display: none;
+}
+
+.option-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.option-icon {
+    font-size: 24px;
+}
+
+.option-text {
+    font-weight: 500;
+    color: #333;
+}
+
+/* Form Styles */
 .register-form {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 20px;
 }
 
 .form-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
+    gap: 20px;
 }
 
 .form-group {
     display: flex;
     flex-direction: column;
+    gap: 8px;
 }
 
 .form-group label {
     font-weight: 500;
-    color: var(--text);
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
+    color: #333;
+    font-size: 14px;
+}
+
+.form-group label .required {
+    color: #f44336;
+    margin-left: 2px;
 }
 
 .form-group input {
-    padding: 12px 16px;
-    border: 2px solid rgba(0,0,0,0.06);
-    border-radius: 12px;
-    font-size: 1rem;
+    padding: 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    font-size: 16px;
     transition: all 0.3s ease;
-    background: var(--surface);
+    background: #f8f9fa;
 }
 
 .form-group input:focus {
     outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.08);
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+    background: white;
 }
 
-.form-group input:invalid:not(:focus):not(:placeholder-shown) {
-    border-color: #000000;
+.form-group input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
+/* Password Hints */
+.password-hints {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 10px;
+    margin: 10px 0;
+}
+
+.hint-title {
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+.password-hints ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.password-hints li {
+    font-size: 13px;
+    color: #666;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.password-hints li:before {
+    content: "•";
+    font-size: 16px;
+}
+
+.password-hints li.valid {
+    color: #4CAF50;
+}
+
+.password-hints li.valid:before {
+    content: "✓";
+    font-weight: bold;
+}
+
+/* Checkbox */
 .form-checkbox {
     display: flex;
     align-items: flex-start;
-    gap: 0.75rem;
-    margin: 0.5rem 0;
+    gap: 10px;
+    margin: 10px 0;
 }
 
 .form-checkbox input[type="checkbox"] {
-    margin-top: 0.25rem;
+    margin-top: 4px;
     width: 18px;
     height: 18px;
-    border-radius: 4px;
-    border: 2px solid rgba(0,0,0,0.06);
     cursor: pointer;
-}
-
-.form-checkbox input[type="checkbox"]:checked {
-    background-color: var(--accent);
-    border-color: var(--accent);
 }
 
 .form-checkbox label {
-    font-size: 0.9rem;
-    color: var(--muted);
+    font-size: 14px;
+    color: #666;
     line-height: 1.4;
-    cursor: pointer;
 }
 
 .form-checkbox a {
-    color: var(--accent);
+    color: #667eea;
     text-decoration: none;
+    font-weight: 500;
 }
 
 .form-checkbox a:hover {
     text-decoration: underline;
 }
 
+/* Register Button */
 .register-btn {
-    background: var(--accent);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
-    padding: 15px;
-    border-radius: 12px;
-    font-size: 1.1rem;
+    padding: 16px;
+    border-radius: 10px;
+    font-size: 16px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin-top: 0.5rem;
+    margin-top: 10px;
 }
 
-.register-btn:hover {
+.register-btn:hover:not(:disabled) {
     transform: translateY(-2px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.16);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
 }
 
+.register-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Divider */
 .register-divider {
-    text-align: center;
-    position: relative;
-    margin: 1.5rem 0;
-}
-
-.register-divider::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    height: 1px;
-    background: rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
 }
 
 .register-divider span {
-    background: var(--surface);
-    padding: 0 1rem;
-    color: var(--muted);
-    font-size: 0.9rem;
+    flex: 1;
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+    background: white;
+    padding: 0 15px;
 }
 
+.register-divider:before,
+.register-divider:after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e0e0e0;
+}
+
+/* Social Login */
 .social-login {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+    display: flex;
+    gap: 15px;
 }
 
 .social-btn {
+    flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.75rem;
-    padding: 12px;
-    border: 2px solid rgba(0,0,0,0.06);
-    border-radius: 12px;
-    background: var(--surface);
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: white;
+    font-size: 15px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.3s ease;
-    font-size: 0.95rem;
 }
 
-.social-btn:hover {
-    border-color: var(--accent);
-    transform: translateY(-1px);
+.social-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
-.google-btn {
-    color: #4285F4;
+.social-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
-.github-btn {
-    color: var(--text);
+.social-btn.google-btn {
+    color: #333;
 }
 
+.social-btn.github-btn {
+    background: #333;
+    color: white;
+    border-color: #333;
+}
+
+/* Error Message */
+.error-message {
+    background: #ffebee;
+    color: #c33;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ffcdd2;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* Login Link */
 .login-link {
     text-align: center;
-    color: var(--muted);
-    font-size: 0.95rem;
+    margin-top: 20px;
+    color: #666;
+    font-size: 15px;
 }
 
 .login-link a {
-    color: var(--accent);
+    color: #667eea;
     text-decoration: none;
     font-weight: 500;
 }
@@ -241,74 +367,87 @@
     text-decoration: underline;
 }
 
-/* Mobile Responsiveness */
+/* Dark Theme */
+[data-theme="dark"] .register-card {
+    background: #2d2d2d;
+}
+
+[data-theme="dark"] .register-header h1,
+[data-theme="dark"] .form-group label,
+[data-theme="dark"] .hint-title,
+[data-theme="dark"] .option-text {
+    color: #fff;
+}
+
+[data-theme="dark"] .register-header p,
+[data-theme="dark"] .form-checkbox label,
+[data-theme="dark"] .login-link {
+    color: #aaa;
+}
+
+[data-theme="dark"] .form-group input {
+    background: #3d3d3d;
+    border-color: #555;
+    color: #fff;
+}
+
+[data-theme="dark"] .user-type-option {
+    background: #3d3d3d;
+    border-color: #555;
+}
+
+[data-theme="dark"] .password-hints,
+[data-theme="dark"] .social-btn {
+    background: #3d3d3d;
+    border-color: #555;
+    color: #fff;
+}
+
+[data-theme="dark"] .social-btn.github-btn {
+    background: #222;
+    border-color: #444;
+}
+
+[data-theme="dark"] .register-divider span {
+    background: #2d2d2d;
+    color: #aaa;
+}
+
+[data-theme="dark"] .error-message {
+    background: #3d1f1f;
+    border-color: #5c2b2b;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
-    .register-content {
-        padding: 1rem;
-    }
-
     .register-card {
-        padding: 2rem;
+        padding: 30px 25px;
     }
-
+    
     .form-row {
         grid-template-columns: 1fr;
+        gap: 15px;
     }
-
+    
+    .user-type-options {
+        flex-direction: column;
+    }
+    
     .social-login {
-        grid-template-columns: 1fr;
+        flex-direction: column;
     }
+}
 
+@media (max-width: 480px) {
+    .register-container {
+        padding: 20px;
+    }
+    
+    .register-card {
+        padding: 25px 20px;
+    }
+    
     .register-header h1 {
-        font-size: 1.8rem;
+        font-size: 24px;
     }
-}
-
-/* Animation for form elements */
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.register-card {
-    animation: slideUp 0.6s ease-out;
-}
-
-.form-group {
-    animation: slideUp 0.6s ease-out;
-}
-
-.form-group:nth-child(1) { animation-delay: 0.1s; }
-.form-group:nth-child(2) { animation-delay: 0.2s; }
-.form-group:nth-child(3) { animation-delay: 0.3s; }
-.form-group:nth-child(4) { animation-delay: 0.4s; }
-
-
-/* Add this to your existing Register.css */
-.error-message {
-    background: #fee;
-    color: #c33;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #fcc;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-    text-align: center;
-}
-
-.register-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none !important;
-}
-
-.social-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
 }

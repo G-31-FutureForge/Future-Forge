@@ -1,23 +1,23 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const jobController = require('../controllers/jobController');
+import { getAllJobs, getJob, createJob, updateJob, deleteJob, searchJobs } from '../controllers/jobController.js';
 
 // GET all jobs
-router.get('/', jobController.getAllJobs);
+router.get('/', getAllJobs);
 
 // GET search jobs
-router.get('/search', jobController.searchJobs);
+router.get('/search', searchJobs);
 
 // GET single job
-router.get('/:id', jobController.getJob);
+router.get('/:id', getJob);
 
 // POST create new job
-router.post('/', jobController.createJob);
+router.post('/', createJob);
 
 // PUT update job
-router.put('/:id', jobController.updateJob);
+router.put('/:id', updateJob);
 
 // DELETE job
-router.delete('/:id', jobController.deleteJob);
+router.delete('/:id', deleteJob);
 
-module.exports = router;
+export default router;

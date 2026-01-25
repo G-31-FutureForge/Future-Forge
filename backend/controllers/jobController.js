@@ -1,7 +1,7 @@
-const Job = require('../models/Job');
+import Job from '../models/Job.js';
 
 // Get all jobs
-exports.getAllJobs = async (req, res) => {
+export const getAllJobs = async (req, res) => {
   try {
     const jobs = await Job.find().sort({ postedDate: -1 });
     res.status(200).json(jobs);
@@ -11,7 +11,7 @@ exports.getAllJobs = async (req, res) => {
 };
 
 // Get a single job
-exports.getJob = async (req, res) => {
+export const getJob = async (req, res) => {
   try {
     const job = await Job.findById(req.params.id);
     if (!job) {
@@ -24,7 +24,7 @@ exports.getJob = async (req, res) => {
 };
 
 // Create a new job
-exports.createJob = async (req, res) => {
+export const createJob = async (req, res) => {
   try {
     const job = new Job(req.body);
     await job.save();
@@ -35,7 +35,7 @@ exports.createJob = async (req, res) => {
 };
 
 // Update a job
-exports.updateJob = async (req, res) => {
+export const updateJob = async (req, res) => {
   try {
     const job = await Job.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
@@ -51,7 +51,7 @@ exports.updateJob = async (req, res) => {
 };
 
 // Delete a job
-exports.deleteJob = async (req, res) => {
+export const deleteJob = async (req, res) => {
   try {
     const job = await Job.findByIdAndDelete(req.params.id);
     if (!job) {
@@ -64,7 +64,7 @@ exports.deleteJob = async (req, res) => {
 };
 
 // Search jobs
-exports.searchJobs = async (req, res) => {
+export const searchJobs = async (req, res) => {
   try {
     const { query, location, jobType } = req.query;
     const searchQuery = {};

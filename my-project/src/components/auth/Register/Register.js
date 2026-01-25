@@ -1,3 +1,4 @@
+// src/components/auth/Register/Register.js
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Register.css';
@@ -9,6 +10,9 @@ const Register = () => {
         email: '',
         password: '',
         confirmPassword: '',
+        userType: 'student', // Default to student
+        companyName: '', // Only for recruiters
+        phone: '', // Optional field
         agreeTerms: false
     });
     const [loading, setLoading] = useState(false);
@@ -38,16 +42,19 @@ const Register = () => {
             setError('Please agree to the Terms of Service and Privacy Policy');
             return false;
         }
+        if (formData.userType === 'recruiter' && !formData.companyName.trim()) {
+            setError('Company name is required for recruiters');
+            return false;
+        }
         return true;
     };
 
-    // ...existing code...
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!validateForm()) return;
         setLoading(true);
         setError('');
-        try {
+
         try {
             const response = await fetch('http://localhost:5000/api/auth/register', {
                 method: 'POST',
@@ -58,22 +65,33 @@ const Register = () => {
                     firstName: formData.firstName,
                     lastName: formData.lastName,
                     email: formData.email,
-                    password: formData.password
+                    password: formData.password,
+                    confirmPassword: formData.confirmPassword,
+                    userType: formData.userType,
+                    companyName: formData.companyName,
+                    phone: formData.phone,
+                    agreeTerms: formData.agreeTerms
                 }),
             });
+
             const data = await response.json();
+            
             if (response.ok) {
                 localStorage.setItem('token', data.token);
                 localStorage.setItem('user', JSON.stringify(data.user));
-                window.location.href = '/dashboard';
+                localStorage.setItem('userType', formData.userType);
+                
+                // Redirect based on user type
+                if (formData.userType === 'recruiter') {
+                    window.location.href = '/recruiter-dashboard';
+                } else {
+                    window.location.href = '/dashboard';
+                }
             } else {
                 setError(data.message || 'Registration failed');
             }
         } catch (err) {
-            setError('Server error');
-        }
-        setLoading(false);
-            console.error('Registration error:', error);
+            setError('Server error. Please try again later.');
         } finally {
             setLoading(false);
         }
@@ -100,6 +118,42 @@ const Register = () => {
                     )}
 
                     <form className="register-form" onSubmit={handleSubmit}>
+                        {/* User Type Selection */}
+                        <div className="form-group user-type-selection">
+                            <label>I am a:</label>
+                            <div className="user-type-options">
+                                <label className={`user-type-option ${formData.userType === 'student' ? 'active' : ''}`}>
+                                    <input
+                                        type="radio"
+                                        name="userType"
+                                        value="student"
+                                        checked={formData.userType === 'student'}
+                                        onChange={handleChange}
+                                        disabled={loading}
+                                    />
+                                    <div className="option-content">
+                                        <span className="option-icon">👨‍🎓</span>
+                                        <span className="option-text">Student</span>
+                                    </div>
+                                </label>
+                                
+                                <label className={`user-type-option ${formData.userType === 'recruiter' ? 'active' : ''}`}>
+                                    <input
+                                        type="radio"
+                                        name="userType"
+                                        value="recruiter"
+                                        checked={formData.userType === 'recruiter'}
+                                        onChange={handleChange}
+                                        disabled={loading}
+                                    />
+                                    <div className="option-content">
+                                        <span className="option-icon">👔</span>
+                                        <span className="option-text">Recruiter</span>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
                         <div className="form-row">
                             <div className="form-group">
                                 <label htmlFor="firstName">First Name</label>
@@ -111,6 +165,7 @@ const Register = () => {
                                     onChange={handleChange}
                                     required
                                     disabled={loading}
+                                    placeholder="Enter your first name"
                                 />
                             </div>
                             <div className="form-group">
@@ -123,6 +178,7 @@ const Register = () => {
                                     onChange={handleChange}
                                     required
                                     disabled={loading}
+                                    placeholder="Enter your last name"
                                 />
                             </div>
                         </div>
@@ -137,35 +193,84 @@ const Register = () => {
                                 onChange={handleChange}
                                 required
                                 disabled={loading}
+                                placeholder="Enter your email"
                             />
                         </div>
 
+                        {/* Company Name Field - Only for Recruiters */}
+                        {formData.userType === 'recruiter' && (
+                            <div className="form-group">
+                                <label htmlFor="companyName">Company Name <span className="required">*</span></label>
+                                <input
+                                    type="text"
+                                    id="companyName"
+                                    name="companyName"
+                                    value={formData.companyName}
+                                    onChange={handleChange}
+                                    required
+                                    disabled={loading}
+                                    placeholder="Enter your company name"
+                                />
+                            </div>
+                        )}
+
                         <div className="form-group">
-                            <label htmlFor="password">Password</label>
+                            <label htmlFor="phone">Phone Number (Optional)</label>
                             <input
-                                type="password"
-                                id="password"
-                                name="password"
-                                value={formData.password}
+                                type="tel"
+                                id="phone"
+                                name="phone"
+                                value={formData.phone}
                                 onChange={handleChange}
-                                required
-                                minLength="6"
                                 disabled={loading}
+                                placeholder="Enter your phone number"
                             />
                         </div>
 
-                        <div className="form-group">
-                            <label htmlFor="confirmPassword">Confirm Password</label>
-                            <input
-                                type="password"
-                                id="confirmPassword"
-                                name="confirmPassword"
-                                value={formData.confirmPassword}
-                                onChange={handleChange}
-                                required
-                                minLength="6"
-                                disabled={loading}
-                            />
+                        <div className="form-row">
+                            <div className="form-group">
+                                <label htmlFor="password">Password</label>
+                                <input
+                                    type="password"
+                                    id="password"
+                                    name="password"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    required
+                                    minLength="6"
+                                    disabled={loading}
+                                    placeholder="Create a password"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="confirmPassword">Confirm Password</label>
+                                <input
+                                    type="password"
+                                    id="confirmPassword"
+                                    name="confirmPassword"
+                                    value={formData.confirmPassword}
+                                    onChange={handleChange}
+                                    required
+                                    minLength="6"
+                                    disabled={loading}
+                                    placeholder="Confirm your password"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="password-hints">
+                            <p className="hint-title">Password must contain:</p>
+                            <ul>
+                                <li className={formData.password.length >= 6 ? 'valid' : ''}>
+                                    At least 6 characters
+                                </li>
+                                <li className={/[A-Z]/.test(formData.password) ? 'valid' : ''}>
+                                    At least one uppercase letter
+                                </li>
+                                <li className={/\d/.test(formData.password) ? 'valid' : ''}>
+                                    At least one number
+                                </li>
+                            </ul>
                         </div>
 
                         <div className="form-checkbox">
@@ -179,7 +284,7 @@ const Register = () => {
                                 disabled={loading}
                             />
                             <label htmlFor="agreeTerms">
-                                I agree to the <a href="/terms">Terms of Service</a> and <a href="/privacy">Privacy Policy</a>
+                                I agree to the <Link to="/terms">Terms of Service</Link> and <Link to="/privacy">Privacy Policy</Link>
                             </label>
                         </div>
 
@@ -188,7 +293,7 @@ const Register = () => {
                             className="register-btn"
                             disabled={loading}
                         >
-                            {loading ? 'Creating Account...' : 'Create Account'}
+                            {loading ? 'Creating Account...' : `Create ${formData.userType === 'recruiter' ? 'Recruiter' : 'Student'} Account`}
                         </button>
 
                         <div className="register-divider">
