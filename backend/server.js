@@ -15,12 +15,17 @@ import reportRoutes from './routes/reportRoutes.js';
 import jobExplorationRoutes from './routes/jobExplorationRoutes.js';
 import apiRoutes from './routes/apiRoutes.js';
 import companyRoutes from './routes/companyRoutes.js';
+import careerGuidanceRoutes from './routes/careerGuidanceRoutes.js';
 
-dotenv.config();
-
-// ES6 equivalent of __dirname
+// Load .env explicitly from the backend folder to avoid issues when
+// the server is started from a different working directory.
+// ES6 equivalent of __dirname (needed before loading .env)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Load .env explicitly from the backend folder to avoid issues when
+// the server is started from a different working directory.
+dotenv.config({ path: path.join(__dirname, '.env') });
 
 const app = express();
 
@@ -49,6 +54,7 @@ app.use('/api/report', reportRoutes);
 app.use('/api/jobs', jobExplorationRoutes);
 app.use('/api', apiRoutes);
 app.use('/api/companies', companyRoutes);
+app.use('/api/career-guidance', careerGuidanceRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

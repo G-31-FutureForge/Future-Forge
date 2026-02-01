@@ -1,7 +1,42 @@
+/* Smooth step transitions */
+.career-step-content {
+    animation-duration: 0.35s;
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    animation-fill-mode: both;
+}
+.career-step-enter {
+    opacity: 0;
+    transform: translateY(12px);
+}
+.career-step-visible {
+    animation-name: careerFadeInUp;
+}
+.career-results-animate {
+    animation-name: careerFadeIn;
+}
+@keyframes careerFadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+@keyframes careerFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.career-step-wrapper {
+    animation: careerFadeInUp 0.35s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
 .career-container {
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
+    position: relative;
 }
 
 .career-header {
@@ -24,107 +59,546 @@
 .career-content {
     display: grid;
     gap: 2rem;
+    min-height: 320px;
+    position: relative;
 }
 
-.career-status-section, .jobs-exploration-section, .courses-section {
+/* Education Level Selection */
+.education-level-selection {
+    text-align: center;
+}
+
+.education-level-selection h2 {
+    font-size: 2rem;
+    color: var(--text);
+    margin-bottom: 2rem;
+}
+
+.education-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.education-card {
+    background: var(--surface);
+    padding: 2.5rem 2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px var(--shadow);
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    animation: cardSlideIn 0.4s ease backwards;
+}
+.education-cards .education-card:nth-child(1) { animation-delay: 0.05s; }
+.education-cards .education-card:nth-child(2) { animation-delay: 0.15s; }
+.education-cards .education-card:nth-child(3) { animation-delay: 0.25s; }
+@keyframes cardSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.education-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    border-color: var(--accent);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+}
+
+.card-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.education-card h3 {
+    font-size: 1.5rem;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+}
+
+.education-card p {
+    color: var(--muted);
+    font-size: 1rem;
+}
+
+/* Form Styles */
+.career-form {
+    background: var(--surface);
+    padding: 2.5rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 20px var(--shadow);
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.career-form h2 {
+    font-size: 1.8rem;
+    color: var(--text);
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    background: white;
+    color: var(--text);
+    transition: border-color 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.file-input {
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+.file-name {
+    margin-top: 0.5rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+    margin-top: 2rem;
+}
+
+.btn-primary,
+.btn-secondary {
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background: var(--accent);
+    color: white;
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-secondary {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--text);
+}
+
+.btn-secondary:hover {
+    background: rgba(0, 0, 0, 0.1);
+}
+
+/* Results Section */
+.career-results {
     background: var(--surface);
     padding: 2rem;
     border-radius: 15px;
     box-shadow: 0 5px 20px var(--shadow);
-    border: 1px solid rgba(0,0,0,0.06);
 }
 
-.career-status-section h2, .jobs-exploration-section h2, .courses-section h2 {
-    font-size: 1.8rem;
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.results-header h2 {
+    font-size: 2rem;
     color: var(--text);
+}
+
+.summary-section {
+    background: rgba(66, 153, 225, 0.05);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+    border-left: 4px solid #4299e1;
+}
+
+.summary-section h3 {
+    color: var(--text);
+    margin-bottom: 0.5rem;
+}
+
+.summary-section p {
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+/* Career Path Cards */
+.career-paths {
+    display: grid;
+    gap: 2rem;
+}
+
+.career-path-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    animation: cardFadeIn 0.4s ease backwards;
+}
+.career-paths .career-path-card:nth-child(1) { animation-delay: 0.05s; }
+.career-paths .career-path-card:nth-child(2) { animation-delay: 0.12s; }
+.career-paths .career-path-card:nth-child(3) { animation-delay: 0.19s; }
+.career-paths .career-path-card:nth-child(4) { animation-delay: 0.26s; }
+.career-paths .career-path-card:nth-child(5) { animation-delay: 0.33s; }
+@keyframes cardFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.career-path-card h3 {
+    font-size: 1.5rem;
+    color: var(--text);
+    margin-bottom: 0.5rem;
+}
+
+.path-description {
+    color: var(--muted);
     margin-bottom: 1.5rem;
+    line-height: 1.6;
+}
+
+.path-section {
+    margin-bottom: 1.5rem;
+}
+
+.path-section h4 {
+    font-size: 1.1rem;
+    color: var(--text);
+    margin-bottom: 0.75rem;
     font-weight: 600;
 }
 
-/* Job Status Cards */
-.job-status-list {
+/* Skills List */
+.skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.skill-tag {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    background: rgba(72, 187, 120, 0.1);
+    color: #48bb78;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.skill-tag.gap {
+    background: rgba(237, 137, 54, 0.1);
+    color: #ed8936;
+}
+
+/* Courses List */
+.courses-list {
     display: grid;
     gap: 1rem;
 }
 
-.job-status-card {
-    padding: 1.5rem;
-    border-radius: 10px;
-    border-left: 4px solid rgba(0,0,0,0.06);
+.course-item {
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    border-left: 3px solid #4299e1;
 }
 
-.job-status-card.applied {
-    border-left-color: #4299e1;
-    background: rgba(66, 153, 225, 0.05);
+.course-item strong {
+    display: block;
+    color: var(--text);
+    margin-bottom: 0.5rem;
 }
 
-.job-status-card.recommended {
-    border-left-color: #48bb78;
-    background: rgba(72, 187, 120, 0.05);
-}
-
-.job-status-card.interview {
-    border-left-color: #ed8936;
-    background: rgba(237, 137, 54, 0.05);
-}
-
-.job-status {
+.course-type,
+.course-duration {
     display: inline-block;
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
+    padding: 0.2rem 0.5rem;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 4px;
     font-size: 0.8rem;
-    font-weight: 600;
-    text-transform: uppercase;
+    margin-right: 0.5rem;
+    margin-top: 0.5rem;
 }
 
-.job-status-card.applied .job-status {
+.course-item p {
+    margin-top: 0.5rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+/* Jobs List */
+.jobs-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.job-tag {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    background: rgba(139, 92, 246, 0.1);
+    color: #8b5cf6;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Roadmap Steps */
+.roadmap-steps {
+    display: grid;
+    gap: 1rem;
+}
+
+.roadmap-step {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    border-left: 3px solid #4299e1;
+}
+
+.step-number {
+    min-width: 40px;
+    height: 40px;
     background: #4299e1;
     color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.1rem;
 }
 
-.job-status-card.recommended .job-status {
+.step-content {
+    flex: 1;
+}
+
+.step-content h5 {
+    color: var(--text);
+    margin-bottom: 0.25rem;
+    font-size: 1rem;
+}
+
+.step-timeline {
+    display: inline-block;
+    padding: 0.2rem 0.5rem;
+    background: rgba(237, 137, 54, 0.1);
+    color: #ed8936;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-bottom: 0.5rem;
+}
+
+.step-content p {
+    color: var(--muted);
+    margin: 0.5rem 0;
+    font-size: 0.9rem;
+}
+
+.step-actions {
+    margin-top: 0.5rem;
+    padding-left: 1.5rem;
+}
+
+.step-actions li {
+    color: var(--muted);
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+/* Diagram Section */
+.diagram-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.diagram-section h3 {
+    font-size: 1.5rem;
+    color: var(--text);
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.career-diagram {
+    position: relative;
+    min-height: 600px;
+    background: linear-gradient(to bottom, rgba(66, 153, 225, 0.05), rgba(139, 92, 246, 0.05));
+    border-radius: 12px;
+    padding: 2rem;
+    overflow: auto;
+}
+
+.diagram-node {
+    position: absolute;
+    min-width: 200px;
+    padding: 1rem;
+    border-radius: 10px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.diagram-node:hover {
+    transform: scale(1.05);
+    z-index: 10;
+}
+
+.node-start {
+    background: #4299e1;
+    color: white;
+    text-align: center;
+}
+
+.node-career-path {
+    background: #8b5cf6;
+    color: white;
+    text-align: center;
+}
+
+.node-skills {
     background: #48bb78;
     color: white;
 }
 
-.job-status-card.interview .job-status {
+.node-courses {
     background: #ed8936;
     color: white;
 }
 
-/* Course Cards */
-.course-list {
-    display: grid;
-    gap: 1rem;
-}
-
-.course-card {
-    padding: 1.5rem;
-    border: 1px solid rgba(0,0,0,0.06);
-    border-radius: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.course-card h4 {
-    margin: 0;
-    color: var(--text);
-}
-
-.course-card p {
-    margin: 0.25rem 0 0 0;
-    color: var(--muted);
-}
-
-.btn-small {
-    padding: 0.5rem 1rem;
-    background: var(--accent);
+.node-jobs {
+    background: #f56565;
     color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.9rem;
+}
+
+.node-label {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.node-skills span,
+.node-jobs span {
+    display: block;
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    opacity: 0.9;
+}
+
+.node-courses div {
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+    opacity: 0.9;
+}
+
+/* Error Message */
+.error-message {
+    background: rgba(245, 101, 101, 0.1);
+    color: #f56565;
+    padding: 1rem;
+    border-radius: 8px;
+    border-left: 4px solid #f56565;
+    margin-bottom: 1rem;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(66, 153, 225, 0.2);
+    border-top-color: #4299e1;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+.loading-overlay {
+    animation: overlayFadeIn 0.25s ease;
+}
+@keyframes overlayFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-overlay p {
+    color: var(--text);
+    font-size: 1.1rem;
 }
 
 /* Responsive Design */
@@ -137,9 +611,37 @@
         font-size: 2rem;
     }
     
-    .course-card {
+    .education-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .career-form {
+        padding: 1.5rem;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .btn-primary,
+    .btn-secondary {
+        width: 100%;
+    }
+    
+    .results-header {
         flex-direction: column;
         align-items: flex-start;
         gap: 1rem;
+    }
+    
+    .career-diagram {
+        min-height: 400px;
+    }
+    
+    .diagram-node {
+        position: relative;
+        margin-bottom: 1rem;
+        left: auto !important;
+        top: auto !important;
     }
 }

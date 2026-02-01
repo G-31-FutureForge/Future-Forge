@@ -2,6 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import { handleMatch } from '../controllers/matchController.js';
 import { generateReport } from '../controllers/reportController.js';
+import { handleResumeAnalysis } from '../controllers/resumeAnalysisController.js';
 import loadingScreen from '../middleware/loadingScreen.js';
 import path from 'path';
 import courseRoutes from './courseRoutes.js';
@@ -48,6 +49,12 @@ router.post('/skill-analysis',
     next();
   },
   handleMatch
+);
+
+router.post('/resume-analysis',
+  loadingScreen,
+  upload.single('resume'),
+  handleResumeAnalysis
 );
 
 router.post('/match', 
