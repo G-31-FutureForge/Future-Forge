@@ -76,7 +76,7 @@ function App() {
 
     return (
       <div className="App">
-        <Navbar toggleSidebar={toggleSidebar} theme={theme} toggleTheme={toggleTheme} />
+        <Navbar toggleSidebar={toggleSidebar} />
         {!isRecruiterArea && (
           <>
             <Sidebar 

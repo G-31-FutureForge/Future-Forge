@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Navbar.css';
 
-const Navbar = ({ toggleSidebar, theme, toggleTheme }) => {
+const Navbar = ({ toggleSidebar }) => {
   const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
-  const location = useLocation();
-  const isRecruiterDashboard = location.pathname === '/recruiter-dashboard';
 
   useEffect(() => {
     const userData = localStorage.getItem('user');
@@ -29,15 +27,13 @@ const Navbar = ({ toggleSidebar, theme, toggleTheme }) => {
         state: { searchQuery: searchQuery.trim() } 
       });
       setSearchQuery('');
-      setShowSearch(false);
     }
   };
 
-  const toggleSearch = () => {
-    setShowSearch(!showSearch);
-    if (!showSearch) {
-      setSearchQuery('');
-    }
+  const openSearch = () => setShowSearch(true);
+  const closeSearch = () => {
+    setShowSearch(false);
+    setSearchQuery('');
   };
 
   const handleLogout = () => {
@@ -93,10 +89,11 @@ const Navbar = ({ toggleSidebar, theme, toggleTheme }) => {
       <div className="navbar-container">
         {/* Left Section - Menu Button and Brand */}
         <div className="navbar-left">
-          {user && !isRecruiterDashboard && (
+          {user && (
             <button 
               className="navbar-menu-btn"
               onClick={toggleSidebar}
+              title="Open menu"
             >
               ☰
             </button>
@@ -106,45 +103,49 @@ const Navbar = ({ toggleSidebar, theme, toggleTheme }) => {
           </Link>
         </div>
 
-        {/* Center Section - Search (visible for students only, hidden for recruiters) */}
-        {user && user.userType !== 'recruiter' && (
-          <div className="navbar-center">
-            <div className={`search-container ${showSearch ? 'active' : ''}`}>
-              <form onSubmit={handleSearch} className="search-form">
-                <input
-                  type="text"
-                  placeholder="Search jobs, companies, keywords..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="search-input"
-                />
-                <button type="submit" className="search-btn">
+        {/* Right Section – Search (students only, in place of theme) + Profile / Links */}
+        <div className="navbar-right">
+          {/* Search button / bar (students only); replaces dark theme toggle */}
+          {user && user.userType !== 'recruiter' && (
+            <>
+              {!showSearch ? (
+                <button
+                  type="button"
+                  className="search-toggle-btn"
+                  onClick={openSearch}
+                  title="Search jobs"
+                  aria-label="Open search"
+                >
                   🔍
                 </button>
-              </form>
-            </div>
-            {!showSearch && (
-              <button 
-                className="search-toggle-btn"
-                onClick={toggleSearch}
-                title="Search Jobs"
-              >
-                🔍
-              </button>
-            )}
-          </div>
-        )}
-
-        {/* Right Section - Navigation Links */}
-        <div className="navbar-right">
-          <button
-            className="theme-toggle-btn"
-            onClick={toggleTheme}
-            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-            aria-label="Toggle theme"
-          >
-            {theme === 'dark' ? '🌞' : '🌙'}
-          </button>
+              ) : (
+                <div className={`search-container ${showSearch ? 'search-container--open' : ''}`}>
+                  <form onSubmit={handleSearch} className="search-form search-form--emerge">
+                    <input
+                      type="text"
+                      placeholder="Search jobs, companies, keywords..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="search-input"
+                      autoFocus
+                    />
+                    <button type="submit" className="search-btn" title="Search">
+                      🔍
+                    </button>
+                    <button
+                      type="button"
+                      className="search-close-btn"
+                      onClick={closeSearch}
+                      title="Close search"
+                      aria-label="Close search"
+                    >
+                      ×
+                    </button>
+                  </form>
+                </div>
+              )}
+            </>
+          )}
           {user ? (
             // Show when user is logged in
             <>
