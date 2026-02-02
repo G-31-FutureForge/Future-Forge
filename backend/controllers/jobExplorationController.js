@@ -1,4 +1,5 @@
 import { fetchJoobleJobs, transformJoobleJobs } from '../services/joobleService.js';
+import Job from '../models/Job.js';
 
 /**
  * Search and fetch jobs from Jooble API for job exploration
@@ -87,6 +88,52 @@ export const exploreJobs = async (req, res) => {
       jobs: [],
       message: 'Internal server error while fetching jobs',
     });
+  }
+};
+
+/**
+ * Get local recruiter-created jobs from the `Job` collection
+ * GET /api/jobs/local
+ */
+export const getLocalJobs = async (req, res) => {
+  try {
+    const { page = 1, limit = 50 } = req.query;
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const [jobs, total] = await Promise.all([
+      Job.find({})
+        .sort({ postedDate: -1 })
+        .skip(skip)
+        .limit(Number(limit))
+        .lean(),
+      Job.countDocuments({})
+    ]);
+
+    // Normalize to a lightweight shape similar to JobPost shape used by frontend
+    const normalized = jobs.map(j => ({
+      _id: j._id,
+      title: j.title,
+      company: { name: j.company },
+      location: j.location,
+      locationType: j.locationType || 'on-site',
+      jobType: j.jobType,
+      experienceLevel: j.experienceLevel || 'Entry-level',
+      salary: typeof j.salary === 'string' ? { min: null, max: null, raw: j.salary } : j.salary,
+      description: j.description,
+      requiredSkills: Array.isArray(j.skills) ? j.skills.map(s => ({ skill: s })) : [],
+      postedAt: j.postedDate || j.postedAt || new Date(),
+      source: 'local'
+    }));
+
+    res.json({
+      success: true,
+      jobs: normalized,
+      totalCount: total,
+      currentPage: Number(page)
+    });
+  } catch (error) {
+    console.error('Error fetching local jobs:', error);
+    res.status(500).json({ success: false, error: error.message, jobs: [] });
   }
 };
 

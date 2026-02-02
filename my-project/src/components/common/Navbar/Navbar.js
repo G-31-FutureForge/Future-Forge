@@ -149,6 +149,11 @@ const Navbar = ({ toggleSidebar }) => {
           {user ? (
             // Show when user is logged in
             <>
+              {user.userType !== 'recruiter' && (
+                <Link to="/job-finder" className="navbar-link">
+                  🔗 Find Jobs
+                </Link>
+              )}
               <div className="navbar-user">
                 <span className="welcome-text">
                   Hi, {getFirstName()}

@@ -18,6 +18,8 @@ import SkillGapAnalyzer from './components/pages/items/SkillGapAnalyzer';
 import SkillGapDashboard from './components/pages/items/SkillGapDashboard';
 import ResumeBuilder from './components/pages/items/ResumeBuilder';
 import UpskillCourses from './components/pages/items/UpskillCourses';
+import JobFinder from './components/pages/items/JobFinder';
+import JobDetails from './components/pages/items/JobDetails';
 import './App.css';
 
 // Protected Route Component with User Type Check
@@ -196,6 +198,22 @@ function App() {
               element={
                 <ProtectedRoute allowedUserTypes={['student']}>
                   <UpskillCourses />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/job-finder" 
+              element={
+                <ProtectedRoute allowedUserTypes={['student']}>
+                  <JobFinder />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/job/:id" 
+              element={
+                <ProtectedRoute allowedUserTypes={['student']}>
+                  <JobDetails />
                 </ProtectedRoute>
               } 
             />

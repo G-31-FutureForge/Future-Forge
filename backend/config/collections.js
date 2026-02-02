@@ -10,6 +10,8 @@ export const COLLECTIONS = {
   COMPANIES: 'companies',
   /** Job postings */
   JOBS: 'jobs',
+  /** Detailed job posts with applications */
+  jobPosts: 'jobPosts',
 };
 
 export default COLLECTIONS;
