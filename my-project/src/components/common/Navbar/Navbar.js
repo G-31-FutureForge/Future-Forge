@@ -11,12 +11,18 @@ const Navbar = ({ toggleSidebar }) => {
 
   useEffect(() => {
     const userData = localStorage.getItem('user');
-    if (userData) {
+    const token = localStorage.getItem('token');
+
+    // Treat user as logged in ONLY if both user data and token exist
+    if (userData && token) {
       try {
         setUser(JSON.parse(userData));
       } catch (error) {
         console.error('Error parsing user data:', error);
+        setUser(null);
       }
+    } else {
+      setUser(null);
     }
   }, []);
 
@@ -51,8 +57,8 @@ const Navbar = ({ toggleSidebar }) => {
 
   // Safe function to get user's first name
   const getFirstName = () => {
-    if (!user) return 'User';
-    return user.firstName || user.firstname || user.name || user.username || 'User';
+    if (!user) return '';
+    return user.firstName || user.firstname || user.name || user.username || '';
   };
 
   // Safe function to get user's last name
