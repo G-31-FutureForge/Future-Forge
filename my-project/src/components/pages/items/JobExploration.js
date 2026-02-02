@@ -267,58 +267,6 @@ const JobExploration = () => {
     }
   };
 
-  const fetchRecruiterPortalJobs = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:5000/api/job-posts`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      // backend returns { success: true, data: [...] } or { jobs: [...] } or array
-      const jobsArray = data.data || data.jobs || (Array.isArray(data) ? data : []);
-      
-      const recruiterJobs = jobsArray.map(job => {
-        // company may be populated object or a string id
-        const companyName = job.company && typeof job.company === 'object' ? (job.company.name || job.company.companyName || '') : (job.company || 'Company not specified');
-        // requiredSkills may be array of objects { skill, level, yearsRequired }
-        const skills = Array.isArray(job.requiredSkills)
-          ? job.requiredSkills.map(rs => (typeof rs === 'string' ? rs : (rs.skill || rs.name || ''))).filter(Boolean)
-          : [];
-
-        return {
-          _id: job._id,
-          title: job.title,
-          company: companyName || 'Company not specified',
-          requiredQualification: job.minEducation || 'all',
-          location: job.location || 'Location not specified',
-          // Force recruiter portal jobs to appear under Private Sector in the explore UI
-          jobType: 'Private Sector',
-          // Keep original contract type (Full-time/Part-time) if needed elsewhere
-          originalJobType: job.jobType || '',
-          salary: job.salary && (job.salary.min || job.salary.max) ? `₹${job.salary.min || 0} - ₹${job.salary.max || 0}` : 'Not specified',
-          description: job.description || 'No description available',
-          skills,
-          postedDate: job.createdAt || job.postedAt || new Date().toISOString(),
-          applicationDeadline: job.applicationDeadline || null,
-          source: 'Future Forge',
-          locationType: job.locationType || 'On-site'
-        };
-      });
-
-      return recruiterJobs;
-    } catch (err) {
-      console.error('Error fetching recruiter portal jobs:', err);
-      return [];
-    }
-  };
-
   const fetchSarkariResultJobs = async () => {
     try {
       const response = await fetch(`http://localhost:5000/api/scrape/sarkari-result?qualification=${selectedQualification === 'all' ? '' : selectedQualification}`);
@@ -364,13 +312,12 @@ const JobExploration = () => {
 
   const fetchAllJobs = async () => {
     try {
-      const [joobleJobs, sarkariJobs, recruiterJobs] = await Promise.all([
+      const [joobleJobs, sarkariJobs] = await Promise.all([
         fetchJoobleJobs(),
-        fetchSarkariResultJobs(),
-        fetchRecruiterPortalJobs()
+        fetchSarkariResultJobs()
       ]);
 
-      let allJobs = [...joobleJobs, ...sarkariJobs, ...recruiterJobs];
+      let allJobs = [...joobleJobs, ...sarkariJobs];
 
       // Filter jobs based on selectedQualification if not 'all'
       if (selectedQualification !== 'all') {

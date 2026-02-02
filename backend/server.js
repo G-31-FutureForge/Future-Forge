@@ -17,7 +17,6 @@ import apiRoutes from './routes/apiRoutes.js';
 import companyRoutes from './routes/companyRoutes.js';
 import careerGuidanceRoutes from './routes/careerGuidanceRoutes.js';
 import recruiterRoutes from './routes/recruiterRoutes.js';
-import jobPostRoutes from './routes/jobPostRoutes.js';
 
 // Load .env explicitly from the backend folder to avoid issues when
 // the server is started from a different working directory.
@@ -58,7 +57,6 @@ app.use('/api', apiRoutes);
 app.use('/api/companies', companyRoutes);
 app.use('/api/career-guidance', careerGuidanceRoutes);
 app.use('/api/recruiter', recruiterRoutes);
-app.use('/api/job-posts', jobPostRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

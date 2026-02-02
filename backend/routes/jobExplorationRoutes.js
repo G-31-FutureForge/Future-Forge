@@ -1,5 +1,5 @@
 import express from 'express';
-import { exploreJobs, getFeaturedJobs, getJobsByLocation, getLocalJobs } from '../controllers/jobExplorationController.js';
+import { exploreJobs, getFeaturedJobs, getJobsByLocation } from '../controllers/jobExplorationController.js';
 
 const router = express.Router();
 
@@ -25,12 +25,6 @@ router.get('/explore', exploreJobs);
  * - location: Job location
  */
 router.get('/featured', getFeaturedJobs);
-
-/**
- * GET /api/jobs/local
- * Return recruiter-created local Job entries (normalized)
- */
-router.get('/local', getLocalJobs);
 
 /**
  * GET /api/jobs/location/:location
