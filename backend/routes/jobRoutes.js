@@ -1,23 +1,32 @@
 import express from 'express';
 const router = express.Router();
-import { getAllJobs, getJob, createJob, updateJob, deleteJob, searchJobs } from '../controllers/jobController.js';
+import { 
+  getAllJobs, 
+  getJob, 
+  createJob, 
+  updateJob, 
+  deleteJob, 
+  searchJobs,
+  getMyJobs,
+  toggleJobStatus,
+  getJobStats
+} from '../controllers/jobController.js';
+import { protect } from '../middleware/authMiddleware.js';
 
-// GET all jobs
-router.get('/', getAllJobs);
-
-// GET search jobs
+// Public routes
 router.get('/search', searchJobs);
-
-// GET single job
+router.get('/stats', getJobStats);
+router.get('/', getAllJobs);
 router.get('/:id', getJob);
 
-// POST create new job
-router.post('/', createJob);
+// Protected routes (require authentication)
+// Job posting by recruiter
+router.post('/', protect, createJob);
+router.put('/:id', protect, updateJob);
+router.delete('/:id', protect, deleteJob);
+router.patch('/:id/status', protect, toggleJobStatus);
 
-// PUT update job
-router.put('/:id', updateJob);
-
-// DELETE job
-router.delete('/:id', deleteJob);
+// Recruiter's own jobs
+router.get('/recruiter/my-jobs', protect, getMyJobs);
 
 export default router;
