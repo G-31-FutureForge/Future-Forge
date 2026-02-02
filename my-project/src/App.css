@@ -11,50 +11,50 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Theme variables */
+/* Theme variables - light mode (fallback) */
 :root {
-  --bg: #ecf0f1;
-  --bg-rgb: 236,240,241;
-  --surface: #ffffff;
-  --surface-rgb: 255,255,255;
-  --surface-alt: #f7f9fc;
-  --muted: #6c757d;
-  --accent: #6366f1;
-  --accent-rgb: 99,102,241;
-  --accent-strong: #7c3aed;
-  --accent-contrast: #f8fafc;
-  --text: #1e293b;
-  --text-rgb: 30,41,59;
-  --shadow: 0 10px 30px rgba(15,23,42,0.12);
-  --border: rgba(15,23,42,0.08);
-  --overlay: rgba(15,23,42,0.55);
-  --hero-gradient-start: #f8fafc;
-  --hero-gradient-end: #edf2f7;
-  --cta-gradient-start: #1a202c;
-  --cta-gradient-end: #2d3748;
+  --bg: #0b1120;
+  --bg-rgb: 11,17,32;
+  --surface: #020617;
+  --surface-rgb: 2,6,23;
+  --surface-alt: #020617;
+  --muted: #9ca3af;
+  --accent: #38bdf8;
+  --accent-rgb: 56,189,248;
+  --accent-strong: #0ea5e9;
+  --accent-contrast: #f9fafb;
+  --text: #e5e7eb;
+  --text-rgb: 229,231,235;
+  --shadow: 0 22px 45px rgba(15,23,42,0.8);
+  --border: rgba(148,163,184,0.35);
+  --overlay: rgba(15,23,42,0.75);
+  --hero-gradient-start: #020617;
+  --hero-gradient-end: #020617;
+  --cta-gradient-start: #020617;
+  --cta-gradient-end: #020617;
 }
 
-/* Dark theme overrides */
-[data-theme="dark"] {
-  --bg: #030712;
-  --bg-rgb: 3,7,18;
-  --surface: #0f1720;
-  --surface-rgb: 15,23,32;
-  --surface-alt: #131c2a;
-  --muted: #a0aec0;
-  --accent: #7dd3fc;
-  --accent-rgb: 125,211,252;
-  --accent-strong: #38bdf8;
-  --accent-contrast: #f8fafc;
-  --text: #e2e8f0;
-  --text-rgb: 226,232,240;
-  --shadow: 0 25px 45px rgba(0,0,0,0.55);
-  --border: rgba(148,163,184,0.35);
-  --overlay: rgba(3,7,18,0.75);
-  --hero-gradient-start: #0b1220;
-  --hero-gradient-end: #111b2a;
-  --cta-gradient-start: #0f172a;
-  --cta-gradient-end: #0b1120;
+/* Optional true light theme (if you ever set data-theme=\"light\") */
+[data-theme="light"] {
+  --bg: #f3f4f6;
+  --bg-rgb: 243,244,246;
+  --surface: #ffffff;
+  --surface-rgb: 255,255,255;
+  --surface-alt: #f9fafb;
+  --muted: #6b7280;
+  --accent: #2563eb;
+  --accent-rgb: 37,99,235;
+  --accent-strong: #1d4ed8;
+  --accent-contrast: #f9fafb;
+  --text: #0f172a;
+  --text-rgb: 15,23,42;
+  --shadow: 0 12px 30px rgba(15,23,42,0.18);
+  --border: rgba(15,23,42,0.08);
+  --overlay: rgba(15,23,42,0.45);
+  --hero-gradient-start: #eff6ff;
+  --hero-gradient-end: #e5e7eb;
+  --cta-gradient-start: #111827;
+  --cta-gradient-end: #020617;
 }
 
 .App {

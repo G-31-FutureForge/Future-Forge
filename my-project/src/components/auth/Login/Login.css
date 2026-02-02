@@ -4,25 +4,29 @@
   justify-content: center;
   align-items: center;
   min-height: calc(100vh - 80px);
-  padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 32px 20px;
+  background:
+    radial-gradient(circle at top left, rgba(var(--accent-rgb), 0.35), transparent 58%),
+    radial-gradient(circle at bottom right, rgba(var(--accent-rgb), 0.18), transparent 50%),
+    linear-gradient(135deg, var(--bg), #020617);
 }
 
 .login-form {
-  background: white;
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  background: var(--surface);
+  padding: 40px 36px;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
   width: 100%;
-  max-width: 450px;
+  max-width: 460px;
+  border: 1px solid var(--border);
 }
 
 .login-form h2 {
   text-align: center;
   margin-bottom: 30px;
-  color: #333;
-  font-size: 28px;
-  font-weight: 600;
+  color: var(--text);
+  font-size: 26px;
+  font-weight: 650;
 }
 
 .user-type-group {
@@ -37,22 +41,23 @@
 
 .user-type-option {
   flex: 1;
-  border: 2px solid #e0e0e0;
-  border-radius: 10px;
-  padding: 15px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 12px 14px;
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: center;
+  background: rgba(var(--surface-rgb), 0.6);
 }
 
 .user-type-option:hover {
-  border-color: #667eea;
+  border-color: var(--accent);
   transform: translateY(-2px);
 }
 
 .user-type-option.active {
-  border-color: #667eea;
-  background: linear-gradient(135deg, #667eea15 0%, #764ba215 100%);
+  border-color: var(--accent);
+  background: radial-gradient(circle at top left, rgba(var(--accent-rgb),0.26), rgba(var(--accent-rgb),0.08));
 }
 
 .user-type-option input {
@@ -72,7 +77,7 @@
 
 .option-text {
   font-weight: 500;
-  color: #333;
+  color: var(--text);
 }
 
 .form-group {
@@ -82,44 +87,49 @@
 .form-group input {
   width: 100%;
   padding: 14px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
   font-size: 16px;
-  transition: border-color 0.3s ease;
+  transition: border-color 0.3s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+  background: rgba(var(--surface-rgb), 0.6);
+  color: var(--text);
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #667eea;
-  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.3);
+  background: rgba(var(--surface-rgb), 0.9);
 }
 
 .error-message {
-  background: #fee;
-  color: #c33;
+  background: rgba(248, 113, 113, 0.12);
+  color: #fecaca;
   padding: 12px;
   border-radius: 8px;
   margin-bottom: 20px;
   text-align: center;
-  border: 1px solid #fcc;
+  border: 1px solid rgba(248, 113, 113, 0.4);
 }
 
 .login-btn {
   width: 100%;
   padding: 15px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--accent-strong), var(--accent));
+  color: var(--accent-contrast);
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
+  box-shadow: 0 18px 40px rgba(var(--accent-rgb), 0.45);
 }
 
 .login-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+  box-shadow: 0 22px 55px rgba(var(--accent-rgb), 0.55);
+  filter: brightness(1.03);
 }
 
 .login-btn:disabled {
@@ -130,11 +140,11 @@
 .register-link {
   text-align: center;
   margin-top: 20px;
-  color: #666;
+  color: var(--muted);
 }
 
 .register-link a {
-  color: #667eea;
+  color: var(--accent);
   text-decoration: none;
   font-weight: 500;
 }
@@ -143,31 +153,8 @@
   text-decoration: underline;
 }
 
-/* Dark theme support */
-[data-theme="dark"] .login-form {
-  background: #2d2d2d;
-  color: #fff;
-}
-
-[data-theme="dark"] .login-form h2 {
-  color: #fff;
-}
-
-[data-theme="dark"] .form-group input {
-  background: #3d3d3d;
-  border-color: #555;
-  color: #fff;
-}
-
-[data-theme="dark"] .user-type-option {
-  border-color: #555;
-  background: #3d3d3d;
-}
-
-[data-theme="dark"] .option-text {
-  color: #fff;
-}
-
-[data-theme="dark"] .register-link {
-  color: #aaa;
+@media (max-width: 600px) {
+  .login-form {
+    padding: 28px 22px;
+  }
 }
