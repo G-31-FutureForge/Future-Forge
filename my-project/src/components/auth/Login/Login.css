@@ -4,29 +4,31 @@
   justify-content: center;
   align-items: center;
   min-height: calc(100vh - 80px);
-  padding: 32px 20px;
+  padding: 40px 24px;
   background:
-    radial-gradient(circle at top left, rgba(var(--accent-rgb), 0.35), transparent 58%),
-    radial-gradient(circle at bottom right, rgba(var(--accent-rgb), 0.18), transparent 50%),
-    linear-gradient(135deg, var(--bg), #020617);
+    radial-gradient(ellipse at top left, rgba(var(--accent-rgb), 0.15), transparent 50%),
+    radial-gradient(ellipse at bottom right, rgba(var(--accent-rgb), 0.1), transparent 50%),
+    linear-gradient(180deg, var(--bg), var(--surface-alt));
 }
 
 .login-form {
   background: var(--surface);
-  padding: 40px 36px;
-  border-radius: 20px;
-  box-shadow: var(--shadow);
+  padding: 48px 40px;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
   width: 100%;
-  max-width: 460px;
+  max-width: 440px;
   border: 1px solid var(--border);
+  backdrop-filter: blur(10px);
 }
 
 .login-form h2 {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 32px;
   color: var(--text);
-  font-size: 26px;
-  font-weight: 650;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 .user-type-group {
@@ -114,27 +116,33 @@
 
 .login-btn {
   width: 100%;
-  padding: 15px;
+  padding: 16px;
   background: linear-gradient(135deg, var(--accent-strong), var(--accent));
   color: var(--accent-contrast);
   border: none;
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, filter 0.25s ease;
-  box-shadow: 0 18px 40px rgba(var(--accent-rgb), 0.45);
+  transition: all var(--transition-normal);
+  box-shadow: 0 8px 24px rgba(var(--accent-rgb), 0.3);
+  letter-spacing: 0.01em;
 }
 
 .login-btn:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 22px 55px rgba(var(--accent-rgb), 0.55);
-  filter: brightness(1.03);
+  box-shadow: 0 12px 32px rgba(var(--accent-rgb), 0.4);
+  filter: brightness(1.05);
+}
+
+.login-btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .login-btn:disabled {
-  opacity: 0.7;
+  opacity: 0.6;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
 .register-link {

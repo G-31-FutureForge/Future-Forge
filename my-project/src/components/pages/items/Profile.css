@@ -1,7 +1,8 @@
 .profile-container {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 2.5rem;
+    min-height: calc(100vh - 80px);
 }
 
 .profile-header {
@@ -12,12 +13,13 @@
 .profile-header h1 {
     font-size: 2.5rem;
     color: var(--text);
-    margin-bottom: 1rem;
+    margin-bottom: 0.75rem;
     font-weight: 700;
+    letter-spacing: -0.02em;
 }
 
 .profile-header p {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     color: var(--muted);
 }
 
@@ -29,11 +31,12 @@
 .profile-card {
     background: var(--surface);
     padding: 2.5rem;
-    border-radius: 15px;
-    box-shadow: 0 5px 20px var(--shadow);
-    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
     width: 100%;
-    max-width: 500px;
+    max-width: 560px;
+    backdrop-filter: blur(10px);
 }
 
 .profile-info {
@@ -44,46 +47,61 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1rem 0;
-    border-bottom: 1px solid #e2e8f0;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--border);
+    transition: background-color var(--transition-fast);
 }
 
 .info-item:last-child {
     border-bottom: none;
 }
 
+.info-item:hover {
+    background: rgba(var(--accent-rgb), 0.03);
+    margin: 0 -1rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    border-radius: var(--radius-sm);
+}
+
 .info-item strong {
     color: var(--text);
     font-weight: 600;
+    font-size: 0.95rem;
 }
 
 .info-item span {
-    color: var(--muted);
+    color: var(--text-secondary);
+    font-size: 0.95rem;
 }
 
 .profile-actions {
     display: flex;
     gap: 1rem;
     justify-content: center;
+    padding-top: 0.5rem;
 }
 
 .btn-primary, .btn-secondary {
-    padding: 0.75rem 1.5rem;
-    border-radius: 10px;
+    padding: 0.875rem 1.75rem;
+    border-radius: var(--radius-md);
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
     border: none;
+    font-size: 0.95rem;
 }
 
 .btn-primary {
-    background: var(--accent);
-    color: white;
+    background: linear-gradient(135deg, var(--accent-strong), var(--accent));
+    color: var(--accent-contrast);
+    box-shadow: 0 4px 16px rgba(var(--accent-rgb), 0.3);
 }
 
 .btn-primary:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.16);
+    box-shadow: 0 8px 24px rgba(var(--accent-rgb), 0.4);
+    filter: brightness(1.05);
 }
 
 .btn-secondary {
@@ -93,7 +111,8 @@
 }
 
 .btn-secondary:hover {
-    background: rgba(102, 126, 234, 0.1);
+    background: rgba(var(--accent-rgb), 0.1);
+    transform: translateY(-2px);
 }
 
 /* Responsive Design */

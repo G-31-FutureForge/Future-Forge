@@ -1,8 +1,8 @@
 .skill-gap-analyzer {
   max-width: 1000px;
   margin: 0 auto;
-  padding: 2rem;
-  min-height: 80vh;
+  padding: 2.5rem;
+  min-height: calc(100vh - 80px);
 }
 
 .analyzer-header {
@@ -15,16 +15,17 @@
   color: var(--text);
   font-size: 2.5rem;
   font-weight: 700;
-  margin-bottom: 0.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  margin-bottom: 0.75rem;
+  background: linear-gradient(135deg, var(--accent), var(--accent-light));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  letter-spacing: -0.02em;
 }
 
 .analyzer-header p {
   color: var(--muted);
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   font-weight: 400;
 }
 
@@ -54,10 +55,10 @@
 
 .analyzer-container {
   background: var(--surface);
-  border-radius: 16px;
+  border-radius: var(--radius-xl);
   padding: 2.5rem;
-  box-shadow: 0 10px 40px var(--shadow);
-  border: 1px solid rgba(0,0,0,0.06);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
   backdrop-filter: blur(10px);
 }
 
@@ -84,13 +85,13 @@
 }
 
 .upload-area {
-  border: 2px dashed rgba(0,0,0,0.06);
-  border-radius: 12px;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-lg);
   padding: 2.5rem 2rem;
   text-align: center;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--transition-normal);
   cursor: pointer;
-  background: rgba(0,0,0,0.03);
+  background: var(--surface-elevated);
   position: relative;
   overflow: hidden;
 }
@@ -102,7 +103,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background: linear-gradient(90deg, transparent, rgba(var(--accent-rgb), 0.1), transparent);
   transition: left 0.5s;
 }
 
@@ -112,9 +113,9 @@
 
 .upload-area:hover {
   border-color: var(--accent);
-  background: rgba(0,123,255,0.03);
+  background: rgba(var(--accent-rgb), 0.05);
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 123, 255, 0.12);
+  box-shadow: 0 8px 24px rgba(var(--accent-rgb), 0.15);
 }
 
 .file-input {
@@ -155,14 +156,15 @@
 .jd-textarea {
   width: 100%;
   padding: 1.25rem;
-  border: 2px solid rgba(0,0,0,0.06);
-  border-radius: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
   resize: vertical;
-  font-family: 'Inter', sans-serif;
+  font-family: inherit;
   font-size: 0.95rem;
-  line-height: 1.5;
+  line-height: 1.6;
   background: var(--surface);
-  transition: all 0.3s ease;
+  color: var(--text);
+  transition: all var(--transition-fast);
   min-height: 200px;
 }
 
@@ -170,8 +172,7 @@
   outline: none;
   border-color: var(--accent);
   background: var(--surface);
-  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.08);
-  transform: translateY(-1px);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.15);
 }
 
 .jd-textarea::placeholder {
@@ -180,21 +181,22 @@
 
 .analyze-btn {
   width: 100%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  background: linear-gradient(135deg, var(--accent-strong), var(--accent));
+  color: var(--accent-contrast);
   border: none;
   padding: 1.25rem 2rem;
-  border-radius: 12px;
-  font-size: 1.1rem;
+  border-radius: var(--radius-md);
+  font-size: 1.05rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--transition-normal);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.75rem;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 6px 20px rgba(var(--accent-rgb), 0.3);
 }
 
 .analyze-btn::before {
@@ -204,7 +206,7 @@
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
   transition: left 0.5s;
 }
 
@@ -213,16 +215,17 @@
 }
 
 .analyze-btn:hover:not(:disabled) {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(var(--accent-rgb), 0.4);
+  filter: brightness(1.05);
 }
 
 .analyze-btn:active:not(:disabled) {
-  transform: translateY(-1px);
+  transform: translateY(0);
 }
 
 .analyze-btn:disabled {
-  background: rgba(0,0,0,0.03);
+  background: var(--surface-elevated);
   color: var(--muted);
   cursor: not-allowed;
   transform: none;

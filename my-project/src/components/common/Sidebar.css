@@ -6,10 +6,10 @@
   left: 0;
   width: 280px;
   height: 100vh;
-  background: rgba(15,23,42,0.96);
+  background: rgba(30, 64, 175, 0.98);
   color: var(--text);
-  border-right: 1px solid var(--border);
-  box-shadow: 18px 0 55px rgba(15, 23, 42, 0.9);
+  border-right: 1px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 4px 0 25px rgba(30, 64, 175, 0.4);
   transform: translateX(-100%);
   transition: transform 0.3s ease;
   z-index: 1000;
@@ -29,14 +29,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface-alt);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .sidebar-header h3 {
   margin: 0;
   font-size: 1.2rem;
-  color: var(--text);
+  color: #ffffff;
 }
 
 .sidebar-close-btn {
@@ -46,12 +46,12 @@
   cursor: pointer;
   padding: 0.35rem;
   border-radius: 8px;
-  color: var(--text);
-  transition: background-color 0.2s ease;
+  color: #ffffff;
+  transition: all 0.2s ease;
 }
 
 .sidebar-close-btn:hover {
-  background-color: rgba(var(--text-rgb), 0.1);
+  background-color: rgba(255, 255, 255, 0.15);
 }
 
 .sidebar-menu {
@@ -72,27 +72,27 @@
   gap: 0.75rem;
   padding: 0.95rem 1.5rem;
   text-decoration: none;
-  color: var(--text);
+  color: rgba(255, 255, 255, 0.9);
   background: none;
   border: none;
   font: inherit;
   font-size: 1rem;
   cursor: pointer;
   border-left: 3px solid transparent;
-  transition: background-color 0.2s ease, color 0.2s ease, border-left-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .sidebar-menu li.active a {
-  background: rgba(var(--accent-rgb), 0.12);
-  color: var(--accent);
-  border-left-color: var(--accent);
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  border-left-color: #ffffff;
   font-weight: 600;
 }
 
 .sidebar-menu a:hover,
 .sidebar-logout-btn:hover {
-  background: rgba(var(--text-rgb), 0.08);
-  color: var(--accent);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 .sidebar-icon {
@@ -103,18 +103,18 @@
 
 .sidebar-divider {
   height: 1px;
-  background: var(--border);
+  background: rgba(255, 255, 255, 0.1);
   margin: 0.75rem 1.5rem;
 }
 
 .sidebar-logout-btn {
-  color: #ef4444;
+  color: #fca5a5 !important;
   font-weight: 600;
 }
 
 .sidebar-logout-btn:hover {
-  background: rgba(239, 68, 68, 0.12);
-  color: #dc2626;
+  background: rgba(239, 68, 68, 0.2) !important;
+  color: #fecaca !important;
 }
 
 .sidebar-overlay {

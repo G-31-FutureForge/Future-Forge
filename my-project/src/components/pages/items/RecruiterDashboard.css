@@ -1,10 +1,10 @@
-/* Recruiter Dashboard – Post Job, Search Candidates, View All Candidates only */
+/* Recruiter Dashboard – Professional Design */
 .recruiter-dashboard {
-    padding: 32px 24px;
+    padding: 2.5rem;
     max-width: 1000px;
     margin: 0 auto;
-    min-height: 100vh;
-    background: #f8fafc;
+    min-height: calc(100vh - 80px);
+    background: transparent;
 }
 
 .recruiter-loading {
@@ -12,120 +12,82 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    font-size: 18px;
-    color: #667eea;
+    font-size: 1.1rem;
+    color: var(--accent);
 }
 
 .recruiter-dashboard-header {
-    margin-bottom: 40px;
+    margin-bottom: 3rem;
     text-align: center;
 }
 
 .recruiter-dashboard-header h1 {
-    font-size: 32px;
+    font-size: 2.5rem;
     font-weight: 700;
-    color: #1a202c;
-    margin: 0 0 8px 0;
+    color: var(--text);
+    margin: 0 0 0.5rem 0;
+    letter-spacing: -0.02em;
 }
 
 .recruiter-dashboard-header p {
-    font-size: 18px;
-    color: #718096;
+    font-size: 1.1rem;
+    color: var(--muted);
     margin: 0;
 }
 
 .recruiter-actions {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
 }
 
 .recruiter-action-card {
-    background: white;
-    border: 2px solid #e2e8f0;
-    border-radius: 16px;
-    padding: 32px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 2.5rem 2rem;
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all var(--transition-normal);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 1rem;
+    box-shadow: var(--shadow-sm);
 }
 
 .recruiter-action-card:hover {
-    border-color: #667eea;
-    box-shadow: 0 8px 24px rgba(102, 126, 234, 0.2);
-    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: var(--shadow);
+    transform: translateY(-6px);
+    background: linear-gradient(135deg, var(--surface) 0%, rgba(var(--accent-rgb), 0.05) 100%);
 }
 
 .recruiter-action-card .action-icon {
-    font-size: 48px;
+    font-size: 3rem;
     line-height: 1;
 }
 
 .recruiter-action-card h3 {
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 700;
-    color: #1a202c;
+    color: var(--text);
     margin: 0;
 }
 
 .recruiter-action-card p {
-    font-size: 14px;
-    color: #718096;
+    font-size: 0.95rem;
+    color: var(--muted);
     margin: 0;
     line-height: 1.5;
-}
-
-.recruiter-action-card.post-job:hover {
-    border-color: #667eea;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
-}
-
-.recruiter-action-card.search-candidates:hover {
-    border-color: #667eea;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
-}
-
-.recruiter-action-card.view-candidates:hover {
-    border-color: #667eea;
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
 }
 
 @media (max-width: 640px) {
     .recruiter-actions {
         grid-template-columns: 1fr;
     }
-}
-
-[data-theme="dark"] .recruiter-dashboard {
-    background: #1a202c;
-}
-
-[data-theme="dark"] .recruiter-dashboard-header h1 {
-    color: #e2e8f0;
-}
-
-[data-theme="dark"] .recruiter-dashboard-header p {
-    color: #a0aec0;
-}
-
-[data-theme="dark"] .recruiter-action-card {
-    background: #2d3748;
-    border-color: #4a5568;
-}
-
-[data-theme="dark"] .recruiter-action-card:hover {
-    border-color: #667eea;
-    background: #4a5568;
-}
-
-[data-theme="dark"] .recruiter-action-card h3 {
-    color: #e2e8f0;
-}
-
-[data-theme="dark"] .recruiter-action-card p {
-    color: #a0aec0;
+    
+    .recruiter-dashboard {
+        padding: 1.5rem;
+    }
 }
