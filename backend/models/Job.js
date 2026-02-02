@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { COLLECTIONS } from '../config/collections.js';
 
 const jobSchema = new mongoose.Schema({
   title: {
@@ -41,7 +42,14 @@ const jobSchema = new mongoose.Schema({
   applicationDeadline: {
     type: Date,
     required: false,
-  }
+  },
+  postedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: false,
+  },
+}, {
+  collection: COLLECTIONS.JOBS,
 });
 
 export default mongoose.model('Job', jobSchema);

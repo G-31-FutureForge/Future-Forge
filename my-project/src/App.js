@@ -7,7 +7,9 @@ import Home from './components/pages/Home';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Dashboard from './components/pages/items/Dashboard'; // Existing dashboard
-import RecruiterDashboard from './components/pages/items/RecruiterDashboard'; // New recruiter dashboard
+import RecruiterDashboard from './components/pages/items/RecruiterDashboard';
+import PostJob from './components/pages/items/PostJob';
+import Candidates from './components/pages/items/Candidates';
 import Career from './components/pages/items/Career';
 import Profile from './components/pages/items/Profile';
 import JobExploration from './components/pages/items/JobExploration';
@@ -70,12 +72,12 @@ function App() {
   // Inner component to access useLocation hook
   const AppContent = () => {
     const location = useLocation();
-    const isRecruiterDashboard = location.pathname === '/recruiter-dashboard';
+    const isRecruiterArea = location.pathname === '/recruiter-dashboard' || location.pathname.startsWith('/recruiter/');
 
     return (
       <div className="App">
         <Navbar toggleSidebar={toggleSidebar} theme={theme} toggleTheme={toggleTheme} />
-        {!isRecruiterDashboard && (
+        {!isRecruiterArea && (
           <>
             <Sidebar 
               isOpen={sidebarOpen} 
@@ -88,7 +90,7 @@ function App() {
           </>
         )}
         
-        <main className={`main-content ${sidebarOpen && !isRecruiterDashboard ? 'sidebar-open' : ''}`}>
+        <main className={`main-content ${sidebarOpen && !isRecruiterArea ? 'sidebar-open' : ''}`}>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
@@ -104,12 +106,28 @@ function App() {
               } 
             />
             
-            {/* Recruiter Dashboard - New Component */}
+            {/* Recruiter: Dashboard, Post Job, View/Search Candidates */}
             <Route 
               path="/recruiter-dashboard" 
               element={
                 <ProtectedRoute allowedUserTypes={['recruiter']}>
                   <RecruiterDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/recruiter/post-job" 
+              element={
+                <ProtectedRoute allowedUserTypes={['recruiter']}>
+                  <PostJob />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/recruiter/candidates" 
+              element={
+                <ProtectedRoute allowedUserTypes={['recruiter']}>
+                  <Candidates />
                 </ProtectedRoute>
               } 
             />

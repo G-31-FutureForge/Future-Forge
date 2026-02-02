@@ -1,5 +1,12 @@
 import mongoose from 'mongoose';
 
+/**
+ * Connects to MongoDB. Data is stored in separate collections:
+ * - users: all user registrations (students & recruiters)
+ * - companies: company registrations (created when recruiters sign up)
+ * - jobs: job postings
+ * See config/collections.js for collection name constants.
+ */
 const connectDB = async () => {
   try {
     if (!process.env.MONGO_URI) {

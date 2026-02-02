@@ -1,6 +1,7 @@
 // backend/models/User.js
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import { COLLECTIONS } from '../config/collections.js';
 
 const educationSchema = new mongoose.Schema({
     institution: { type: String, required: true, trim: true },
@@ -278,6 +279,7 @@ const userSchema = new mongoose.Schema({
     
 }, { 
     timestamps: true,
+    collection: COLLECTIONS.USERS,
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
 });

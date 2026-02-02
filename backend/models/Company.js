@@ -1,5 +1,6 @@
 // backend/models/Company.js
 import mongoose from 'mongoose';
+import { COLLECTIONS } from '../config/collections.js';
 
 const companySchema = new mongoose.Schema({
     // Company Basic Information
@@ -279,6 +280,7 @@ const companySchema = new mongoose.Schema({
     
 }, {
     timestamps: true,
+    collection: COLLECTIONS.COMPANIES,
     toJSON: { virtuals: true },
     toObject: { virtuals: true }
 });

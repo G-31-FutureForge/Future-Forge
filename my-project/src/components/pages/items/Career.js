@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './Career.css';
 
 const Career = () => {
     const [step, setStep] = useState(1);
     const [educationLevel, setEducationLevel] = useState('');
-    const [stepDirection, setStepDirection] = useState(1); // 1 forward, -1 back
     const [isTransitioning, setIsTransitioning] = useState(false);
     const [formData, setFormData] = useState({
         interest: '',
@@ -20,7 +19,6 @@ const Career = () => {
 
     // Handle education level selection with smooth transition
     const handleEducationLevelSelect = (level) => {
-        setStepDirection(1);
         setIsTransitioning(true);
         setTimeout(() => {
             setEducationLevel(level);
@@ -93,7 +91,6 @@ const Career = () => {
 
             if (result.success) {
                 setCareerData(result.data);
-                setStepDirection(1);
                 setIsTransitioning(true);
                 setTimeout(() => setStep(3), 150);
                 setTimeout(() => setIsTransitioning(false), 400);
@@ -110,7 +107,6 @@ const Career = () => {
 
     // Reset to start with transition
     const handleReset = () => {
-        setStepDirection(-1);
         setIsTransitioning(true);
         setTimeout(() => {
             setStep(1);
@@ -130,7 +126,6 @@ const Career = () => {
     };
 
     const handleBackToStep1 = () => {
-        setStepDirection(-1);
         setIsTransitioning(true);
         setTimeout(() => { setStep(1); setEducationLevel(''); setIsTransitioning(false); }, 200);
     };

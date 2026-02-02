@@ -43,6 +43,8 @@ const Navbar = ({ toggleSidebar, theme, toggleTheme }) => {
   const handleLogout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
+    localStorage.removeItem('userType');
+    setUser(null);
     setShowProfileDropdown(false);
     navigate('/');
   };
@@ -104,8 +106,8 @@ const Navbar = ({ toggleSidebar, theme, toggleTheme }) => {
           </Link>
         </div>
 
-        {/* Center Section - Search (Visible when logged in) */}
-        {user && (
+        {/* Center Section - Search (visible for students only, hidden for recruiters) */}
+        {user && user.userType !== 'recruiter' && (
           <div className="navbar-center">
             <div className={`search-container ${showSearch ? 'active' : ''}`}>
               <form onSubmit={handleSearch} className="search-form">
