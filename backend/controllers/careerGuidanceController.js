@@ -1,4 +1,5 @@
 import { generateCareerGuidance, parseResume, generateDiagramStructure } from '../services/careerGuidanceService.js';
+import { generateDatasetBasedGuidance } from '../services/datasetCareerGuidance.js';
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -66,8 +67,24 @@ export const handleCareerGuidance = async (req, res) => {
       resumeText
     };
 
-    // Generate career guidance
-    const careerData = await generateCareerGuidance(userProfile);
+    // Try dataset-based guidance first for comprehensive, data-driven recommendations
+    let careerData;
+    try {
+      console.log('[Career Guidance] Generating guidance from Indian Career Dataset...');
+      careerData = await generateDatasetBasedGuidance(
+        educationLevel,
+        interest,
+        stream,
+        preferredJobType,
+        careerGoal,
+        userProfile.preferredSkills
+      );
+      console.log('[Career Guidance] Successfully generated dataset-based guidance');
+    } catch (datasetError) {
+      console.warn('[Career Guidance] Dataset guidance failed, falling back to AI:', datasetError?.message);
+      // Fallback to AI-based guidance
+      careerData = await generateCareerGuidance(userProfile);
+    }
 
     // Generate diagram structure
     const diagramStructure = generateDiagramStructure(careerData, educationLevel);
@@ -77,7 +94,11 @@ export const handleCareerGuidance = async (req, res) => {
       data: {
         careerPaths: careerData.career_paths || [],
         summary: careerData.summary || '',
-        diagram: diagramStructure
+        diagram: diagramStructure,
+        datasetMatches: careerData.dataset_matches || 0,
+        topLocations: careerData.top_locations || [],
+        averageSalary: careerData.average_salary || 'Competitive',
+        growthPotential: careerData.growth_potential || 'High'
       }
     });
   } catch (error) {

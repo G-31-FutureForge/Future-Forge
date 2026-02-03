@@ -336,9 +336,33 @@ const Career = () => {
                     </button>
                 </div>
 
+                {/* Dataset Info Banner */}
+                {careerData.datasetMatches && (
+                    <div className="dataset-info-banner">
+                        <div className="info-item">
+                            <span className="info-label">Matching Profiles:</span>
+                            <span className="info-value">{careerData.datasetMatches}</span>
+                        </div>
+                        <div className="info-item">
+                            <span className="info-label">Average Salary:</span>
+                            <span className="info-value">{careerData.averageSalary}</span>
+                        </div>
+                        <div className="info-item">
+                            <span className="info-label">Growth Potential:</span>
+                            <span className="info-value">{careerData.growthPotential}</span>
+                        </div>
+                        {careerData.topLocations && careerData.topLocations.length > 0 && (
+                            <div className="info-item">
+                                <span className="info-label">Top Locations:</span>
+                                <span className="info-value">{careerData.topLocations.join(', ')}</span>
+                            </div>
+                        )}
+                    </div>
+                )}
+
                 {careerData.summary && (
                     <div className="summary-section">
-                        <h3>Summary</h3>
+                        <h3>Career Guidance Summary</h3>
                         <p>{careerData.summary}</p>
                     </div>
                 )}
@@ -346,73 +370,129 @@ const Career = () => {
                 <div className="career-paths">
                     {careerData.careerPaths.map((path, index) => (
                         <div key={index} className="career-path-card">
-                            <h3>{path.name}</h3>
+                            <div className="path-header">
+                                <h3>{path.name}</h3>
+                                {path.growthPotential && (
+                                    <span className={`growth-badge growth-${path.growthPotential.toLowerCase()}`}>
+                                        {path.growthPotential}
+                                    </span>
+                                )}
+                            </div>
+                            
                             {path.description && <p className="path-description">{path.description}</p>}
                             
+                            {/* Career Details Grid */}
+                            <div className="career-details-grid">
+                                {path.industry && (
+                                    <div className="detail-item">
+                                        <strong>Industry:</strong>
+                                        <p>{path.industry}</p>
+                                    </div>
+                                )}
+                                {path.experienceLevel && (
+                                    <div className="detail-item">
+                                        <strong>Experience Level:</strong>
+                                        <p>{path.experienceLevel}</p>
+                                    </div>
+                                )}
+                                {path.salaryRange && (
+                                    <div className="detail-item">
+                                        <strong>Salary Range:</strong>
+                                        <p>{path.salaryRange}</p>
+                                    </div>
+                                )}
+                                {path.jobType && (
+                                    <div className="detail-item">
+                                        <strong>Job Type:</strong>
+                                        <p>{path.jobType}</p>
+                                    </div>
+                                )}
+                                {path.locations && path.locations.length > 0 && (
+                                    <div className="detail-item">
+                                        <strong>Locations:</strong>
+                                        <p>{path.locations.join(', ')}</p>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Required Skills */}
                             {path.skills && path.skills.length > 0 && (
                                 <div className="path-section">
-                                    <h4>Required Skills</h4>
+                                    <h4>✓ Required Skills</h4>
                                     <div className="skills-list">
                                         {path.skills.map((skill, i) => (
-                                            <span key={i} className="skill-tag">{skill}</span>
+                                            <span key={i} className="skill-tag skill-required">{skill}</span>
                                         ))}
                                     </div>
                                 </div>
                             )}
 
-                            {path.skill_gaps && path.skill_gaps.length > 0 && (
+                            {/* Skill Gaps */}
+                            {path.skillGaps && path.skillGaps.length > 0 && (
                                 <div className="path-section">
-                                    <h4>Skill Gaps to Address</h4>
+                                    <h4>⚠️ Skill Gaps to Address</h4>
                                     <div className="skills-list">
-                                        {path.skill_gaps.map((gap, i) => (
-                                            <span key={i} className="skill-tag gap">{gap}</span>
+                                        {path.skillGaps.map((gap, i) => (
+                                            <span key={i} className="skill-tag skill-gap">{gap}</span>
                                         ))}
                                     </div>
                                 </div>
                             )}
 
+                            {/* Recommended Courses */}
                             {path.courses && path.courses.length > 0 && (
                                 <div className="path-section">
-                                    <h4>Recommended Courses</h4>
+                                    <h4>📚 Recommended Courses</h4>
                                     <div className="courses-list">
                                         {path.courses.map((course, i) => (
                                             <div key={i} className="course-item">
-                                                <strong>{course.name}</strong>
-                                                <span className="course-type">{course.type}</span>
-                                                {course.duration && <span className="course-duration">{course.duration}</span>}
-                                                {course.description && <p>{course.description}</p>}
+                                                <div className="course-header">
+                                                    <strong>{course.name}</strong>
+                                                    <span className="course-type">{course.type}</span>
+                                                </div>
+                                                <div className="course-meta">
+                                                    {course.platform && <span className="course-platform">📱 {course.platform}</span>}
+                                                    {course.duration && <span className="course-duration">⏱️ {course.duration}</span>}
+                                                </div>
+                                                {course.description && <p className="course-description">{course.description}</p>}
                                             </div>
                                         ))}
                                     </div>
                                 </div>
                             )}
 
-                            {path.job_roles && path.job_roles.length > 0 && (
+                            {/* Target Job Roles */}
+                            {path.jobRoles && path.jobRoles.length > 0 && (
                                 <div className="path-section">
-                                    <h4>Target Job Roles</h4>
+                                    <h4>🎯 Target Job Roles</h4>
                                     <div className="jobs-list">
-                                        {path.job_roles.map((job, i) => (
+                                        {path.jobRoles.map((job, i) => (
                                             <span key={i} className="job-tag">{job}</span>
                                         ))}
                                     </div>
                                 </div>
                             )}
 
+                            {/* Career Roadmap Timeline */}
                             {path.roadmap && path.roadmap.length > 0 && (
                                 <div className="path-section">
-                                    <h4>Career Roadmap</h4>
+                                    <h4>🚀 Career Roadmap Timeline</h4>
                                     <div className="roadmap-steps">
                                         {path.roadmap.map((step, i) => (
                                             <div key={i} className="roadmap-step">
-                                                <div className="step-number">{step.step || i + 1}</div>
+                                                <div className="step-header">
+                                                    <div className="step-number">{step.step || i + 1}</div>
+                                                    <div className="step-title-container">
+                                                        <h5>{step.title}</h5>
+                                                        {step.timeline && <span className="step-timeline">📅 {step.timeline}</span>}
+                                                    </div>
+                                                </div>
                                                 <div className="step-content">
-                                                    <h5>{step.title}</h5>
-                                                    {step.timeline && <span className="step-timeline">{step.timeline}</span>}
-                                                    {step.description && <p>{step.description}</p>}
+                                                    {step.description && <p className="step-description">{step.description}</p>}
                                                     {step.actions && step.actions.length > 0 && (
                                                         <ul className="step-actions">
                                                             {step.actions.map((action, j) => (
-                                                                <li key={j}>{action}</li>
+                                                                <li key={j}>✅ {action}</li>
                                                             ))}
                                                         </ul>
                                                     )}
