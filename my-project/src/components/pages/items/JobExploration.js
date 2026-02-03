@@ -6,7 +6,15 @@ import YouTubeModal from '../../common/YouTubeModal';
 
 const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
-const JobCard = ({ job, selectedQualification, resume, handleApply }) => {
+const JobCard = ({ job, handleApply }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const description = job.description || '';
+  const MAX_PREVIEW_CHARS = 220;
+  const isLongDescription = description.length > MAX_PREVIEW_CHARS;
+  const visibleDescription = isExpanded || !isLongDescription
+    ? description
+    : `${description.slice(0, MAX_PREVIEW_CHARS)}…`;
   return (
     <div key={job._id} className="job-card">
       <div className="job-card-header">
@@ -39,7 +47,18 @@ const JobCard = ({ job, selectedQualification, resume, handleApply }) => {
         </div>
       </div>
 
-      <p className="job-description">{job.description}</p>
+      <p className="job-description">
+        {visibleDescription}
+        {isLongDescription && (
+          <button
+            type="button"
+            className="job-description-toggle"
+            onClick={() => setIsExpanded(prev => !prev)}
+          >
+            {isExpanded ? 'Read less' : 'Read more'}
+          </button>
+        )}
+      </p>
 
       {job.skills && job.skills.length > 0 && (
         <div className="skills-section">
@@ -66,12 +85,11 @@ const JobCard = ({ job, selectedQualification, resume, handleApply }) => {
       </div>
 
       <button 
-        className={`apply-btn ${selectedQualification === 'graduate' && !resume ? 'disabled' : ''}`}
-        disabled={selectedQualification === 'graduate' && !resume}
-        title={selectedQualification === 'graduate' && !resume ? 'Please upload your resume first' : 'Apply for this position'}
+        className="apply-btn"
+        title="Apply for this position"
         onClick={() => handleApply(job)}
       >
-        {selectedQualification === 'graduate' && !resume ? 'Upload Resume to Apply' : 'Apply Now'}
+        Apply Now
       </button>
     </div>
   );
@@ -203,6 +221,19 @@ const JobExploration = () => {
   const [matchedJobs, setMatchedJobs] = useState([]);
   const [isMatchingResume, setIsMatchingResume] = useState(false);
   const [matchStats, setMatchStats] = useState(null);
+  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
+  const [applyJob, setApplyJob] = useState(null);
+  const [applyForm, setApplyForm] = useState({
+    fullName: '',
+    email: '',
+    phone: '',
+  });
+  const [applyResumeFile, setApplyResumeFile] = useState(null);
+  const [applyStatus, setApplyStatus] = useState({
+    loading: false,
+    message: '',
+    error: false,
+  });
 
   // Load jobs based on qualification and search
   useEffect(() => {
@@ -581,21 +612,146 @@ const JobExploration = () => {
   };
 
   const handleApply = (job) => {
-    if (selectedQualification === 'graduate' && !resume) {
-      alert('Please upload your resume before applying for graduate positions.');
+    setApplyJob(job);
+    setApplyForm({
+      fullName: '',
+      email: '',
+      phone: '',
+    });
+    setApplyResumeFile(null);
+    setApplyStatus({
+      loading: false,
+      message: '',
+      error: false,
+    });
+    setIsApplyModalOpen(true);
+  };
+
+  const closeApplyModal = () => {
+    if (applyStatus.loading) return;
+    setIsApplyModalOpen(false);
+    setApplyJob(null);
+  };
+
+  const handleApplyFormChange = (e) => {
+    const { name, value } = e.target;
+    setApplyForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleApplyResumeChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      setApplyResumeFile(null);
       return;
     }
 
-    if (job.link && job.link !== '#') {
-      const link = (job.link || '').toString();
-      const isYouTube = link.includes('youtube.com') || link.includes('youtu.be');
-      if (isYouTube) {
-        setVideoUrl(link);
-      } else {
-        window.open(link, '_blank', 'noopener,noreferrer');
+    const allowedTypes = [
+      'application/pdf',
+      'application/msword',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+      setApplyStatus({
+        loading: false,
+        message: 'Resume must be a PDF, DOC, or DOCX file.',
+        error: true,
+      });
+      setApplyResumeFile(null);
+      return;
+    }
+
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      setApplyStatus({
+        loading: false,
+        message: 'File size must be under 5MB.',
+        error: true,
+      });
+      setApplyResumeFile(null);
+      return;
+    }
+
+    setApplyStatus({
+      loading: false,
+      message: '',
+      error: false,
+    });
+    setApplyResumeFile(file);
+  };
+
+  const handleApplySubmit = async (e) => {
+    e.preventDefault();
+
+    if (!applyForm.fullName.trim() || !applyForm.email.trim() || !applyForm.phone.trim()) {
+      setApplyStatus({
+        loading: false,
+        message: 'Please fill in your full name, email, and phone number.',
+        error: true,
+      });
+      return;
+    }
+
+    if (!applyResumeFile) {
+      setApplyStatus({
+        loading: false,
+        message: 'Please upload your resume.',
+        error: true,
+      });
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('fullName', applyForm.fullName.trim());
+    formData.append('email', applyForm.email.trim());
+    formData.append('phone', applyForm.phone.trim());
+
+    if (applyJob?._id) {
+      formData.append('jobId', applyJob._id);
+    }
+    if (applyJob?.title) {
+      formData.append('jobTitle', applyJob.title);
+    }
+    if (applyJob?.company) {
+      formData.append('company', applyJob.company);
+    }
+
+    formData.append('resume', applyResumeFile);
+
+    setApplyStatus({
+      loading: true,
+      message: '',
+      error: false,
+    });
+
+    try {
+      const response = await fetch(`${API_BASE}/api/apply`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || data.success === false) {
+        throw new Error(data.message || 'Failed to submit application.');
       }
-    } else {
-      alert(`Application process for ${job.title} at ${job.company} would start here.`);
+
+      setApplyStatus({
+        loading: false,
+        message: data.message || 'Application submitted successfully.',
+        error: false,
+      });
+
+      setTimeout(() => {
+        closeApplyModal();
+      }, 1500);
+    } catch (err) {
+      console.error('Error submitting application:', err);
+      setApplyStatus({
+        loading: false,
+        message: err.message || 'Something went wrong. Please try again.',
+        error: true,
+      });
     }
   };
 
@@ -872,8 +1028,117 @@ const JobExploration = () => {
               {scrapeSource === 'fallback' && (
                 <span className="scrape-notice"> (Sample Data)</span>
               )}
+      </div>
+
+      {isApplyModalOpen && applyJob && (
+        <div className="apply-modal-backdrop" onClick={closeApplyModal}>
+          <div
+            className="apply-modal"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            <div className="apply-modal-header">
+              <h2>Apply for {applyJob.title}</h2>
+              <button
+                type="button"
+                className="apply-modal-close"
+                onClick={closeApplyModal}
+                disabled={applyStatus.loading}
+              >
+                ✕
+              </button>
             </div>
+            <p className="apply-modal-subtitle">{applyJob.company}</p>
+
+            <form onSubmit={handleApplySubmit} className="apply-form">
+              <div className="apply-form-row">
+                <label>
+                  Full Name
+                  <input
+                    type="text"
+                    name="fullName"
+                    value={applyForm.fullName}
+                    onChange={handleApplyFormChange}
+                    placeholder="Jane Doe"
+                    required
+                  />
+                </label>
+              </div>
+              <div className="apply-form-row">
+                <label>
+                  Email
+                  <input
+                    type="email"
+                    name="email"
+                    value={applyForm.email}
+                    onChange={handleApplyFormChange}
+                    placeholder="you@example.com"
+                    required
+                  />
+                </label>
+              </div>
+              <div className="apply-form-row">
+                <label>
+                  Phone Number
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={applyForm.phone}
+                    onChange={handleApplyFormChange}
+                    placeholder="+91-XXXXXXXXXX"
+                    required
+                  />
+                </label>
+              </div>
+              <div className="apply-form-row">
+                <label className="apply-file-label">
+                  Resume (PDF, DOC, DOCX)
+                  <input
+                    type="file"
+                    accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    onChange={handleApplyResumeChange}
+                  />
+                </label>
+                {applyResumeFile && (
+                  <p className="apply-file-name">
+                    Selected: {applyResumeFile.name}
+                  </p>
+                )}
+              </div>
+
+              {applyStatus.message && (
+                <div
+                  className={`apply-status ${
+                    applyStatus.error ? 'error' : 'success'
+                  }`}
+                >
+                  {applyStatus.message}
+                </div>
+              )}
+
+              <div className="apply-form-actions">
+                <button
+                  type="button"
+                  className="apply-secondary-btn"
+                  onClick={closeApplyModal}
+                  disabled={applyStatus.loading}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="apply-primary-btn"
+                  disabled={applyStatus.loading}
+                >
+                  {applyStatus.loading ? 'Submitting…' : 'Submit Application'}
+                </button>
+              </div>
+            </form>
           </div>
+        </div>
+      )}
+    </div>
 
           {scrapeSource === 'fallback' && (
             <div className="scrape-banner">
@@ -962,8 +1227,7 @@ const JobExploration = () => {
                   <>
                     <div className="section-header" style={{ marginTop: '0.75rem' }}>
                       <h3 style={{ fontSize: '1.05rem' }}>
-                        <span className="section-icon">🔒</span>
-                        Private Jobs
+                        Private Jobs (Future Forge)
                       </h3>
                       <span className="section-count">
                         {privateRecruiterJobs.length} positions
