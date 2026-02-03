@@ -9,13 +9,15 @@ import {
   searchJobs,
   getMyJobs,
   toggleJobStatus,
-  getJobStats
+  getJobStats,
+  getRecruiterPostedJobs
 } from '../controllers/jobController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
 // Public routes
 router.get('/search', searchJobs);
 router.get('/stats', getJobStats);
+router.get('/recruiter-posted', getRecruiterPostedJobs); // For candidate portal - must be before /:id
 router.get('/', getAllJobs);
 router.get('/:id', getJob);
 

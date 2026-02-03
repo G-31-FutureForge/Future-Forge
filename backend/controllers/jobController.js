@@ -1,6 +1,37 @@
 import Job from '../models/Job.js';
 import User from '../models/User.js';
 
+// Get recruiter-posted jobs for candidate portal (public, no auth required)
+export const getRecruiterPostedJobs = async (req, res) => {
+  try {
+    const { limit = 100 } = req.query;
+    const filter = { 
+      isActive: true, 
+      status: 'Open',
+      postedBy: { $exists: true, $ne: null }
+    };
+    
+    const jobs = await Job.find(filter)
+      .populate('postedBy', 'name firstName lastName email companyName')
+      .sort({ postedDate: -1 })
+      .limit(Math.min(parseInt(limit) || 100, 200))
+      .lean();
+    
+    res.status(200).json({
+      success: true,
+      count: jobs.length,
+      data: jobs,
+    });
+  } catch (error) {
+    console.error('getRecruiterPostedJobs error:', error);
+    res.status(500).json({ 
+      success: false,
+      message: 'Error fetching recruiter jobs', 
+      error: error.message 
+    });
+  }
+};
+
 // Get all jobs with pagination and filters
 export const getAllJobs = async (req, res) => {
   try {
@@ -13,6 +44,8 @@ export const getAllJobs = async (req, res) => {
     if (location) filter.location = new RegExp(location, 'i');
     if (level) filter.level = level;
     
+    console.log('getAllJobs - Filter:', JSON.stringify(filter));
+    
     const skip = (parseInt(page) - 1) * parseInt(limit);
     
     const jobs = await Job.find(filter)
@@ -23,6 +56,8 @@ export const getAllJobs = async (req, res) => {
     
     const total = await Job.countDocuments(filter);
     
+    console.log(`getAllJobs - Found ${jobs.length} jobs out of ${total} total matching filter`);
+    
     res.status(200).json({
       success: true,
       count: jobs.length,
@@ -32,6 +67,7 @@ export const getAllJobs = async (req, res) => {
       data: jobs,
     });
   } catch (error) {
+    console.error('getAllJobs error:', error);
     res.status(500).json({ 
       success: false,
       message: 'Error fetching jobs', 

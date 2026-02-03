@@ -27,6 +27,8 @@ export const createJob = async (req, res) => {
       jobType,
       applicationDeadline: applicationDeadline ? new Date(applicationDeadline) : undefined,
       postedBy: req.user._id,
+      status: 'Open',
+      isActive: true,
     });
 
     res.status(201).json({

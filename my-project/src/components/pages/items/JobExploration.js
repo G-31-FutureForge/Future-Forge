@@ -4,6 +4,8 @@ import './JobExploration.css';
 import { jobsData } from '../../../data/jobsData';
 import YouTubeModal from '../../common/YouTubeModal';
 
+const API_BASE = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+
 const JobCard = ({ job, selectedQualification, resume, handleApply }) => {
   return (
     <div key={job._id} className="job-card">
@@ -186,6 +188,8 @@ const JobExploration = () => {
   const location = useLocation();
   const [jobs, setJobs] = useState([]);
   const [filteredJobs, setFilteredJobs] = useState([]);
+  const [futureForgeJobs, setFutureForgeJobs] = useState([]);
+  const [futureForgeError, setFutureForgeError] = useState('');
   const [loading, setLoading] = useState(true);
   const [scrapeSource, setScrapeSource] = useState(null);
   const [error, setError] = useState(null);
@@ -195,6 +199,7 @@ const JobExploration = () => {
   const [videoUrl, setVideoUrl] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [sectorFilter, setSectorFilter] = useState('all'); // all | government | private
+  const [sourceFilter, setSourceFilter] = useState('all'); // all | future-forge
   const [matchedJobs, setMatchedJobs] = useState([]);
   const [isMatchingResume, setIsMatchingResume] = useState(false);
   const [matchStats, setMatchStats] = useState(null);
@@ -217,6 +222,20 @@ const JobExploration = () => {
     loadJobs();
   }, [selectedQualification, searchQuery]);
 
+  // If Future Forge filter is active, refresh recruiter jobs directly
+  useEffect(() => {
+    const refreshFutureForgeJobs = async () => {
+      if (sourceFilter !== 'future-forge') return;
+      try {
+        const recruiterJobs = await fetchRecruiterPostedJobs();
+        setFutureForgeJobs(recruiterJobs);
+      } catch (e) {
+        console.error('Error refreshing Future Forge jobs:', e);
+      }
+    };
+    refreshFutureForgeJobs();
+  }, [sourceFilter]);
+
   // Filter jobs when search query changes
   useEffect(() => {
     if (location.state?.searchQuery) {
@@ -237,7 +256,7 @@ const JobExploration = () => {
         page: '1',
         radius: '25'
       });
-      const response = await fetch(`http://localhost:5000/api/jobs/explore?${params.toString()}`);
+      const response = await fetch(`${API_BASE}/api/job-exploration/explore?${params.toString()}`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -269,7 +288,7 @@ const JobExploration = () => {
 
   const fetchSarkariResultJobs = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/scrape/sarkari-result?qualification=${selectedQualification === 'all' ? '' : selectedQualification}`);
+      const response = await fetch(`${API_BASE}/api/scrape/sarkari-result?qualification=${selectedQualification === 'all' ? '' : selectedQualification}`);
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -310,14 +329,65 @@ const JobExploration = () => {
     }
   };
 
+  const fetchRecruiterPostedJobs = async () => {
+    try {
+      // Use relative URL so CRA `proxy` can forward to backend (avoids CORS issues)
+      const url = `/api/jobs/recruiter-posted?limit=100`;
+      const response = await fetch(url);
+      
+      if (!response.ok) {
+        const errText = await response.text().catch(() => '');
+        throw new Error(`Recruiter jobs API error ${response.status}: ${errText || 'Request failed'}`);
+      }
+
+      const data = await response.json();
+      const jobs = Array.isArray(data?.data) ? data.data : [];
+
+      const formatSalary = (job) => {
+        // `salary` can be a string or object (mongoose Mixed). Prefer string for display.
+        if (typeof job?.salary === 'string' && job.salary.trim()) return job.salary;
+        // If salary is a number, show as-is.
+        if (typeof job?.salary === 'number' && Number.isFinite(job.salary)) return String(job.salary);
+        const min = job?.salaryRange?.min;
+        const max = job?.salaryRange?.max;
+        const currency = job?.salaryRange?.currency || '';
+        if (min != null && max != null) return `${min} - ${max}${currency ? ` ${currency}` : ''}`;
+        return 'Not specified';
+      };
+
+      return jobs.map(job => ({
+        _id: job._id || Math.random().toString(36).substr(2, 9),
+        title: job.title || '',
+        company: job.company || 'Company not specified',
+        requiredQualification: 'all', // Recruiter jobs visible to all candidates in Private Jobs
+        location: job.location || 'Location not specified',
+        jobType: 'Private Sector', // Recruiter jobs appear in Private Sector / Private Jobs section
+        salary: formatSalary(job),
+        description: job.description || 'No description available',
+        skills: Array.isArray(job.skills) ? job.skills : [],
+        postedDate: job.postedDate || new Date().toISOString(),
+        applicationDeadline: job.applicationDeadline || null,
+        source: 'Future Forge Recruiter',
+        level: job.level || 'Mid-level'
+      }));
+    } catch (err) {
+      console.error('Error fetching recruiter posted jobs:', err);
+      setFutureForgeError(err?.message || 'Failed to fetch Future Forge jobs');
+      return [];
+    }
+  };
+
   const fetchAllJobs = async () => {
     try {
-      const [joobleJobs, sarkariJobs] = await Promise.all([
+      setFutureForgeError('');
+      const [joobleJobs, sarkariJobs, recruiterJobs] = await Promise.all([
         fetchJoobleJobs(),
-        fetchSarkariResultJobs()
+        fetchSarkariResultJobs(),
+        fetchRecruiterPostedJobs()
       ]);
 
-      let allJobs = [...joobleJobs, ...sarkariJobs];
+      let allJobs = [...recruiterJobs, ...joobleJobs, ...sarkariJobs];
+      setFutureForgeJobs(recruiterJobs);
 
       // Filter jobs based on selectedQualification if not 'all'
       if (selectedQualification !== 'all') {
@@ -405,6 +475,17 @@ const JobExploration = () => {
     setSectorFilter(prev => (prev === sector ? 'all' : sector));
   };
 
+  const handleFutureForgeToggle = () => {
+    setSourceFilter((prev) => {
+      const next = prev === 'future-forge' ? 'all' : 'future-forge';
+      if (next === 'future-forge') {
+        // Make sure user sees the private section (where recruiter jobs live)
+        setSectorFilter('private');
+      }
+      return next;
+    });
+  };
+
   const handleResumeUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -454,7 +535,7 @@ const JobExploration = () => {
         jobsCount: privateJobs.length
       });
 
-      const response = await fetch('http://localhost:5000/api/match/resume-jobs', {
+      const response = await fetch(`${API_BASE}/api/match/resume-jobs`, {
         method: 'POST',
         body: formData
       });
@@ -572,6 +653,43 @@ const JobExploration = () => {
     );
   }
 
+  const matchesCurrentFilters = (job) => {
+    if (selectedQualification !== 'all') {
+      if (job.requiredQualification !== selectedQualification && job.requiredQualification !== 'all') return false;
+    }
+    if (searchQuery && searchQuery.trim()) {
+      const searchTerm = searchQuery.toLowerCase();
+      const skillsText = Array.isArray(job.skills) ? job.skills.join(' ').toLowerCase() : '';
+      const hit = (
+        job.title?.toLowerCase().includes(searchTerm) ||
+        job.company?.toLowerCase().includes(searchTerm) ||
+        job.description?.toLowerCase().includes(searchTerm) ||
+        job.location?.toLowerCase().includes(searchTerm) ||
+        skillsText.includes(searchTerm)
+      );
+      if (!hit) return false;
+    }
+    return true;
+  };
+
+  const displayJobs = sourceFilter === 'future-forge'
+    ? futureForgeJobs.filter(matchesCurrentFilters)
+    : filteredJobs;
+
+  const privateRecruiterJobs = displayJobs.filter(
+    (job) => job.jobType === 'Private Sector' && job.source === 'Future Forge Recruiter'
+  );
+  const privateOtherJobs = displayJobs.filter(
+    (job) => job.jobType === 'Private Sector' && job.source !== 'Future Forge Recruiter'
+  );
+
+  const getDisplayJobCountText = () => {
+    if (searchQuery) {
+      return `Found ${displayJobs.length} job${displayJobs.length !== 1 ? 's' : ''} for "${searchQuery}"`;
+    }
+    return `${displayJobs.length} job${displayJobs.length !== 1 ? 's' : ''} available`;
+  };
+
   return (
     <div className="job-exploration-page">
       <div className="job-exploration-header">
@@ -644,6 +762,22 @@ const JobExploration = () => {
                 🏢 Private
               </button>
             </div>
+
+            <h2 style={{ marginTop: '1.5rem' }}>Future Forge</h2>
+            <p className="filter-description">Show jobs posted from the Recruiter Portal</p>
+            <div className="qualification-buttons">
+              <button
+                className={`qual-btn ${sourceFilter === 'future-forge' ? 'active' : ''}`}
+                onClick={handleFutureForgeToggle}
+              >
+                🚀 Future Forge
+              </button>
+            </div>
+            {sourceFilter === 'future-forge' && futureForgeError && (
+              <p className="resume-error" style={{ marginTop: '0.75rem' }}>
+                ⚠️ {futureForgeError}
+              </p>
+            )}
           </div>
 
           {/* Resume Upload Section - Only for Graduate */}
@@ -734,7 +868,7 @@ const JobExploration = () => {
           <div className="jobs-header">
             <h2>Available Positions</h2>
             <div className="jobs-count">
-              {getJobCountText()}
+              {getDisplayJobCountText()}
               {scrapeSource === 'fallback' && (
                 <span className="scrape-notice"> (Sample Data)</span>
               )}
@@ -747,7 +881,7 @@ const JobExploration = () => {
             </div>
           )}
 
-          {filteredJobs.length === 0 ? (
+          {displayJobs.length === 0 ? (
             <div className="no-jobs-found">
               <div className="no-jobs-icon">🔍</div>
               <h3>No jobs found</h3>
@@ -777,11 +911,11 @@ const JobExploration = () => {
                     Government Jobs
                   </h3>
                   <span className="section-count">
-                    {filteredJobs.filter(job => job.jobType === 'Government').length} positions
+                    {displayJobs.filter(job => job.jobType === 'Government').length} positions
                   </span>
                 </div>
                 <div className="jobs-grid">
-                  {filteredJobs
+                  {displayJobs
                     .filter(job => job.jobType === 'Government')
                     .map((job) => (
                       <JobCard 
@@ -810,25 +944,33 @@ const JobExploration = () => {
                   <span className="section-count">
                     {resume && matchedJobs.length > 0 
                       ? `${matchedJobs.length} matches`
-                      : `${filteredJobs.filter(job => job.jobType === 'Private Sector').length} positions`
+                      : `${displayJobs.filter(job => job.jobType === 'Private Sector').length} positions`
                     }
                   </span>
                 </div>
-                <div className="jobs-grid">
-                  {resume && matchedJobs.length > 0 ? (
-                    // Show matched jobs first
-                    matchedJobs.map((job) => (
+                {resume && matchedJobs.length > 0 ? (
+                  <div className="jobs-grid">
+                    {matchedJobs.map((job) => (
                       <MatchedJobCard 
                         key={job._id}
                         job={job}
                         handleApply={handleApply}
                       />
-                    ))
-                  ) : (
-                    // Show all private sector jobs
-                    filteredJobs
-                      .filter(job => job.jobType === 'Private Sector')
-                      .map((job) => (
+                    ))}
+                  </div>
+                ) : (
+                  <>
+                    <div className="section-header" style={{ marginTop: '0.75rem' }}>
+                      <h3 style={{ fontSize: '1.05rem' }}>
+                        <span className="section-icon">🔒</span>
+                        Private Jobs
+                      </h3>
+                      <span className="section-count">
+                        {privateRecruiterJobs.length} positions
+                      </span>
+                    </div>
+                    <div className="jobs-grid">
+                      {privateRecruiterJobs.map((job) => (
                         <JobCard 
                           key={job._id}
                           job={job}
@@ -836,9 +978,35 @@ const JobExploration = () => {
                           resume={resume}
                           handleApply={handleApply}
                         />
-                      ))
-                  )}
-                </div>
+                      ))}
+                    </div>
+
+                    {sourceFilter !== 'future-forge' && (
+                      <>
+                        <div className="section-header" style={{ marginTop: '1rem' }}>
+                          <h3 style={{ fontSize: '1.05rem' }}>
+                            <span className="section-icon">🌐</span>
+                            Public Private Jobs
+                          </h3>
+                          <span className="section-count">
+                            {privateOtherJobs.length} positions
+                          </span>
+                        </div>
+                        <div className="jobs-grid">
+                          {privateOtherJobs.map((job) => (
+                            <JobCard 
+                              key={job._id}
+                              job={job}
+                              selectedQualification={selectedQualification}
+                              resume={resume}
+                              handleApply={handleApply}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </>
+                )}
               </div>
               )}
             </div>
