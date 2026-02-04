@@ -5,7 +5,7 @@ import './Dashboard.css';
 const Dashboard = () => {
     const [user, setUser] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
-    const [jobs, setJobs] = useState([]);
+    const [jobsCount, setJobsCount] = useState(0);
     const [courses, setCourses] = useState([]);
     const navigate = useNavigate();
 
@@ -27,12 +27,23 @@ const Dashboard = () => {
             setIsLoaded(true);
         }, 400);
 
-        // Mock Data for jobs
-        setJobs([
-            { id: 1, title: 'Frontend Developer', company: 'TechNova', status: 'Applied' },
-            { id: 2, title: 'AI Engineer', company: 'FutureLabs', status: 'Recommended' },
-            { id: 3, title: 'UI/UX Designer', company: 'Designify', status: 'Interview' },
-        ]);
+        // Fetch real job count (jobs posted from recruiter portal are stored in MongoDB)
+        const fetchJobsCount = async () => {
+            try {
+                // Using backend pagination response: total = total available open jobs
+                const response = await fetch('/api/jobs?page=1&limit=1');
+                const data = await response.json();
+
+                if (response.ok && data?.success) {
+                    setJobsCount(Number(data.total) || 0);
+                } else {
+                    setJobsCount(0);
+                }
+            } catch (error) {
+                console.error('Error fetching job count:', error);
+                setJobsCount(0);
+            }
+        };
 
         // Fetch recommended courses from all platforms
         const fetchRecommendedCourses = async () => {
@@ -55,6 +66,7 @@ const Dashboard = () => {
         };
 
         fetchRecommendedCourses();
+        fetchJobsCount();
     }, [navigate]);
 
     const getUserFirstName = () => {
@@ -107,11 +119,11 @@ const Dashboard = () => {
                                 <div className="stat-info-side">
                                     <div className="stat-icon">💼</div>
                                     <div className="stat-main-info">
-                                        <h3>{jobs.length}</h3>
-                                        <p>Jobs Available</p>
+                                        <h3>{jobsCount}</h3>
+                                        <p>Jobs Available on Future-Forge</p>
                                     </div>
                                     <div className="stat-details">
-                                        <span>12 new today</span>
+                                        
                                     </div>
                                 </div>
                                 <div className="stat-action-side">
@@ -128,7 +140,7 @@ const Dashboard = () => {
                                     <div className="stat-icon">📚</div>
                                     <div className="stat-main-info">
                                         <h3>{courses.length}</h3>
-                                        <p>Courses Suggested</p>
+                                        <p>Courses Suggested </p>
                                     </div>
                                     <div className="stat-details">
                                         <span>Based on your profile</span>
