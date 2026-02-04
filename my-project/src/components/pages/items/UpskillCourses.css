@@ -66,6 +66,21 @@
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: gradientShift 3s ease infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.courses-header h1 .header-icon {
+  color: var(--primary-color);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: float 3s ease-in-out infinite;
+}
+
+.courses-header h1:hover .header-icon {
+  transform: scale(1.1) rotate(5deg);
 }
 
 @keyframes gradientShift {
@@ -132,7 +147,7 @@
   align-items: center;
   gap: 0.75rem;
   font-weight: 500;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 }
@@ -147,7 +162,7 @@
   background: linear-gradient(90deg, var(--primary-color), var(--success-color));
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .platform-btn:hover {
@@ -177,7 +192,9 @@
 
 .platform-icon {
   font-size: 1.25rem;
-  transition: transform 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
 }
 
 .platform-btn:hover .platform-icon {
@@ -247,7 +264,7 @@
   align-items: center;
   gap: 1rem;
   margin-bottom: 0.5rem;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 0.95rem;
   position: relative;
   overflow: hidden;
@@ -263,7 +280,7 @@
   background: var(--primary-color);
   transform: scaleY(0);
   transform-origin: top;
-  transition: transform 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .category-btn:hover {
@@ -293,11 +310,18 @@
 
 .category-icon {
   font-size: 1.25rem;
-  transition: transform 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  color: inherit;
 }
 
 .category-btn:hover .category-icon {
   transform: scale(1.2);
+}
+
+.category-btn.active .category-icon {
+  color: white;
 }
 
 /* Courses Grid */
@@ -326,10 +350,10 @@
   padding: 1.5rem;
   position: relative;
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   border: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
-  animation: cardAppear 0.5s ease-out forwards;
+  animation: cardAppear 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   opacity: 0;
   transform: translateY(30px);
 }
@@ -351,7 +375,7 @@
   background: linear-gradient(90deg, var(--primary-color), var(--success-color));
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.4s ease;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .course-card:hover {
@@ -407,12 +431,22 @@
 .course-type {
   display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.375rem;
   font-size: 0.875rem;
   font-weight: 500;
   padding: 0.25rem 0.75rem;
   border-radius: var(--radius-md);
   background: var(--light-bg);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.course-type svg {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.course-card:hover .course-type svg {
+  transform: scale(1.15);
 }
 
 .course-type.free {
@@ -433,9 +467,19 @@
 .course-info span {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.375rem;
   font-size: 0.875rem;
   color: var(--text-secondary);
+  transition: color 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.course-info span svg {
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+
+.course-card:hover .course-info span svg {
+  transform: scale(1.1);
 }
 
 .course-info .platform {
@@ -473,7 +517,7 @@
   font-weight: 600;
   font-size: 0.95rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 }
@@ -486,7 +530,7 @@
   width: 100%;
   height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s ease;
+  transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .enroll-btn:hover {
@@ -643,7 +687,33 @@
 
 /* Smooth hover effects */
 .transition-all {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced icon transitions */
+.courses-header h1,
+.platform-icon,
+.category-icon,
+.course-info span svg,
+.course-type svg {
+  will-change: transform;
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Enhanced card stagger animation */
+@keyframes cardAppear {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* Card hover glow effect */

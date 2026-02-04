@@ -9,6 +9,22 @@ import {
   getProviderIcon,
   getProviderName 
 } from '../../../utils/courseApi';
+import { 
+  Globe, 
+  Code, 
+  BarChart3, 
+  Cloud, 
+  Smartphone, 
+  Brain,
+  GraduationCap,
+  Building2,
+  Clock,
+  Star,
+  Users,
+  User,
+  Gift,
+  CreditCard
+} from 'lucide-react';
 
 const UpskillCourses = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -17,18 +33,18 @@ const UpskillCourses = () => {
 
   // Categories for course filtering
   const categories = [
-    { id: 'all', name: 'All Courses', icon: '🌐' },
-    { id: 'web', name: 'Web Development', icon: '💻' },
-    { id: 'data', name: 'Data Science', icon: '📊' },
-    { id: 'cloud', name: 'Cloud Computing', icon: '☁️' },
-    { id: 'mobile', name: 'Mobile Development', icon: '📱' },
-    { id: 'ai', name: 'AI & ML', icon: '🧠' }
+    { id: 'all', name: 'All Courses', icon: Globe },
+    { id: 'web', name: 'Web Development', icon: Code },
+    { id: 'data', name: 'Data Science', icon: BarChart3 },
+    { id: 'cloud', name: 'Cloud Computing', icon: Cloud },
+    { id: 'mobile', name: 'Mobile Development', icon: Smartphone },
+    { id: 'ai', name: 'AI & ML', icon: Brain }
   ];
 
   // Popular providers to show in selector
   const popularProviders = [
     COURSE_PROVIDERS.ALL,
-    COURSE_PROVIDERS.YOUTUBE,
+    // YouTube removed
     // Udemy and edX removed
     COURSE_PROVIDERS.KHAN_ACADEMY,
     COURSE_PROVIDERS.FREECODECAMP,
@@ -84,7 +100,10 @@ const UpskillCourses = () => {
   return (
     <div className="upskill-courses">
       <div className="courses-header">
-        <h1>🎓 Upskill Yourself</h1>
+        <h1>
+          <GraduationCap className="header-icon" />
+          Upskill Yourself
+        </h1>
         <p>Discover courses from multiple platforms to enhance your skills and career prospects</p>
       </div>
 
@@ -115,7 +134,9 @@ const UpskillCourses = () => {
               className={`category-btn ${selectedCategory === category.id ? 'active' : ''}`}
               onClick={() => setSelectedCategory(category.id)}
             >
-              <span className="category-icon">{category.icon}</span>
+              <span className="category-icon">
+                <category.icon size={20} />
+              </span>
               {category.name}
             </button>
           ))}
@@ -141,15 +162,39 @@ const UpskillCourses = () => {
               <div className="course-header">
                 <h4>{course.title}</h4>
                 <span className={`course-type ${course.type}`}>
-                  {course.type === 'free' ? '🆓 Free' : '💳 Paid'}
+                  {course.type === 'free' ? (
+                    <>
+                      <Gift size={14} /> Free
+                    </>
+                  ) : (
+                    <>
+                      <CreditCard size={14} /> Paid
+                    </>
+                  )}
                 </span>
               </div>
               <div className="course-info">
-                <span className="platform">🏢 {course.platform}</span>
-                <span className="duration">⏱️ {course.duration}</span>
-                {course.rating && <span className="rating">⭐ {typeof course.rating === 'number' ? course.rating.toFixed(1) : course.rating}/5</span>}
-                {course.students && <span className="students">👥 {course.students}</span>}
-                {course.instructor && <span className="instructor">👤 {course.instructor}</span>}
+                <span className="platform">
+                  <Building2 size={14} /> {course.platform}
+                </span>
+                <span className="duration">
+                  <Clock size={14} /> {course.duration}
+                </span>
+                {course.rating && (
+                  <span className="rating">
+                    <Star size={14} /> {typeof course.rating === 'number' ? course.rating.toFixed(1) : course.rating}/5
+                  </span>
+                )}
+                {course.students && (
+                  <span className="students">
+                    <Users size={14} /> {course.students}
+                  </span>
+                )}
+                {course.instructor && (
+                  <span className="instructor">
+                    <User size={14} /> {course.instructor}
+                  </span>
+                )}
               </div>
               {course.description && (
                 <div className="course-description">
