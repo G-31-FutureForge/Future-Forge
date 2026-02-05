@@ -186,7 +186,7 @@ export const getAppliedCandidates = async (req, res) => {
 
 export const searchAppliedCandidates = async (req, res) => {
   try {
-    const { q, page = 1, limit = 20 } = req.query;
+    const { q, mode = 'auto', page = 1, limit = 20 } = req.query;
     const safeLimit = Math.min(Number(limit) || 20, 200);
     const skip = (Number(page) - 1) * safeLimit;
 
@@ -197,15 +197,57 @@ export const searchAppliedCandidates = async (req, res) => {
 
     const filter = { jobId: { $in: jobIdStrings } };
 
-    if (q && String(q).trim()) {
-      const searchRegex = new RegExp(String(q).trim(), 'i');
-      filter.$or = [
-        { fullName: searchRegex },
-        { email: searchRegex },
-        { phone: searchRegex },
-        { jobTitle: searchRegex },
-        { company: searchRegex },
-      ];
+    const rawQuery = q ? String(q).trim() : '';
+    const escapeRegExp = (str) => String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+    if (rawQuery) {
+      let safeMode = String(mode || 'auto').toLowerCase();
+      const fields = ['fullName', 'email', 'phone', 'jobTitle', 'company'];
+
+      let queryText = rawQuery;
+      const prefixMatch = queryText.match(/^(email|name|phrase|keyword)\s*:\s*(.+)$/i);
+      if (prefixMatch) {
+        safeMode = String(prefixMatch[1]).toLowerCase();
+        queryText = String(prefixMatch[2] || '').trim();
+      }
+
+      if (safeMode === 'auto') {
+        if (/^\S+@\S+\.[^\s]+$/.test(queryText)) {
+          safeMode = 'email';
+        } else {
+          const quoteMatch = queryText.match(/^"([\s\S]+)"$/);
+          if (quoteMatch) {
+            safeMode = 'phrase';
+            queryText = String(quoteMatch[1] || '').trim();
+          } else {
+            safeMode = 'keyword';
+          }
+        }
+      }
+
+      if (safeMode === 'email') {
+        const emailRegex = new RegExp(`^${escapeRegExp(queryText)}$`, 'i');
+        filter.email = emailRegex;
+      } else if (safeMode === 'name') {
+        const nameRegex = new RegExp(escapeRegExp(queryText), 'i');
+        filter.fullName = nameRegex;
+      } else if (safeMode === 'phrase') {
+        const phraseRegex = new RegExp(escapeRegExp(queryText), 'i');
+        filter.$or = fields.map((f) => ({ [f]: phraseRegex }));
+      } else {
+        const tokens = queryText.split(/\s+/).filter(Boolean).slice(0, 8);
+        if (tokens.length === 1) {
+          const tokenRegex = new RegExp(escapeRegExp(tokens[0]), 'i');
+          filter.$or = fields.map((f) => ({ [f]: tokenRegex }));
+        } else {
+          filter.$and = tokens.map((t) => {
+            const tokenRegex = new RegExp(escapeRegExp(t), 'i');
+            return {
+              $or: fields.map((f) => ({ [f]: tokenRegex })),
+            };
+          });
+        }
+      }
     }
 
     const [candidates, total] = await Promise.all([

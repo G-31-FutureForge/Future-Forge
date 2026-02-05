@@ -10,6 +10,7 @@ import Dashboard from './components/pages/items/Dashboard'; // Existing dashboar
 import RecruiterDashboard from './components/pages/items/RecruiterDashboard';
 import PostJob from './components/pages/items/PostJob';
 import Candidates from './components/pages/items/Candidates';
+import SearchCandidates from './components/pages/items/SearchCandidates';
 import Career from './components/pages/items/Career';
 import Profile from './components/pages/items/Profile';
 import JobExploration from './components/pages/items/JobExploration';
@@ -128,6 +129,14 @@ function App() {
               element={
                 <ProtectedRoute allowedUserTypes={['recruiter']}>
                   <Candidates />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/recruiter/search-candidates" 
+              element={
+                <ProtectedRoute allowedUserTypes={['recruiter']}>
+                  <SearchCandidates />
                 </ProtectedRoute>
               } 
             />

@@ -101,7 +101,7 @@ const RecruiterDashboard = () => {
                         <button
                             type="button"
                             className="recruiter-sidebar-action"
-                            onClick={() => navigate('/recruiter/candidates')}
+                            onClick={() => navigate('/recruiter/search-candidates')}
                         >
                             <span className="sidebar-action-icon">🔍</span>
                             <span className="sidebar-action-content">
