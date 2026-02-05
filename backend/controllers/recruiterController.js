@@ -46,6 +46,84 @@ export const createJob = async (req, res) => {
   }
 };
 
+export const getRecruiterDashboardStats = async (req, res) => {
+  try {
+    const recruiterJobs = await Job.find({ postedBy: req.user._id })
+      .select('_id title company status isActive postedDate')
+      .lean();
+
+    const jobIdStrings = recruiterJobs.map((j) => String(j._id));
+    const recruiterJobsById = new Map(recruiterJobs.map((j) => [String(j._id), j]));
+
+    const totalJobs = recruiterJobs.length;
+    const openJobs = recruiterJobs.filter((j) => j.status === 'Open' && j.isActive !== false).length;
+
+    const baseFilter = { jobId: { $in: jobIdStrings } };
+    const since7Days = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+    const [totalApplicants, applicantsLast7Days, recentApplicants, topJobsAgg] = await Promise.all([
+      Candidate.countDocuments(baseFilter),
+      Candidate.countDocuments({
+        ...baseFilter,
+        appliedAt: { $gte: since7Days },
+      }),
+      Candidate.find(baseFilter)
+        .sort({ appliedAt: -1 })
+        .limit(5)
+        .lean(),
+      Candidate.aggregate([
+        { $match: baseFilter },
+        { $group: { _id: '$jobId', applications: { $sum: 1 } } },
+        { $sort: { applications: -1 } },
+        { $limit: 5 },
+      ]),
+    ]);
+
+    const topJobIds = topJobsAgg.map((g) => g._id).filter(Boolean);
+    const topJobsDetails = await Job.find({ _id: { $in: topJobIds } })
+      .select('_id title company')
+      .lean();
+    const topJobsById = new Map(topJobsDetails.map((j) => [String(j._id), j]));
+
+    const topJobs = topJobsAgg.map((g) => {
+      const job = topJobsById.get(String(g._id)) || recruiterJobsById.get(String(g._id));
+      return {
+        jobId: g._id,
+        title: job?.title || 'Unknown',
+        company: job?.company || '',
+        applications: g.applications,
+      };
+    });
+
+    const recentApplicantsWithJob = recentApplicants.map((a) => {
+      const job = recruiterJobsById.get(String(a.jobId));
+      return {
+        ...a,
+        jobTitle: a.jobTitle || job?.title,
+        company: a.company || job?.company,
+      };
+    });
+
+    res.status(200).json({
+      success: true,
+      data: {
+        totalJobs,
+        openJobs,
+        totalApplicants,
+        applicantsLast7Days,
+        topJobs,
+        recentApplicants: recentApplicantsWithJob,
+      },
+    });
+  } catch (error) {
+    console.error('Recruiter dashboard stats error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching dashboard stats',
+    });
+  }
+};
+
 // @desc    Get all jobs posted by this recruiter
 // @route   GET /api/recruiter/jobs
 // @access  Private (recruiter only)

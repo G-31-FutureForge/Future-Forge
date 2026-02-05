@@ -1,12 +1,14 @@
 // backend/routes/recruiterRoutes.js
 import express from 'express';
-import { createJob, getMyJobs, getAppliedCandidates, searchAppliedCandidates, getAllCandidates, searchCandidates } from '../controllers/recruiterController.js';
+import { createJob, getMyJobs, getRecruiterDashboardStats, getAppliedCandidates, searchAppliedCandidates, getAllCandidates, searchCandidates } from '../controllers/recruiterController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 router.use(protect);
 router.use(authorize('recruiter'));
+
+router.get('/dashboard-stats', getRecruiterDashboardStats);
 
 // Jobs
 router.post('/jobs', createJob);

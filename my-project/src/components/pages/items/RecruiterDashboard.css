@@ -1,7 +1,7 @@
 /* Recruiter Dashboard – Professional Design */
 .recruiter-dashboard {
     padding: 2.5rem;
-    max-width: 1000px;
+    max-width: 1200px;
     margin: 0 auto;
     min-height: calc(100vh - 80px);
     background: transparent;
@@ -33,6 +33,287 @@
     font-size: 1.1rem;
     color: var(--muted);
     margin: 0;
+}
+
+.recruiter-dashboard-layout {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: start;
+}
+
+.recruiter-sidebar {
+    position: sticky;
+    top: 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-sm);
+    padding: 1.25rem;
+}
+
+.recruiter-sidebar-title {
+    font-weight: 800;
+    color: var(--text);
+    font-size: 1rem;
+    margin-bottom: 0.85rem;
+}
+
+.recruiter-sidebar-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.recruiter-sidebar-action {
+    width: 100%;
+    text-align: left;
+    background: rgba(0, 0, 0, 0.02);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    transition: all var(--transition-normal);
+}
+
+.recruiter-sidebar-action:hover {
+    border-color: var(--accent);
+    background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.09) 0%, rgba(0, 0, 0, 0) 70%);
+    transform: translateY(-2px);
+}
+
+.sidebar-action-icon {
+    font-size: 1.6rem;
+    line-height: 1;
+    margin-top: 0.05rem;
+}
+
+.sidebar-action-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.sidebar-action-title {
+    font-weight: 900;
+    color: var(--text);
+}
+
+.sidebar-action-desc {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 0.9rem;
+    line-height: 1.35;
+}
+
+.recruiter-main {
+    min-width: 0;
+}
+
+.recruiter-stats-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 1.75rem;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 2rem;
+}
+
+.recruiter-stats-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.recruiter-stats-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: var(--text);
+    font-weight: 700;
+}
+
+.recruiter-refresh-btn {
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 0.6rem 1rem;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all var(--transition-normal);
+}
+
+.recruiter-refresh-btn:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+}
+
+.recruiter-refresh-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.recruiter-stats-error {
+    background: rgba(231, 76, 60, 0.08);
+    border: 1px solid rgba(231, 76, 60, 0.25);
+    color: #c0392b;
+    padding: 0.9rem 1rem;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.recruiter-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.recruiter-stat-card {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1rem 1.1rem;
+    background: linear-gradient(135deg, rgba(var(--accent-rgb), 0.06) 0%, rgba(0, 0, 0, 0) 70%);
+}
+
+.recruiter-stat-card .stat-label {
+    font-size: 0.9rem;
+    color: var(--muted);
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+}
+
+.recruiter-stat-card .stat-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: -0.01em;
+}
+
+.recruiter-insights-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.recruiter-panel {
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.25rem;
+    background: var(--surface);
+}
+
+.panel-title {
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
+}
+
+.panel-empty {
+    color: var(--muted);
+    font-weight: 600;
+    padding: 0.75rem 0;
+}
+
+.panel-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    margin-bottom: 0.75rem;
+}
+
+.panel-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: rgba(0, 0, 0, 0.02);
+}
+
+.panel-row-title {
+    font-weight: 800;
+    color: var(--text);
+    margin-bottom: 0.15rem;
+}
+
+.panel-row-subtitle {
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.panel-row-meta {
+    color: var(--muted);
+    font-weight: 500;
+    font-size: 0.85rem;
+    margin-top: 0.2rem;
+}
+
+.panel-row-metric {
+    font-weight: 900;
+    color: var(--accent);
+    font-size: 1.1rem;
+    white-space: nowrap;
+}
+
+.panel-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.resume-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.45rem 0.75rem;
+    border-radius: 10px;
+    text-decoration: none;
+    border: 1px solid rgba(var(--accent-rgb), 0.3);
+    color: var(--accent);
+    background: rgba(var(--accent-rgb), 0.08);
+    font-weight: 800;
+    transition: all var(--transition-normal);
+}
+
+.resume-link:hover {
+    transform: translateY(-1px);
+    background: rgba(var(--accent-rgb), 0.14);
+}
+
+.resume-missing {
+    color: var(--muted);
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.recruiter-secondary-btn {
+    width: 100%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+    font-weight: 800;
+    transition: all var(--transition-normal);
+}
+
+.recruiter-secondary-btn:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
 }
 
 .recruiter-actions {
@@ -89,5 +370,28 @@
     
     .recruiter-dashboard {
         padding: 1.5rem;
+    }
+
+    .recruiter-stats-section {
+        padding: 1.25rem;
+    }
+}
+
+@media (max-width: 900px) {
+    .recruiter-dashboard-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .recruiter-sidebar {
+        position: static;
+        top: auto;
+    }
+
+    .recruiter-stats-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .recruiter-insights-grid {
+        grid-template-columns: 1fr;
     }
 }
