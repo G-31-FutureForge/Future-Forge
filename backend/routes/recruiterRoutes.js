@@ -1,6 +1,6 @@
 // backend/routes/recruiterRoutes.js
 import express from 'express';
-import { createJob, getMyJobs, getAllCandidates, searchCandidates } from '../controllers/recruiterController.js';
+import { createJob, getMyJobs, getAppliedCandidates, searchAppliedCandidates, getAllCandidates, searchCandidates } from '../controllers/recruiterController.js';
 import { protect, authorize } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
@@ -11,6 +11,10 @@ router.use(authorize('recruiter'));
 // Jobs
 router.post('/jobs', createJob);
 router.get('/jobs', getMyJobs);
+
+// Applied Candidates (job applications)
+router.get('/applied-candidates/search', searchAppliedCandidates);
+router.get('/applied-candidates', getAppliedCandidates);
 
 // Candidates - search must be before :id to avoid "search" being treated as id
 router.get('/candidates/search', searchCandidates);

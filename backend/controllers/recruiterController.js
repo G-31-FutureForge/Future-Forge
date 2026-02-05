@@ -1,6 +1,7 @@
 // backend/controllers/recruiterController.js
 import Job from '../models/Job.js';
 import User from '../models/User.js';
+import Candidate from '../models/Candidate.js';
 
 // @desc    Create a new job (recruiter)
 // @route   POST /api/recruiter/jobs
@@ -60,6 +61,99 @@ export const getMyJobs = async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error fetching jobs',
+    });
+  }
+};
+
+export const getAppliedCandidates = async (req, res) => {
+  try {
+    const { page = 1, limit = 20 } = req.query;
+    const safeLimit = Math.min(Number(limit) || 20, 200);
+    const skip = (Number(page) - 1) * safeLimit;
+
+    const recruiterJobs = await Job.find({ postedBy: req.user._id })
+      .select('_id')
+      .lean();
+    const jobIdStrings = recruiterJobs.map((j) => String(j._id));
+
+    const filter = { jobId: { $in: jobIdStrings } };
+
+    const [candidates, total] = await Promise.all([
+      Candidate.find(filter)
+        .sort({ appliedAt: -1 })
+        .skip(skip)
+        .limit(safeLimit)
+        .lean(),
+      Candidate.countDocuments(filter),
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: candidates,
+      pagination: {
+        page: Number(page),
+        limit: safeLimit,
+        total,
+        pages: Math.ceil(total / safeLimit) || 1,
+      },
+    });
+  } catch (error) {
+    console.error('Get applied candidates error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching applied candidates',
+    });
+  }
+};
+
+export const searchAppliedCandidates = async (req, res) => {
+  try {
+    const { q, page = 1, limit = 20 } = req.query;
+    const safeLimit = Math.min(Number(limit) || 20, 200);
+    const skip = (Number(page) - 1) * safeLimit;
+
+    const recruiterJobs = await Job.find({ postedBy: req.user._id })
+      .select('_id')
+      .lean();
+    const jobIdStrings = recruiterJobs.map((j) => String(j._id));
+
+    const filter = { jobId: { $in: jobIdStrings } };
+
+    if (q && String(q).trim()) {
+      const searchRegex = new RegExp(String(q).trim(), 'i');
+      filter.$or = [
+        { fullName: searchRegex },
+        { email: searchRegex },
+        { phone: searchRegex },
+        { jobTitle: searchRegex },
+        { company: searchRegex },
+      ];
+    }
+
+    const [candidates, total] = await Promise.all([
+      Candidate.find(filter)
+        .sort({ appliedAt: -1 })
+        .skip(skip)
+        .limit(safeLimit)
+        .lean(),
+      Candidate.countDocuments(filter),
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: candidates,
+      pagination: {
+        page: Number(page),
+        limit: safeLimit,
+        total,
+        pages: Math.ceil(total / safeLimit) || 1,
+      },
+    });
+  } catch (error) {
+    console.error('Search applied candidates error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error searching applied candidates',
     });
   }
 };

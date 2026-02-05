@@ -53,7 +53,7 @@ const RecruiterDashboard = () => {
                 >
                     <span className="action-icon">🔍</span>
                     <h3>Search Candidates</h3>
-                    <p>Find candidates by name, skills, or profile</p>
+                    <p>Find candidates who applied to your posted jobs</p>
                 </button>
 
                 <button
@@ -62,7 +62,7 @@ const RecruiterDashboard = () => {
                 >
                     <span className="action-icon">👥</span>
                     <h3>View All Candidates</h3>
-                    <p>Browse all registered student candidates</p>
+                    <p>Browse candidates who applied to your posted jobs</p>
                 </button>
             </div>
         </div>

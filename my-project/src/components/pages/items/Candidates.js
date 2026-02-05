@@ -36,8 +36,8 @@ const Candidates = () => {
         setError('');
         try {
             const url = isSearch && searchQuery.trim()
-                ? `${API_BASE}/api/recruiter/candidates/search?q=${encodeURIComponent(searchQuery.trim())}&page=${pageNum}&limit=10`
-                : `${API_BASE}/api/recruiter/candidates?page=${pageNum}&limit=10`;
+                ? `${API_BASE}/api/recruiter/applied-candidates/search?q=${encodeURIComponent(searchQuery.trim())}&page=${pageNum}&limit=10`
+                : `${API_BASE}/api/recruiter/applied-candidates?page=${pageNum}&limit=10`;
             const response = await fetch(url, {
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -84,7 +84,7 @@ const Candidates = () => {
                     ← Back to Dashboard
                 </button>
                 <h1>View All Candidates</h1>
-                <p>Browse and search student candidates.</p>
+                <p>Browse and search candidates who applied to your posted jobs.</p>
             </div>
 
             <form className="candidates-search-form" onSubmit={handleSearch}>
@@ -113,23 +113,32 @@ const Candidates = () => {
                             <div key={c._id} className="candidate-card">
                                 <div className="candidate-card-header">
                                     <div className="candidate-avatar">
-                                        {(c.firstName?.[0] || '') + (c.lastName?.[0] || '') || '?'}
+                                        {c.fullName?.[0] || '?'}
                                     </div>
                                     <div className="candidate-info">
-                                        <h3>{[c.firstName, c.lastName].filter(Boolean).join(' ') || 'Unknown'}</h3>
+                                        <h3>{c.fullName || 'Unknown'}</h3>
                                         <p className="candidate-email">{c.email || '—'}</p>
                                         {c.phone && <p className="candidate-phone">{c.phone}</p>}
                                     </div>
                                 </div>
-                                {(c.studentProfile?.headline || c.studentProfile?.summary) && (
-                                    <p className="candidate-headline">
-                                        {c.studentProfile.headline || c.studentProfile.summary?.substring(0, 120)}
-                                        {c.studentProfile.summary?.length > 120 ? '...' : ''}
-                                    </p>
-                                )}
                                 <div className="candidate-skills">
-                                    <strong>Skills:</strong> {getSkillsDisplay(c.skills)}
+                                    <strong>Applied For:</strong> {c.jobTitle || '—'} {c.company ? `@ ${c.company}` : ''}
                                 </div>
+                                <div className="candidate-skills">
+                                    <strong>Applied At:</strong> {c.appliedAt ? new Date(c.appliedAt).toLocaleString() : '—'}
+                                </div>
+                                {c.resumePath && (
+                                    <div className="candidate-skills">
+                                        <strong>Resume:</strong>{' '}
+                                        <a
+                                            href={`${API_BASE}${c.resumePath}`}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                        >
+                                            View
+                                        </a>
+                                    </div>
+                                )}
                             </div>
                         ))}
                     </div>
