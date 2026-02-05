@@ -186,7 +186,7 @@ export const getAppliedCandidates = async (req, res) => {
 
 export const searchAppliedCandidates = async (req, res) => {
   try {
-    const { q, mode = 'auto', page = 1, limit = 20 } = req.query;
+    const { q, mode = 'keyword', page = 1, limit = 20 } = req.query;
     const safeLimit = Math.min(Number(limit) || 20, 200);
     const skip = (Number(page) - 1) * safeLimit;
 
@@ -201,41 +201,20 @@ export const searchAppliedCandidates = async (req, res) => {
     const escapeRegExp = (str) => String(str).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
     if (rawQuery) {
-      let safeMode = String(mode || 'auto').toLowerCase();
+      const safeMode = String(mode || 'keyword').toLowerCase();
       const fields = ['fullName', 'email', 'phone', 'jobTitle', 'company'];
 
-      let queryText = rawQuery;
-      const prefixMatch = queryText.match(/^(email|name|phrase|keyword)\s*:\s*(.+)$/i);
-      if (prefixMatch) {
-        safeMode = String(prefixMatch[1]).toLowerCase();
-        queryText = String(prefixMatch[2] || '').trim();
-      }
-
-      if (safeMode === 'auto') {
-        if (/^\S+@\S+\.[^\s]+$/.test(queryText)) {
-          safeMode = 'email';
-        } else {
-          const quoteMatch = queryText.match(/^"([\s\S]+)"$/);
-          if (quoteMatch) {
-            safeMode = 'phrase';
-            queryText = String(quoteMatch[1] || '').trim();
-          } else {
-            safeMode = 'keyword';
-          }
-        }
-      }
-
       if (safeMode === 'email') {
-        const emailRegex = new RegExp(`^${escapeRegExp(queryText)}$`, 'i');
+        const emailRegex = new RegExp(`^${escapeRegExp(rawQuery)}$`, 'i');
         filter.email = emailRegex;
       } else if (safeMode === 'name') {
-        const nameRegex = new RegExp(escapeRegExp(queryText), 'i');
+        const nameRegex = new RegExp(escapeRegExp(rawQuery), 'i');
         filter.fullName = nameRegex;
       } else if (safeMode === 'phrase') {
-        const phraseRegex = new RegExp(escapeRegExp(queryText), 'i');
+        const phraseRegex = new RegExp(escapeRegExp(rawQuery), 'i');
         filter.$or = fields.map((f) => ({ [f]: phraseRegex }));
       } else {
-        const tokens = queryText.split(/\s+/).filter(Boolean).slice(0, 8);
+        const tokens = rawQuery.split(/\s+/).filter(Boolean).slice(0, 8);
         if (tokens.length === 1) {
           const tokenRegex = new RegExp(escapeRegExp(tokens[0]), 'i');
           filter.$or = fields.map((f) => ({ [f]: tokenRegex }));

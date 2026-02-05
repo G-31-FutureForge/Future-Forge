@@ -28,11 +28,65 @@ const SearchCandidates = () => {
         }
     }, [navigate]);
 
+    const buildSearchPlan = (rawInput) => {
+        const raw = String(rawInput || '').trim();
+        const isQuoted =
+            (raw.length >= 2 && raw.startsWith('"') && raw.endsWith('"')) ||
+            (raw.length >= 2 && raw.startsWith("'") && raw.endsWith("'"));
+
+        const q = isQuoted ? raw.slice(1, -1).trim() : raw;
+
+        const isEmail = (value) => {
+            const v = String(value || '').trim();
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+        };
+
+        const looksLikeName = (value) => {
+            const v = String(value || '').trim();
+            if (!v) return false;
+            if (/\d/.test(v)) return false;
+            const parts = v.split(/\s+/).filter(Boolean);
+            if (parts.length < 1 || parts.length > 4) return false;
+            return /^[a-zA-Z][a-zA-Z\s.'-]{0,80}$/.test(v);
+        };
+
+        if (isEmail(q)) {
+            return { q, modes: ['email', 'keyword'] };
+        }
+
+        if (isQuoted) {
+            return { q, modes: ['phrase', 'keyword'] };
+        }
+
+        if (looksLikeName(q)) {
+            return { q, modes: ['name', 'keyword'] };
+        }
+
+        return { q, modes: ['keyword'] };
+    };
+
+    const performSearch = async ({ q, mode, token }) => {
+        const url = `${API_BASE}/api/recruiter/applied-candidates/search?q=${encodeURIComponent(q)}&mode=${encodeURIComponent(mode)}&page=1&limit=50`;
+        const response = await fetch(url, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok || data.success === false) {
+            throw new Error(data.message || 'Failed to search candidates');
+        }
+
+        return Array.isArray(data.data) ? data.data : [];
+    };
+
     const runSearch = async (e) => {
         e.preventDefault();
 
-        const q = query.trim();
-        if (!q) {
+        const plan = buildSearchPlan(query);
+        if (!plan.q) {
             setError('Please enter a search value.');
             setCandidates([]);
             setSearched(true);
@@ -50,20 +104,16 @@ const SearchCandidates = () => {
         setSearched(true);
 
         try {
-            const url = `${API_BASE}/api/recruiter/applied-candidates/search?q=${encodeURIComponent(q)}&page=1&limit=50`;
-            const response = await fetch(url, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            });
+            let finalResults = [];
 
-            const data = await response.json().catch(() => ({}));
-
-            if (!response.ok || data.success === false) {
-                throw new Error(data.message || 'Failed to search candidates');
+            for (let i = 0; i < plan.modes.length; i += 1) {
+                const tryMode = plan.modes[i];
+                const results = await performSearch({ q: plan.q, mode: tryMode, token });
+                finalResults = results;
+                if (results.length > 0) break;
             }
 
-            setCandidates(Array.isArray(data.data) ? data.data : []);
+            setCandidates(finalResults);
         } catch (err) {
             setCandidates([]);
             setError(err.message || 'Server error. Please try again.');
@@ -95,7 +145,7 @@ const SearchCandidates = () => {
                 <input
                     type="text"
                     className="search-candidates-input"
-                    placeholder={'Try: john  |  "full stack"  |  email:john@mail.com  |  name:john'}
+                    placeholder={'Search by name, email, keywords, or "exact phrase"'}
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     disabled={loading}
@@ -105,14 +155,10 @@ const SearchCandidates = () => {
                     {loading ? 'Searching...' : 'Search'}
                 </button>
 
-                <button type="button" className="search-candidates-clear" onClick={clearResults} disabled={loading}>
+                <button type="button" className="search-candidates-clear" onClick={clearResults} disabled={loading && !searched}>
                     Clear
                 </button>
             </form>
-
-            <div className="search-candidates-hint">
-                Use quotes for phrase search. Optional prefixes: <strong>email:</strong> or <strong>name:</strong>
-            </div>
 
             {error && <div className="search-candidates-error">{error}</div>}
 
